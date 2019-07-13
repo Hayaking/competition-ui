@@ -2,6 +2,7 @@ export default {
   teacher_group: '工作组',
   post: '发表公告',
   apply_competition: '申请比赛立项',
+  query_apply_competition: '查看比赛立项申请',
 
   home: '首页',
   login: '登录',

@@ -4,7 +4,7 @@
       <Row>
         <Col offset="1" span="10">
           <FormItem label="当前工作组">
-            <Select v-model="currentGroupId">
+            <Select v-model="competition.groupId">
               <Option  v-for="item in groupList"  :value="item.id" :key="item.id">
                 {{item.groupName}}
               </Option>
@@ -86,8 +86,8 @@ export default {
       competition: {
         name: '',
         startTime: '',
-        groupNum: '',
-        stuNum: '',
+        groupNum: 0,
+        stuNum: 0,
         exRes: '',
         place: '',
         org: '',
@@ -100,8 +100,7 @@ export default {
         groupId: ''
       },
       competitionType: [],
-      groupList: [],
-      currentGroupId: 0
+      groupList: []
     }
   },
   mounted () {

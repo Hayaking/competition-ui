@@ -1,5 +1,6 @@
 import {
-  save_competition
+  save_competition,
+  get_by_group_id
 } from '@/api/competition'
 
 export default {
@@ -17,6 +18,17 @@ export default {
         save_competition(cp).then(res => {
           if (res.data.state === 'SUCCESS') {
             resolve()
+          }
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
+    handleGetByGroupId ({ state, commit }, { pageNum, pageSize, groupId }) {
+      return new Promise((resolve, reject) => {
+        get_by_group_id(pageNum, pageSize, groupId).then(res => {
+          if (res.data.state === 'SUCCESS') {
+            resolve(res.data.body)
           }
         }).catch(err => {
           reject(err)

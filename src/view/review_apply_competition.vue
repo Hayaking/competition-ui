@@ -1,18 +1,5 @@
 <template>
   <div>
-    <Row>
-      <Col span="22">
-        <Select v-model="currentGroupId">
-          <Option  v-for="item in groupList"  :value="item.id" :key="item.id">
-            {{item.groupName}}
-          </Option>
-        </Select>
-      </Col>
-      <Col span="2">
-        <Button type="primary" @click="search">查询</Button>
-      </Col>
-    </Row>
-
     <Table :columns="tb_head" :data="tb_res" stripe border ></Table>
     <Page show-total
           :total="page.total"
@@ -27,7 +14,7 @@
 import { mapActions } from 'vuex'
 
 export default {
-  name: 'apply_competition',
+  name: 'review_apply_competition',
   data () {
     return {
       competition: {
@@ -90,10 +77,24 @@ export default {
                 },
                 on: {
                   click: () => {
-                    this.$Message.info('撤回')
+                    this.$Message.info('通过')
+                    this.review(params.row.id, '通过')
                   }
                 }
-              }, '取消')
+              }, '通过'),
+              h('Button', {
+                props: {
+                  type: 'error',
+                  size: 'small',
+                  disabled: params.row.state !== '申请中'
+                },
+                on: {
+                  click: () => {
+                    this.$Message.info('拒绝')
+                    this.review(params.row.id, '拒绝')
+                  }
+                }
+              }, '拒绝')
             ])
           }
         }
@@ -111,13 +112,16 @@ export default {
     this.$nextTick(() => {
       this.getType('competition')
       this.getGroup()
+      this.search()
     })
   },
   methods: {
     ...mapActions([
       'handleGetType',
       'handleGetTeacherGroup',
-      'handleGetByGroupId'
+      'handleGetByGroupId',
+      'handleGetAll',
+      'handleSetState'
     ]),
 
     getType (type) {
@@ -141,13 +145,17 @@ export default {
       })
     },
     search () {
-      let groupId = this.currentGroupId
       let pageNum = this.page.current
       let pageSize = this.page.page_size
-      this.handleGetByGroupId({ pageNum, pageSize, groupId }).then(res => {
+      this.handleGetAll({ pageNum, pageSize }).then(res => {
         this.page.records = res.records
         this.page.total = res.length
         this.pageChange(1)
+      })
+    },
+    review (id, status) {
+      this.handleSetState({ id, status }).then(res => {
+        console.info(res)
       })
     }
   }

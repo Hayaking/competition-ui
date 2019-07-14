@@ -1,8 +1,13 @@
 export default {
   teacher_group: '工作组',
   post: '发表公告',
+  admin_post: '发表公告',
   apply_competition: '申请比赛立项',
   query_apply_competition: '查看比赛立项申请',
+  review_apply_competition: '审核比赛立项',
+  review_teacher_group: '审核工作组',
+  review_result_competition: '审核比赛结果',
+  admin: '管理',
 
   home: '首页',
   login: '登录',

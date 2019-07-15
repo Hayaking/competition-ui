@@ -8,9 +8,4 @@ export const saveErrorLogger = info => {
   })
 }
 
-export const getRoute = (type) => {
-  return axios.request({
-    url: `menu/${type}`,
-    method: 'get'
-  })
-}
+

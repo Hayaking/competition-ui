@@ -7,6 +7,8 @@ import data from './module/data'
 import competition from './module/competition'
 import type from './module/type'
 import group from './module/group'
+import role from './module/role'
+import permission from './module/persmission'
 
 Vue.use(Vuex)
 
@@ -26,6 +28,8 @@ export default new Vuex.Store({
     data,
     competition,
     type,
-    group
+    group,
+    role,
+    permission
   }
 })

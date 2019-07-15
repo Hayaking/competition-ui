@@ -1,6 +1,7 @@
 import {
-  getRoute
-} from '@/api/data'
+  getRoute,
+  get_all_route
+} from '@/api/routers'
 
 export default {
   state: {
@@ -17,6 +18,15 @@ export default {
         console.info('!!!!!!!!!!!!!')
         getRoute(rootState.user.type).then(res => {
           console.info(res.data)
+          resolve(res.data)
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
+    handleGetAllRoute ({ commmit }) {
+      return new Promise((resolve, reject) => {
+        get_all_route().then(res => {
           resolve(res.data)
         }).catch(err => {
           reject(err)

@@ -1,16 +1,11 @@
 <template>
   <div>
     <Row>
-      <Col span="22">
         <Select v-model="currentGroupId">
           <Option  v-for="item in groupList"  :value="item.id" :key="item.id">
             {{item.groupName}}
           </Option>
         </Select>
-      </Col>
-      <Col span="2">
-        <Button type="primary" @click="search">查询</Button>
-      </Col>
     </Row>
 
     <Table :columns="tb_head" :data="tb_res" stripe border ></Table>
@@ -109,27 +104,19 @@ export default {
   },
   mounted () {
     this.$nextTick(() => {
-      this.getType('competition')
-      this.getGroup()
+      this.$store.dispatch('handleGetType', { type: 'competition' }).then(res => {
+        this.competitionType = res
+      })
+      this.$store.dispatch('handleGetTeacherGroup').then(res => {
+        this.groupList = res
+      })
     })
   },
   methods: {
     ...mapActions([
-      'handleGetType',
-      'handleGetTeacherGroup',
       'handleGetByGroupId'
     ]),
 
-    getType (type) {
-      this.handleGetType({ type }).then(res => {
-        this.competitionType = res
-      })
-    },
-    getGroup () {
-      this.handleGetTeacherGroup().then(res => {
-        this.groupList = res
-      })
-    },
     pageChange (index) {
       this.page.current = index
       let start = (index - 1) * this.page.page_size
@@ -150,7 +137,13 @@ export default {
         this.pageChange(1)
       })
     }
+  },
+  watch: {
+    currentGroupId () {
+      this.search()
+    }
   }
+
 }
 </script>
 

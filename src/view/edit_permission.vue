@@ -204,6 +204,7 @@ export default {
         if (res) {
           this.handleGetAllPermission().then(res => {
             this.tb_all_permission = res
+            this.differSet()
           })
         }
       })

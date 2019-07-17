@@ -9,6 +9,8 @@ import type from './module/type'
 import group from './module/group'
 import role from './module/role'
 import permission from './module/persmission'
+import teacher from './module/teacher'
+import student from './module/student'
 
 Vue.use(Vuex)
 
@@ -30,6 +32,8 @@ export default new Vuex.Store({
     type,
     group,
     role,
-    permission
+    permission,
+    teacher,
+    student
   }
 })

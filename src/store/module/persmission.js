@@ -4,7 +4,9 @@ import {
   add_role_permission,
   delete_role_permission,
   add_permission,
-  delete_permission
+  delete_permission,
+  get_id,
+  save_permission_menu
 } from '@/api/permission'
 
 export default {
@@ -73,6 +75,26 @@ export default {
     handleDeletePermission ({ commit }, { permissionId }) {
       return new Promise((resolve, reject) => {
         delete_permission(permissionId).then(res => {
+          if (res.data.state === 'SUCCESS') {
+            resolve(true)
+          }
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
+    handleGetId ({ commit }, { menuId }) {
+      return new Promise((resolve, reject) => {
+        get_id(menuId).then(res => {
+          resolve(res.data.body)
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
+    handleSavePermissionMenu ({ commit }, { menuId, permissionId }) {
+      return new Promise((resolve, reject) => {
+        save_permission_menu(menuId, permissionId).then(res => {
           if (res.data.state === 'SUCCESS') {
             resolve(true)
           }

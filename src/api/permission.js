@@ -41,3 +41,17 @@ export const delete_permission = (permissionId) => {
     method: 'DELETE'
   })
 }
+
+export const get_id = (menuId) => {
+  return axios.request({
+    url: `permission/menu/${menuId}`,
+    method: 'get'
+  })
+}
+
+export const save_permission_menu = (menuId, permissionId) => {
+  return axios.request({
+    url: `permission/menu/${menuId}/${permissionId}`,
+    method: 'post'
+  })
+}

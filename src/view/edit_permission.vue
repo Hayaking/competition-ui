@@ -1,6 +1,6 @@
 <template>
   <Card>
-    <!--    对话框-->
+    <!-- 对话框-->
     <Modal
       @on-cancel="cancel"
       @on-ok="addPermission"
@@ -20,7 +20,7 @@
             </Option>
           </Select>
         </Row>
-        <Table :columns="tb_head" :data="tb_res" border stripe></Table>
+        <Table :columns="tb_head" :data="tb_res" border height="520" size="small" stripe></Table>
       </Col>
       <Col offset="2" span="11">
         <Row>
@@ -31,7 +31,8 @@
             <Button @click="showModal" type="primary">增加</Button>
           </Col>
         </Row>
-        <Table :columns="tb_all_permission_head" :data="tb_all_permission" border stripe></Table>
+        <Table :columns="tb_all_permission_head" :data="tb_all_permission" border height="520" size="small"
+               stripe></Table>
       </Col>
     </Row>
   </Card>
@@ -84,7 +85,24 @@ export default {
           key: 'id'
         }, {
           title: '权限名',
-          key: 'permissionName'
+          key: 'permissionName',
+          render: (h, params) => {
+            if (params.row.isEdit) {
+              return h('Input', {
+                props: {
+                  value: params.row.permissionName
+                }
+              })
+            } else {
+              return h('div', {
+                on: {
+                  dblclick: () => {
+                    this.editPermissionName(params.row._index)
+                  }
+                }
+              }, params.row.permissionName)
+            }
+          }
         }, {
           title: '操作',
           key: 'action',
@@ -122,6 +140,7 @@ export default {
         }
       ],
       tb_all_permission: [],
+      tb_all_permission_back: [],
       permissionName: ''
     }
   },
@@ -129,10 +148,13 @@ export default {
     this.$nextTick(() => {
       this.$store.dispatch('handleGetRoleList').then(res => {
         this.roleList = res
-        console.info(res)
       })
       this.$store.dispatch('handleGetAllPermission').then(res => {
+        res.map(item => {
+          item.isEdit = false
+        })
         this.tb_all_permission = res
+        this.tb_all_permission_back = res
       })
     })
   },
@@ -145,43 +167,40 @@ export default {
       'handleAddPermission',
       'handleDeletePermission'
     ]),
-    add (id) {
-      let flag = true
-      let target = this.tb_all_permission[id]
-      this.tb_res.forEach((item) => {
-        if (item.id === target.id) {
-          flag = false
-          this.$Message.error('重复了')
+    /**
+       * 使角色拥有某个权限
+       * @param id
+       */
+    add (index) {
+      let permission = this.tb_all_permission[index]
+      let params = { roleId: this.roleId, permissionId: permission.id }
+      this.handleAddRolePermission(params).then(res => {
+        if (res) {
+          this.tb_all_permission.splice(index, 1)
+          this.tb_res.push(permission)
         }
       })
-      if (flag) {
-        let roleId = this.roleId
-        let permissionId = target.id
-        this.handleAddRolePermission({ roleId, permissionId }).then(res => {
-          if (res) {
-            this.tb_res.push(target)
-          }
-        })
-        this.$Message.success('添加成功')
-      }
-      console.info(this.tb_res)
+      this.$Message.success('添加成功')
     },
-    remove (id) {
-      let roleId = this.roleId
-      let permissionId = this.tb_all_permission[id].id
-      this.handleDeleteRolePermission({ roleId, permissionId }).then(res => {
+    /**
+       * 移除角色拥有的权限
+       * @param index
+       */
+    remove (index) {
+      let params = { roleId: this.roleId, permissionId: this.tb_res[index].id }
+      this.handleDeleteRolePermission(params).then(res => {
         if (res) {
-          this.tb_res.splice(id, 1)
+          this.tb_all_permission.push(this.tb_res[index])
+          this.tb_res.splice(index, 1)
           this.$Message.info('删除成功')
         }
       })
     },
-    showModal () {
-      this.show = true
-    },
+    /**
+       * 新建权限
+       */
     addPermission () {
-      let permissionName = this.permissionName
-      this.handleAddPermission({ permissionName }).then(res => {
+      this.handleAddPermission({ permissionName: this.permissionName }).then(res => {
         if (res) {
           this.handleGetAllPermission().then(res => {
             this.tb_all_permission = res
@@ -189,25 +208,58 @@ export default {
         }
       })
     },
-    cancel () {
-      this.show = false
-    },
+    /**
+       * 删除权限
+       * @param id
+       */
     deletePermission (id) {
-      let permissionId = id
-      this.handleDeletePermission({ permissionId }).then(res => {
+      this.handleDeletePermission({ permissionId: id }).then(res => {
         if (res) {
           this.handleGetAllPermission().then(res => {
             this.tb_all_permission = res
           })
         }
+      })
+    },
+    /**
+       * 编辑权限名字
+       * @param index
+       */
+    editPermissionName (index) {
+      this.tb_all_permission[index].isEdit = true
+    },
+    /**
+       * 显示对话框
+       */
+    showModal () {
+      this.show = true
+    },
+    /**
+       * 取消对话框
+       */
+    cancel () {
+      this.show = false
+    },
+    /**
+       * 求差集
+       * 对tb_all_permission_back与tb_all_permission求差集
+       * 再赋值给tb_all_permission_back
+       */
+    differSet () {
+      this.tb_all_permission = this.tb_all_permission.filter(item => {
+        return this.tb_res.every((i) => {
+          return i.id !== item.id
+        })
       })
     }
   },
   watch: {
     roleId (val) {
-      let roleId = val
-      this.handleGetPermission({ roleId }).then(res => {
+      // 选择的角色变化时，获取其拥有的权限
+      this.handleGetPermission({ roleId: val }).then(res => {
         this.tb_res = res
+        this.tb_all_permission = this.tb_all_permission_back
+        this.differSet()
       })
     }
   }

@@ -136,7 +136,7 @@ export default {
       let end = index * this.page.page_size
       this.tb_res = this.page.records.slice(start, end)
 
-      this.tb_res.forEach((item) => {
+      this.tb_res.map((item) => {
         item.type = this.competitionType[item.type].typeName
       })
     },

@@ -418,13 +418,13 @@ export const setTitle = (routeItem, vm) => {
 export const initRouterNode = (routers, data) => {
   for (let item of data) {
     let menu = Object.assign({}, item)
-    console.info('当前路由')
-    console.info(item)
+    // console.info('当前路由')
+    // console.info(item)
     menu.component = lazyLoading(item.component)
     if (item.children && item.children.length > 0) {
       menu.children = []
-      console.info('子路由')
-      console.info(item.children)
+      // console.info('子路由')
+      // console.info(item.children)
       initRouterNode(menu.children, item.children)
     }
     menu.meta = item.meta

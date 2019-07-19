@@ -6,3 +6,23 @@ export const get_role_list = () => {
     method: 'get'
   })
 }
+export const get_student_role = (account) => {
+  return axios.request({
+    url: `student/role/${account}`,
+    method: 'get'
+  })
+}
+
+export const add_student_role = (account, roleId) => {
+  return axios.request({
+    url: `student/role/${account}/${roleId}`,
+    method: 'post'
+  })
+}
+
+export const delete_student_role = (account, roleId) => {
+  return axios.request({
+    url: `student/role/${account}/${roleId}`,
+    method: 'delete'
+  })
+}

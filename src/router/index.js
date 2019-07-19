@@ -48,11 +48,11 @@ router.beforeEach((to, from, next) => {
       }
     ]
     store.dispatch('getRoutes').then(res => {
-      console.info('接收路由：')
-      console.info(res)
+      // console.info('接收路由：')
+      // console.info(res)
       menuData = menuData.concat(res)
-      console.info('合并路由')
-      console.info(menuData)
+      // console.info('合并路由')
+      // console.info(menuData)
       initRouterNode(constRoutes, menuData)
       store.commit('setHomeRoute', menuData)
       store.commit('updateAppRouter', constRoutes)

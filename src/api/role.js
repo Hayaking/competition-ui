@@ -26,3 +26,24 @@ export const delete_student_role = (account, roleId) => {
     method: 'delete'
   })
 }
+
+export const get_teacher_role = (account) => {
+  return axios.request({
+    url: `teacher/role/${account}`,
+    method: 'get'
+  })
+}
+
+export const add_teacher_role = (account, roleId) => {
+  return axios.request({
+    url: `teacher/role/${account}/${roleId}`,
+    method: 'post'
+  })
+}
+
+export const delete_teacher_role = (account, roleId) => {
+  return axios.request({
+    url: `teacher/role/${account}/${roleId}`,
+    method: 'delete'
+  })
+}

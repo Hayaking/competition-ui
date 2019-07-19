@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 import user from './module/user'
+import user_edit from './module/user_edit'
 import app from './module/app'
 import data from './module/data'
 import competition from './module/competition'
@@ -26,6 +27,7 @@ export default new Vuex.Store({
   },
   modules: {
     user,
+    user_edit,
     app,
     data,
     competition,

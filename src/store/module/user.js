@@ -3,7 +3,7 @@ import { getToken, getType, setToken, setType } from '@/libs/util'
 
 export default {
   state: {
-    student: {
+    user: {
       account: '',
       stuName: '',
       stuPhone: '',

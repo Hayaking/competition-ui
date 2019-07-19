@@ -1,58 +1,19 @@
 <template>
   <Card>
 <!--角色对话框-->
-    <RoleModal :show="show1"
-      :left-list="tb_role_res"
-      :right-list="tb_role_res_all"
-      :student="student"
-      @cancel="cancelRoleModal"
-    >
+    <RoleModal
+      :show="show1"
+      @ok="cancelModal"
+      @cancel="cancelModal">
     </RoleModal>
-<!--    <Modal-->
-<!--      @on-ok="saveRole"-->
-<!--      @on-cancel="cancelRoleModal"-->
-<!--      title="角色"-->
-<!--      v-model="show1">-->
-<!--      <DragList :list1.sync="tb_role_res" :list2.sync="tb_role_res_all"  @on-change="handleChange" >-->
-<!--        <h3 slot="left-title">拥有的角色</h3>-->
-<!--        <Card class="drag-item" slot="left" slot-scope="left" :padding="3">-->
-<!--          {{ left.itemLeft.roleName }}-->
-<!--        </Card>-->
-<!--        <h3 slot="right-title">所有角色</h3>-->
-<!--        <Card class="drag-item" slot="right" slot-scope="right" :padding="3">-->
-<!--          {{ right.itemRight.roleName }}-->
-<!--        </Card>-->
-<!--      </DragList>-->
-<!--    </Modal>-->
-<!--编辑对话框-->
-    <Modal
-      title="编辑"
-      @on-ok="saveStudent"
-      v-model="show2">
-      <Form :model="student" label-position="left" :label-width="70">
-        <FormItem label="账号">
-          <Input v-model="student.account" :disabled="true"/>
-        </FormItem>
-        <FormItem label="密码">
-          <Input v-model="student.password"/>
-        </FormItem>
-        <FormItem label="姓名">
-          <Input v-model="student.stuName"/>
-        </FormItem>
-        <FormItem label="性别">
-          <Input v-model="student.stuSex"/>
-        </FormItem>
-        <FormItem label="班级">
-          <Input v-model="student.stuClass"/>
-        </FormItem>
-        <FormItem label="电话">
-          <Input v-model="student.stuPhone"/>
-        </FormItem>
-        <FormItem label="银行卡号">
-          <Input v-model="student.stuBankCardNo"/>
-        </FormItem>
-      </Form>
-    </Modal>
+<!--编辑学生对话框-->
+    <UserInfoModal
+      :show="show2"
+      :stu="user"
+      @ok="cancelModal"
+      @cancel="cancelModal">
+    </UserInfoModal>
+
     <Row>
       <Select v-model="type">
         <Option value="teacher">教师</option>
@@ -74,12 +35,14 @@
 <script>
 
 import { mapActions } from 'vuex'
-import RoleModal from '@/view/components/RoleModal'
+import RoleModal from '@/view/components/role-modal'
+import UserInfoModal from '@/view/components/user-info-modal'
 
 export default {
   name: 'edit_user',
-  components: { RoleModal },
+  components: { RoleModal, UserInfoModal },
   created () {
+    // 禁止火狐拖拽搜索
     document.body.ondrop = function (event) {
       event.preventDefault()
       event.stopPropagation()
@@ -87,7 +50,8 @@ export default {
   },
   data () {
     return {
-      type: 'teacher',
+      getter: this.$store.getters,
+      type: 'student',
       tb_head: [],
       tb_teacher_head: [
         {
@@ -134,7 +98,7 @@ export default {
                 },
                 on: {
                   click: () => {
-
+                    this.showRoleModal(params.row)
                   }
                 }
               }, '角色'),
@@ -145,7 +109,7 @@ export default {
                 },
                 on: {
                   click: () => {
-
+                    this.showUserInfoModal(params.row)
                   }
                 }
               }, '编辑'),
@@ -214,7 +178,7 @@ export default {
                 },
                 on: {
                   click: () => {
-                    this.showStudentModal(params.row)
+                    this.showUserInfoModal(params.row)
                   }
                 }
               }, '编辑'),
@@ -243,9 +207,6 @@ export default {
           key: 'roleName'
         }
       ],
-      tb_role_res: [],
-      tb_role_res_all: [],
-      tb_role_res_all_back: [],
       page: {
         current: 1,
         page_size: 2,
@@ -254,30 +215,23 @@ export default {
       },
       show1: false,
       show2: false,
-      student: {
+      user: {
 
-      },
-      handleList: []
-
+      }
     }
   },
   mounted () {
     this.$nextTick(() => {
       this.search()
-      this.$store.dispatch('handleGetRoleList').then(res => {
-        this.tb_role_res_all = res
-        this.tb_role_res_all_back = res
-      })
+      this.$store.dispatch('handleGetRoleList')
     })
   },
   methods: {
     ...mapActions([
       'handleGetAllStudent',
       'handleGetAllTeacherByPage',
-      'handleUpdate',
       'handleGetStudentRole',
-      'handleAddStudentRole',
-      'handleDeleteStudentRole'
+      'handleGetTeacherRole'
     ]),
     /**
      * 页码改变时执行
@@ -316,83 +270,38 @@ export default {
      * @param account
      */
     showRoleModal (obj) {
-      this.student = obj
+      this.$store.commit('setEditUser', obj)
+      this.$store.commit('setEditType', this.type)
       let account = obj.account
-      this.handleGetStudentRole({ account }).then(res => {
-        this.tb_role_res = res
-        this.tb_role_res_all = this.tb_role_res_all.filter((item) => {
-          return this.tb_role_res.every(i => {
-            return i.id !== item.id
-          })
+      if (this.type === 'teacher') {
+        this.handleGetTeacherRole({ account }).then(res => {
+          this.show1 = true
         })
-        this.show1 = true
-      })
+      } else {
+        this.handleGetStudentRole({ account }).then(res => {
+          this.show1 = true
+        })
+      }
     },
     /**
      * 取消角色对话框
      */
-    cancelRoleModal () {
-      console.info(this.tb_role_res_all_back)
-      this.tb_role_res_all = this.tb_role_res_all_back
+    cancelModal () {
       this.show1 = false
+      this.show2 = false
     },
     /**
      * 显示编辑对话框
      * @param obj
      */
-    showStudentModal (obj) {
-      this.student = obj
+    showUserInfoModal (obj) {
+      this.user = obj
       this.show2 = true
-    },
-    /**
-     * 保存学生
-     */
-    saveStudent () {
-      this.handleUpdate({ student: this.student }).then(res => {
-        console.info(res)
-        this.student = {}
-      })
-    },
-    /**
-     * 保存角色
-     * @param index
-     */
-    saveRole (index) {
-      let roleId = this.tb_role_res[index].id
-      let account = this.student.account
-      this.handleAddStudentRole({ account, roleId }).then(res => {
-        console.info(res)
-      })
-    },
-    /**
-     * 删除角色
-     * @param index
-     */
-    deleteRole (index) {
-      let roleId = this.tb_role_res_all[index].id
-      let account = this.student.account
-      this.handleDeleteStudentRole({ account, roleId }).then(res => {
-        console.info(res)
-      })
-    },
-    /**
-     * 拖拽列表改变时
-     * @param src
-     * @param target
-     * @param oldIndex
-     * @param newIndex
-     */
-    handleChange ({ src, target, oldIndex, newIndex }) {
-      console.info(`${src} => ${target}, ${oldIndex} => ${newIndex}`)
-      if (src === 'right') {
-        this.saveRole(newIndex)
-      } else {
-        this.deleteRole(newIndex)
-      }
     }
   },
   watch: {
-    type () {
+    type (val) {
+      this.$store.commit('setEditUser', val)
       this.search()
     }
   }
@@ -400,7 +309,6 @@ export default {
 </script>
 
 <style>
-
   .drag-item{
     margin: 10px;
   }

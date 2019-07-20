@@ -209,7 +209,7 @@ export default {
       ],
       page: {
         current: 1,
-        page_size: 2,
+        page_size: 12,
         total: 0,
         records: []
       },
@@ -253,14 +253,14 @@ export default {
         this.handleGetAllStudent({ pageNum, pageSize }).then(res => {
           this.tb_head = this.tb_student_head
           this.page.records = res.records
-          this.page.total = res.length
+          this.page.total = res.records.length
           this.pageChange(1)
         })
       } else {
         this.handleGetAllTeacherByPage({ pageNum, pageSize }).then(res => {
           this.tb_head = this.tb_teacher_head
           this.page.records = res.records
-          this.page.total = res.length
+          this.page.total = res.records.length
           this.pageChange(1)
         })
       }

@@ -7,6 +7,14 @@ export default {
   review_apply_competition: '审核比赛立项',
   review_teacher_group: '审核工作组',
   review_result_competition: '审核比赛结果',
+  edit_user: '管理用户',
+  edit_permission: '管理角色权限',
+  edit_menu: '管理权限菜单',
+  create_teacher_group: '创建工作组',
+  create_student_group: '创建比赛小组',
+  invite_teacher_member: '邀请组员',
+  invite_student_member: '邀请组员',
+
   admin: '管理',
 
   home: '首页',

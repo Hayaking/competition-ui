@@ -55,17 +55,23 @@ export default {
           title: '审核状态',
           key: 'state',
           render: (h, params) => {
-            return h('div', [
-              h('Button', {
-                props: {
-                  type: params.row.state === '申请中' ? 'info' : params.row.state === '通过' ? 'success' : 'error',
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px'
-                }
-              }, params.row.state)
-            ])
+            return h('Button', {
+              props: {
+                type: params.row.state === '申请中' ? 'info' : params.row.state === '通过' ? 'success' : 'error',
+                size: 'small'
+              }
+            }, params.row.state)
+          }
+        }, {
+          title: '报名状态',
+          key: 'enterState',
+          render: (h, params) => {
+            return h('Button', {
+              props: {
+                type: params.row.enterState === '已开始' ? 'success' : params.row.enterState === '结束' ? 'error' : 'info',
+                size: 'small'
+              }
+            }, params.row.enterState)
           }
         }, {
           title: '操作',
@@ -77,18 +83,31 @@ export default {
               h('Button', {
                 props: {
                   type: 'primary',
-                  size: 'small',
-                  disabled: params.row.state !== '申请中'
+                  size: 'small'
                 },
                 style: {
                   marginRight: '5px'
                 },
                 on: {
                   click: () => {
-                    this.$Message.info('撤回')
+                    this.setEnterState(params.row.id, true)
                   }
                 }
-              }, '取消')
+              }, '开始'),
+              h('Button', {
+                props: {
+                  type: 'error',
+                  size: 'small'
+                },
+                style: {
+                  marginRight: '5px'
+                },
+                on: {
+                  click: () => {
+                    this.setEnterState(params.row.id, false)
+                  }
+                }
+              }, '结束')
             ])
           }
         }
@@ -96,7 +115,7 @@ export default {
       tb_res: [],
       page: {
         current: 1,
-        page_size: 2,
+        page_size: 12,
         total: 0,
         records: []
       }
@@ -104,19 +123,22 @@ export default {
   },
   mounted () {
     this.$nextTick(() => {
+      // 获取竞赛级别
       this.$store.dispatch('handleGetType', { type: 'competition' }).then(res => {
         this.competitionType = res
       })
+      // 获取该老师属于的工作组
       this.$store.dispatch('handleGetTeacherGroup').then(res => {
         this.groupList = res
+        this.currentGroupId = res[0].id
       })
     })
   },
   methods: {
     ...mapActions([
-      'handleGetByGroupId'
+      'handleGetByGroupId',
+      'handleSetEnterState'
     ]),
-
     pageChange (index) {
       this.page.current = index
       let start = (index - 1) * this.page.page_size
@@ -135,6 +157,13 @@ export default {
         this.page.records = res.records
         this.page.total = res.length
         this.pageChange(1)
+      })
+    },
+    setEnterState (id, flag) {
+      this.handleSetEnterState({ id, flag }).then(res => {
+        if (res) {
+          this.search()
+        }
       })
     }
   },

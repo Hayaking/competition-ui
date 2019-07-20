@@ -20,10 +20,13 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 export default {
   name: 'invite_teacher_member',
   data () {
     return {
+      getter: this.$store.getters,
       tb_head1: [
         {
           title: '帐号',
@@ -37,11 +40,12 @@ export default {
           width: 150,
           align: 'center',
           render: (h, params) => {
-            return h('div', [
-              h('Button', {
+            if (params.row.state === '邀请成功') {
+              return h('Button', {
                 props: {
                   type: 'error',
-                  size: 'small'
+                  size: 'small',
+
                 },
                 on: {
                   click: () => {
@@ -49,7 +53,20 @@ export default {
                   }
                 }
               }, '删除')
-            ])
+            } else {
+              return h('Button', {
+                props: {
+                  type: 'error',
+                  size: 'small',
+                  disabled: true
+                },
+                on: {
+                  click: () => {
+                    this.remove(params.row._index)
+                  }
+                }
+              }, params.row.state)
+            }
           }
         }
       ],
@@ -84,42 +101,56 @@ export default {
         }
       ],
       tb_res2: [],
-      tb_res2_back: [],
       groupId: -1,
       groupList: []
     }
   },
   mounted () {
-    this.$store.dispatch('handleGetAllTeacher').then(res => {
-      this.tb_res2 = res
-      this.tb_res2_back = res
-    })
     this.$store.dispatch('handleGetTeacherGroup').then(res => {
       this.groupList = res
     })
+    this.$store.dispatch('handleGetAllTeacher').then(res => {
+      this.tb_res2 = res
+    })
   },
   methods: {
+    ...mapActions([
+      'handleInviteTeacherMember'
+    ]),
     /**
      * 差集
      */
     differSet () {
       this.tb_res2 = this.tb_res2.filter(item => {
         return this.tb_res1.every((i) => {
-          return i.id !== item.id
+          return i.account !== item.account
         })
       })
     },
     invite (index) {
-      this.$Message.info('邀请中')
+      let params = {
+        groupId: this.groupId,
+        account: this.tb_res2[index].account
+      }
+      this.handleInviteTeacherMember(params).then(res => {
+        if (res) {
+          this.$Message.info('邀请中')
+        }
+      })
     }
   },
   watch: {
     groupId (val) {
       this.$store.dispatch('handleGetTeacherByGroupId', { groupId: val }).then(res => {
         this.tb_res1 = res
-        this.tb_res2 = this.tb_res2_back
+        this.tb_res2 = this.allTeacher
         this.differSet()
       })
+    }
+  },
+  computed: {
+    allTeacher () {
+      return this.getter.getAllTeacher
     }
   }
 }

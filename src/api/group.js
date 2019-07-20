@@ -6,3 +6,9 @@ export const get_teacher_group = () => {
     method: 'get'
   })
 }
+export const invite_teacher_member = (groupId, account) => {
+  return axios.request({
+    url: `teacherGroup/invite/${groupId}/${account}`,
+    method: 'post'
+  })
+}

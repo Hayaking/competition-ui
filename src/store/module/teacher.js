@@ -6,17 +6,21 @@ import {
 
 export default {
   state: {
+    allTeacher: []
   },
   mutations: {
-
+    setAllTeacher (state, all) {
+      state.allTeacher = all
+    }
   },
   getters: {
-
+    getAllTeacher: state => state.allTeacher
   },
   actions: {
     handleGetAllTeacher ({ commit }) {
       return new Promise((resolve, reject) => {
         get_all_teacher().then(res => {
+          commit('setAllTeacher', res.data.body)
           resolve(res.data.body)
         }).catch(err => {
           reject(err)

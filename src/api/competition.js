@@ -22,10 +22,16 @@ export const get_competition_all = (pageNum, pageSize) => {
   })
 }
 
-export const set_competition_state = (id, state) => {
+export const set_competition_state = (id, flag) => {
   return axios.request({
-    url: `competition/state`,
-    params: { 'id': id, 'state': state },
-    method: 'get'
+    url: `competition/state/${id}/${flag}`,
+    method: 'post'
+  })
+}
+
+export const set_competition_enter_state = (id, flag) => {
+  return axios.request({
+    url: `competition/enterState/${id}/${flag}`,
+    method: 'post'
   })
 }

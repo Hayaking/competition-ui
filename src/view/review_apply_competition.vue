@@ -69,29 +69,25 @@ export default {
               h('Button', {
                 props: {
                   type: 'primary',
-                  size: 'small',
-                  disabled: params.row.state !== '申请中'
+                  size: 'small'
                 },
                 style: {
                   marginRight: '5px'
                 },
                 on: {
                   click: () => {
-                    this.$Message.info('通过')
-                    this.review(params.row.id, '通过')
+                    this.review(params.row.id, true)
                   }
                 }
               }, '通过'),
               h('Button', {
                 props: {
                   type: 'error',
-                  size: 'small',
-                  disabled: params.row.state !== '申请中'
+                  size: 'small'
                 },
                 on: {
                   click: () => {
-                    this.$Message.info('拒绝')
-                    this.review(params.row.id, '拒绝')
+                    this.review(params.row.id, false)
                   }
                 }
               }, '拒绝')
@@ -102,7 +98,7 @@ export default {
       tb_res: [],
       page: {
         current: 1,
-        page_size: 2,
+        page_size: 10,
         total: 0,
         records: []
       }
@@ -139,7 +135,6 @@ export default {
       let start = (index - 1) * this.page.page_size
       let end = index * this.page.page_size
       this.tb_res = this.page.records.slice(start, end)
-
       this.tb_res.map((item) => {
         item.type = this.competitionType[item.type].typeName
       })
@@ -153,9 +148,11 @@ export default {
         this.pageChange(1)
       })
     },
-    review (id, status) {
-      this.handleSetState({ id, status }).then(res => {
-        console.info(res)
+    review (id, flag) {
+      this.handleSetState({ id, flag }).then(res => {
+        if (res) {
+          this.search()
+        }
       })
     }
   }

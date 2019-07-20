@@ -29,7 +29,7 @@ router.beforeEach((to, from, next) => {
         'redirect': '/home',
         'component': 'Main',
         'meta': {
-          'hideInMenu': 'true',
+          'hideInMenu': 'false',
           'notCache': 'true'
         },
         'children': [
@@ -37,7 +37,7 @@ router.beforeEach((to, from, next) => {
             'path': '/home',
             'name': 'home',
             'meta': {
-              'hideInMenu': 'true',
+              'hideInMenu': 'false',
               'title': '首页',
               'notCache': 'true',
               'icon': 'md-home'

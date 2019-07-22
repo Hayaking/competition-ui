@@ -44,8 +44,7 @@ export default {
               return h('Button', {
                 props: {
                   type: 'error',
-                  size: 'small',
-
+                  size: 'small'
                 },
                 on: {
                   click: () => {
@@ -108,6 +107,7 @@ export default {
   mounted () {
     this.$store.dispatch('handleGetTeacherGroup').then(res => {
       this.groupList = res
+      this.groupId = res[0].id
     })
     this.$store.dispatch('handleGetAllTeacher').then(res => {
       this.tb_res2 = res
@@ -134,7 +134,12 @@ export default {
       }
       this.handleInviteTeacherMember(params).then(res => {
         if (res) {
-          this.$Message.info('邀请中')
+          this.$store.dispatch('handleGetTeacherByGroupId', { groupId: this.groupId }).then(r => {
+            this.tb_res1 = r
+            this.tb_res2 = this.allTeacher
+            this.differSet()
+            this.$Message.info('邀请中')
+          })
         }
       })
     }

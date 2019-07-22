@@ -45,7 +45,6 @@ export default {
     ]),
     toLogin ({ account, password }) {
       let type = this.type
-      console.info(type)
       this.handleLogin({ type, account, password }).then(res => {
         this.getUserInfo({ type }).then(res => {
           this.$router.push({ name: 'home' })

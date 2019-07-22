@@ -4,25 +4,11 @@ import { getToken, getType, setToken, setType } from '@/libs/util'
 export default {
   state: {
     user: {
-      account: '',
-      stuName: '',
-      stuPhone: '',
-      stuSex: '',
-      stuBankCartNo: '',
-      picId: '',
-      stuClass: ''
+      account: ''
     },
-    teacher: {
-      account: '',
-      stuName: '',
-      stuPhone: '',
-      stuSex: '',
-      stuBankCartNo: '',
-      picId: '',
-      stuClass: ''
-    },
+
     hasGetInfo: false,
-    // 将type存入localstage
+    // 当前用户类型;将type存入localstage
     type: getType(),
     token: getToken(),
     access: []
@@ -38,11 +24,8 @@ export default {
     setStudentInfo (state, obj) {
       state.student = obj
     },
-    setTeacherInfo (state, obj) {
-      state.teacher = obj
-    },
-    setHasGetInfo (state, flag) {
-      state.hasGetInfo = flag
+    setUser (state, user) {
+      state.user = user
     },
     setType (state, type) {
       state.type = type
@@ -86,7 +69,6 @@ export default {
     },
     // 获取用户相关信息
     getUserInfo ({ state, commit }, { type }) {
-      console.info(type)
       return new Promise((resolve, reject) => {
         try {
           getUserInfo(type).then(res => {
@@ -94,14 +76,8 @@ export default {
             if (data.state === 'SUCCESS') {
               commit('setHasGetInfo', true)
               commit('setType', type)
-              console.info(type)
-              if (type === 'teacher') {
-                console.info(data.body)
-                commit('setTeacherInfo', data.body)
-              } else {
-                console.info(data.body)
-                commit('setStudentInfo', data.body)
-              }
+              commit('setUser', data.body)
+              console.info(state.user)
               resolve(data.body)
             }
           }).catch(err => {

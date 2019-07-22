@@ -106,7 +106,10 @@ export default {
   mounted () {
     this.$nextTick(() => {
       this.getType('competition')
-      this.getGroup()
+      this.handleGetTeacherGroup().then(res => {
+        this.groupList = res
+        this.competition.groupId = res[0].id
+      })
     })
   },
   methods: {
@@ -132,9 +135,7 @@ export default {
       })
     },
     getGroup () {
-      this.handleGetTeacherGroup().then(res => {
-        this.groupList = res
-      })
+
     }
   }
 }

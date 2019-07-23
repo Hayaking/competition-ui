@@ -43,7 +43,7 @@ export default {
     },
     message () {
       this.$router.push({
-        name: 'message_page'
+        name: 'message'
       })
     },
     handleClick (name) {

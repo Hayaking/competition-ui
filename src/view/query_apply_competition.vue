@@ -155,7 +155,7 @@ export default {
       let pageSize = this.page.page_size
       this.handleGetByGroupId({ pageNum, pageSize, groupId }).then(res => {
         this.page.records = res.records
-        this.page.total = res.length
+        this.page.total = res.records.length
         this.pageChange(1)
       })
     },

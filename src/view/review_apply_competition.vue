@@ -12,6 +12,7 @@
 
 <script>
 import { mapActions } from 'vuex'
+import api_request from '@/libs/api.request'
 
 export default {
   name: 'review_apply_competition',
@@ -25,12 +26,14 @@ export default {
         type: ''
       },
       currentGroupId: 0,
+      url: api_request.baseUrl,
       competitionType: [],
       groupList: [],
       tb_head: [
         {
           title: 'id',
-          key: 'id'
+          key: 'id',
+          width: 100
         }, {
           title: '竞赛名',
           key: 'name'
@@ -42,10 +45,12 @@ export default {
           key: 'org'
         }, {
           title: '竞赛级别',
-          key: 'type'
+          key: 'type',
+          width: 100
         }, {
           title: '审核状态',
           key: 'state',
+          width: 100,
           render: (h, params) => {
             return h('div', [
               h('Button', {
@@ -62,7 +67,7 @@ export default {
         }, {
           title: '操作',
           key: 'action',
-          width: 150,
+          width: 250,
           align: 'center',
           render: (h, params) => {
             return h('div', [
@@ -85,12 +90,26 @@ export default {
                   type: 'error',
                   size: 'small'
                 },
+                style: {
+                  marginRight: '5px'
+                },
                 on: {
                   click: () => {
                     this.review(params.row.id, false)
                   }
                 }
-              }, '拒绝')
+              }, '拒绝'),
+              h('Button', {
+                props: {
+                  type: 'error',
+                  size: 'small'
+                },
+                on: {
+                  click: () => {
+                    this.download(params.row.id)
+                  }
+                }
+              }, '下载申请表')
             ])
           }
         }
@@ -144,7 +163,7 @@ export default {
       let pageSize = this.page.page_size
       this.handleGetAll({ pageNum, pageSize }).then(res => {
         this.page.records = res.records
-        this.page.total = res.length
+        this.page.total = res.records.length
         this.pageChange(1)
       })
     },
@@ -154,6 +173,10 @@ export default {
           this.search()
         }
       })
+    },
+    download (id) {
+      console.info(this.url + '/word/' + id + '.doc')
+      window.open(this.url + '/word/' + id + '.doc')
     }
   }
 }

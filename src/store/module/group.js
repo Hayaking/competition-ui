@@ -3,7 +3,8 @@ import {
   invite_teacher_member,
   create_teacher_group,
   get_teacher_group_all,
-  set_teacher_group_state
+  set_teacher_group_state,
+  get_teacher_group_inviting
 } from '@/api/group'
 
 export default {
@@ -28,6 +29,15 @@ export default {
     handleGetAllTeacherGroup ({ commit }, { pageNum, pageSize }) {
       return new Promise((resolve, reject) => {
         get_teacher_group_all(pageNum, pageSize).then(res => {
+          resolve(res.data.body)
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
+    handleGetTeacherGroupInviting ({ commit }) {
+      return new Promise((resolve, reject) => {
+        get_teacher_group_inviting().then(res => {
           resolve(res.data.body)
         }).catch(err => {
           reject(err)

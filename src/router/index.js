@@ -29,8 +29,7 @@ router.beforeEach((to, from, next) => {
         'redirect': '/home',
         'component': 'Main',
         'meta': {
-          'hideInMenu': 'false',
-          'notCache': 'true'
+          'hideInMenu': 'false'
         },
         'children': [
           {
@@ -39,7 +38,6 @@ router.beforeEach((to, from, next) => {
             'meta': {
               'hideInMenu': 'false',
               'title': '首页',
-              'notCache': 'true',
               'icon': 'md-home'
             },
             'component': 'home'
@@ -48,11 +46,7 @@ router.beforeEach((to, from, next) => {
       }
     ]
     store.dispatch('getRoutes').then(res => {
-      // console.info('接收路由：')
-      // console.info(res)
       menuData = menuData.concat(res)
-      // console.info('合并路由')
-      // console.info(menuData)
       initRouterNode(constRoutes, menuData)
       store.commit('setHomeRoute', menuData)
       store.commit('updateAppRouter', constRoutes)

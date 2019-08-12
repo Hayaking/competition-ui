@@ -16,10 +16,10 @@ export const getUserInfo = (type) => {
   })
 }
 
-export const logout = (token) => {
+export const logout = () => {
   return axios.request({
     url: 'logout',
-    method: 'post'
+    method: 'get'
   })
 }
 

@@ -13,6 +13,7 @@
 <script>
 import { mapActions } from 'vuex'
 import api_request from '@/libs/api.request'
+import { dateFomat } from '@/libs/tools'
 
 export default {
   name: 'review_apply_competition',
@@ -33,16 +34,45 @@ export default {
         {
           title: 'id',
           key: 'id',
-          width: 100
+          width: 100,
+          fixed: 'left'
         }, {
           title: '竞赛名',
-          key: 'name'
+          key: 'name',
+          width: 200,
+          fixed: 'left'
         }, {
           title: '开始时间',
-          key: 'startTime'
+          key: 'startTime',
+          width: 160,
+          render: (h, params) => {
+            return h('div', {}, dateFomat(params.row.startTime))
+          }
+        }, {
+          title: '结束时间',
+          key: 'endTime',
+          width: 160,
+          render: (h, params) => {
+            return h('div', {}, dateFomat(params.row.endTime))
+          }
+        }, {
+          title: '报名开始时间',
+          key: 'enterStartTime',
+          width: 160,
+          render: (h, params) => {
+            return h('div', {}, dateFomat(params.row.enterStartTime))
+          }
+        }, {
+          title: '报名结束时间',
+          key: 'enterEndTime',
+          width: 160,
+          render: (h, params) => {
+            return h('div', {}, dateFomat(params.row.enterEndTime))
+          }
         }, {
           title: '主办方',
-          key: 'org'
+          key: 'org',
+          width: 100
         }, {
           title: '竞赛级别',
           key: 'type',
@@ -52,23 +82,31 @@ export default {
           key: 'state',
           width: 100,
           render: (h, params) => {
-            return h('div', [
-              h('Button', {
-                props: {
-                  type: params.row.state === '申请中' ? 'info' : params.row.state === '通过' ? 'success' : 'error',
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px'
-                }
-              }, params.row.state)
-            ])
+            return h('Button', {
+              props: {
+                type: params.row.state === '申请中' ? 'info' : params.row.state === '通过' ? 'success' : 'error',
+                size: 'small'
+              }
+            }, params.row.state)
+          }
+        }, {
+          title: '报名状态',
+          key: 'enterState',
+          width: 100,
+          render: (h, params) => {
+            return h('Button', {
+              props: {
+                type: params.row.enterState === '已开始' ? 'success' : params.row.enterState === '结束' ? 'error' : 'info',
+                size: 'small'
+              }
+            }, params.row.enterState)
           }
         }, {
           title: '操作',
           key: 'action',
           width: 250,
           align: 'center',
+          fixed: 'right',
           render: (h, params) => {
             return h('div', [
               h('Button', {

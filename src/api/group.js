@@ -14,6 +14,13 @@ export const get_teacher_group_all = (pageNum, pageSize) => {
   })
 }
 
+export const get_teacher_group_inviting = () => {
+  return axios.request({
+    url: 'teacherGroup/inviting',
+    method: 'get'
+  })
+}
+
 export const invite_teacher_member = (groupId, account) => {
   return axios.request({
     url: `teacherGroup/invite/${groupId}/${account}`,

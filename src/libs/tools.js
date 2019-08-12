@@ -100,6 +100,17 @@ const getDate = (timeStamp, startType) => {
   return resStr
 }
 
+export const dateFomat = (str) => {
+  const d = new Date(str)
+  const year = d.getFullYear()
+  const month = getHandledValue(d.getMonth() + 1)
+  const date = getHandledValue(d.getDate())
+  const hours = getHandledValue(d.getHours())
+  const minutes = getHandledValue(d.getMinutes())
+  const second = getHandledValue(d.getSeconds())
+  let resStr = year + '-' + month + '-' + date + ' ' + hours + ':' + minutes + ':' + second
+  return resStr
+}
 /**
  * @param {String|Number} timeStamp 时间戳
  * @returns {String} 相对时间字符串

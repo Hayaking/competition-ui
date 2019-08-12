@@ -20,7 +20,7 @@
 
 <script>
 import { mapActions } from 'vuex'
-
+import { dateFomat } from '@/libs/tools'
 export default {
   name: 'apply_competition',
   data () {
@@ -38,22 +38,54 @@ export default {
       tb_head: [
         {
           title: 'id',
-          key: 'id'
+          key: 'id',
+          width: 100,
+          fixed: 'left'
         }, {
           title: '竞赛名',
-          key: 'name'
+          key: 'name',
+          width: 200,
+          fixed: 'left'
         }, {
           title: '开始时间',
-          key: 'startTime'
+          key: 'startTime',
+          width: 160,
+          render: (h, params) => {
+            return h('div', {}, dateFomat(params.row.startTime))
+          }
+        }, {
+          title: '结束时间',
+          key: 'endTime',
+          width: 160,
+          render: (h, params) => {
+            return h('div', {}, dateFomat(params.row.endTime))
+          }
+        }, {
+          title: '报名开始时间',
+          key: 'enterStartTime',
+          width: 160,
+          render: (h, params) => {
+            return h('div', {}, dateFomat(params.row.enterStartTime))
+          }
+        }, {
+          title: '报名结束时间',
+          key: 'enterEndTime',
+          width: 160,
+          render: (h, params) => {
+            return h('div', {}, dateFomat(params.row.enterEndTime))
+          }
         }, {
           title: '主办方',
-          key: 'org'
+          key: 'org',
+          width: 100
         }, {
           title: '竞赛级别',
-          key: 'type'
+          key: 'type',
+          width: 100
         }, {
           title: '审核状态',
           key: 'state',
+          width: 100,
           render: (h, params) => {
             return h('Button', {
               props: {
@@ -65,6 +97,7 @@ export default {
         }, {
           title: '报名状态',
           key: 'enterState',
+          width: 100,
           render: (h, params) => {
             return h('Button', {
               props: {
@@ -78,6 +111,7 @@ export default {
           key: 'action',
           width: 150,
           align: 'center',
+          fixed: 'right',
           render: (h, params) => {
             return h('div', [
               h('Button', {

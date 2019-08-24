@@ -6,7 +6,7 @@ export default {
       let info = {
         type: 'script',
         code: 0,
-        mes: error.message,
+        mes: error.common_message,
         url: window.location.href
       }
       Vue.nextTick(() => {

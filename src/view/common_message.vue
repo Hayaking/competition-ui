@@ -26,7 +26,7 @@ export default {
     return {
       split: 0.3,
       inviting: [],
-      content: ''
+      content: null
     }
   },
   mounted () {
@@ -39,7 +39,6 @@ export default {
       'handleGetTeacherGroupInviting'
     ]),
     qh (item) {
-      console.info(item)
       this.content = item
     }
   }

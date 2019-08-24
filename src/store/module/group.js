@@ -1,6 +1,8 @@
 import {
   get_teacher_group,
   invite_teacher_member,
+  agree_teacher_group_invite,
+  refuse_teacher_group_invite,
   create_teacher_group,
   get_teacher_group_all,
   set_teacher_group_state,
@@ -73,6 +75,28 @@ export default {
             resolve(true)
           } else {
             resolve(false)
+          }
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
+    handleAgreeTeacherGroupInvite ({ state }, { groupId }) {
+      return new Promise((resolve, reject) => {
+        agree_teacher_group_invite(groupId).then(res => {
+          if (res.data.state === 'SUCCESS') {
+            resolve(true)
+          }
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
+    handleRefuseTeacherGroupInvite ({ state }, { groupId }) {
+      return new Promise((resolve, reject) => {
+        refuse_teacher_group_invite(groupId).then(res => {
+          if (res.data.state === 'SUCCESS') {
+            resolve(true)
           }
         }).catch(err => {
           reject(err)

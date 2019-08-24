@@ -15,6 +15,13 @@ export const get_competition_by_group_id = (pageNum, pageSize, groupId) => {
   })
 }
 
+export const get_competition5_by_type_id = (typeId) => {
+  return axios.request({
+    url: `/competition/${typeId}`,
+    method: 'get'
+  })
+}
+
 export const get_competition_all = (pageNum, pageSize) => {
   return axios.request({
     url: `competition/${pageNum}/${pageSize}`,

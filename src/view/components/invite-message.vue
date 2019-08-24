@@ -18,7 +18,7 @@
         <td>{{content.groupCreateTime}}</td>
       </tr>
     </table>
-    <Button type="success" @click="review(true)">接受</Button>
+    <Button type="success" @click=review(true)>接受</Button>
     <Button type="error" @click="review(false)">拒绝</Button>
   </div>
   <div v-else>
@@ -27,6 +27,8 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 export default {
   name: 'invite-message',
   props: {
@@ -36,11 +38,19 @@ export default {
     }
   },
   methods: {
+    ...mapActions([
+      'handleAgreeTeacherGroupInvite',
+      'handleRefuseTeacherGroupInvite'
+    ]),
     review (flag) {
       if (flag) {
-        alert(flag)
+        this.handleAgreeTeacherGroupInvite({ groupId: this.content.id }).then(res => {
+          this.$Message.success('成功')
+        })
       } else {
-        alert(flag)
+        this.handleRefuseTeacherGroupInvite({ groupId: this.content.id }).then(res => {
+          this.$Message.success('失败')
+        })
       }
     }
   }

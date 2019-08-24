@@ -16,7 +16,7 @@ import api_request from '@/libs/api.request'
 import { dateFomat } from '@/libs/tools'
 
 export default {
-  name: 'review_apply_competition',
+  name: 'common_competition',
   data () {
     return {
       competition: {
@@ -29,7 +29,6 @@ export default {
       currentGroupId: 0,
       url: api_request.baseUrl,
       competitionType: [],
-      groupList: [],
       tb_head: [
         {
           title: 'id',
@@ -76,17 +75,33 @@ export default {
         }, {
           title: '竞赛级别',
           key: 'type',
-          width: 100
-        }, {
-          title: '审核状态',
-          key: 'state',
-          width: 100,
-          render: (h, params) => {
-            return h('Tag', {
-              props: {
-                color: params.row.state === '申请中' ? 'primary' : params.row.state === '通过' ? 'success' : 'default'
-              }
-            }, params.row.state)
+          width: 120,
+          filters: [
+            {
+              label: '院赛',
+              value: 1
+            }, {
+              label: '校赛',
+              value: 2
+            }, {
+              label: '省赛',
+              value: 3
+            }, {
+              label: '国赛',
+              value: 4
+            }
+          ],
+          filterMultiple: false,
+          filterMethod (value, row) {
+            if (value === 1) {
+              return row.type === '院赛'
+            } else if (value === 2) {
+              return row.type === '校赛'
+            } else if (value === 3) {
+              return row.type === '省赛'
+            } else if (value === 4) {
+              return row.type === '国赛'
+            }
           }
         }, {
           title: '报名状态',
@@ -101,63 +116,36 @@ export default {
           }
         }, {
           title: '开始状态',
-          key: 'cpStartState',
           width: 100,
           render: (h, params) => {
             return h('Tag', {
               props: {
-                color: params.row.enterState === '已开始' ? 'success' : params.row.enterState === '结束' ? 'default' : 'primary'
+                color: params.row.startState === '已开始' ? 'success' : params.row.startState === '结束' ? 'default' : 'primary'
               }
-            }, params.row.enterState)
+            }, params.row.startState)
           }
         }, {
           title: '操作',
           key: 'action',
-          width: 250,
+          width: 100,
           align: 'center',
           fixed: 'right',
           render: (h, params) => {
-            return h('div', [
-              h('Button', {
-                props: {
-                  type: 'primary',
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px'
-                },
-                on: {
-                  click: () => {
-                    this.review(params.row.id, true)
-                  }
+            return h('Button', {
+              props: {
+                type: 'primary',
+                size: 'small',
+                disabled: params.row.enterState === '结束'
+              },
+              style: {
+                marginRight: '5px'
+              },
+              on: {
+                click: () => {
+                  this.enter(params.row.id)
                 }
-              }, '通过'),
-              h('Button', {
-                props: {
-                  type: 'error',
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px'
-                },
-                on: {
-                  click: () => {
-                    this.review(params.row.id, false)
-                  }
-                }
-              }, '拒绝'),
-              h('Button', {
-                props: {
-                  type: 'error',
-                  size: 'small'
-                },
-                on: {
-                  click: () => {
-                    this.download(params.row.id)
-                  }
-                }
-              }, '下载申请表')
-            ])
+              }
+            }, '参赛')
           }
         }
       ],
@@ -173,27 +161,18 @@ export default {
   mounted () {
     this.$nextTick(() => {
       this.getType('competition')
-      this.getGroup()
       this.search()
     })
   },
   methods: {
     ...mapActions([
       'handleGetType',
-      'handleGetTeacherGroup',
-      'handleGetByGroupId',
       'handleGetAll',
-      'handleSetState'
+      'handleGetEnterCompetition'
     ]),
-
     getType (type) {
       this.handleGetType({ type }).then(res => {
         this.competitionType = res
-      })
-    },
-    getGroup () {
-      this.handleGetTeacherGroup().then(res => {
-        this.groupList = res
       })
     },
     pageChange (index) {
@@ -214,16 +193,14 @@ export default {
         this.pageChange(1)
       })
     },
-    review (id, flag) {
-      this.handleSetState({ id, flag }).then(res => {
+    enter (id) {
+      this.handleGetEnterCompetition({ id }).then(res => {
         if (res) {
-          this.search()
+          this.$router.push({ name: 'create_student_group' })
+        } else {
+          this.$Message.error('失败')
         }
       })
-    },
-    download (id) {
-      console.info(this.url + '/word/' + id + '.doc')
-      window.open(this.url + '/word/' + id + '.doc')
     }
   }
 }

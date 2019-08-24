@@ -43,14 +43,14 @@ export default {
     },
     message () {
       this.$router.push({
-        name: 'message'
+        name: 'common_message.vue'
       })
     },
     handleClick (name) {
       switch (name) {
         case 'logout': this.logout()
           break
-        case 'message': this.message()
+        case 'common_message.vue': this.message()
           break
       }
     }

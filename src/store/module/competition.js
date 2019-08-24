@@ -1,6 +1,7 @@
 import {
   save_competition,
   get_competition_by_group_id,
+  get_competition5_by_type_id,
   get_competition_all,
   set_competition_state,
   set_competition_enter_state
@@ -30,6 +31,17 @@ export default {
     handleGetByGroupId ({ state, commit }, { pageNum, pageSize, groupId }) {
       return new Promise((resolve, reject) => {
         get_competition_by_group_id(pageNum, pageSize, groupId).then(res => {
+          if (res.data.state === 'SUCCESS') {
+            resolve(res.data.body)
+          }
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
+    handleGet5ByTypeId ({ state, commit }, { typeId }) {
+      return new Promise((resolve, reject) => {
+        get_competition5_by_type_id(typeId).then(res => {
           if (res.data.state === 'SUCCESS') {
             resolve(res.data.body)
           }

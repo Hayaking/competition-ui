@@ -14,8 +14,12 @@ export default {
   create_student_group: '创建比赛小组',
   invite_teacher_member: '邀请组员',
   invite_student_member: '邀请组员',
-
+  common: '通用',
+  common_message: '消息中心',
+  common_edit_self: '个人信息',
+  common_competition: '比赛列表',
   admin: '管理',
+  group: '工作组',
 
   home: '首页',
   login: '登录',

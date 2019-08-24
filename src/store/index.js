@@ -12,6 +12,7 @@ import role from './module/role'
 import permission from './module/persmission'
 import teacher from './module/teacher'
 import student from './module/student'
+import enter from './module/enter'
 
 Vue.use(Vuex)
 
@@ -36,6 +37,7 @@ export default new Vuex.Store({
     role,
     permission,
     teacher,
-    student
+    student,
+    enter
   }
 })

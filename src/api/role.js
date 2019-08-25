@@ -29,7 +29,7 @@ export const delete_student_role = (account, roleId) => {
 
 export const get_teacher_role = (account) => {
   return axios.request({
-    url: `teacher/role/${account}`,
+    url: `teacher/${account}/role`,
     method: 'get'
   })
 }

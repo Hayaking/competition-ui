@@ -1,9 +1,11 @@
 import {
   get_teacher_group,
   invite_teacher_member,
+  invite_student_member,
   agree_teacher_group_invite,
   refuse_teacher_group_invite,
   create_teacher_group,
+  create_student_group,
   get_teacher_group_all,
   set_teacher_group_state,
   get_teacher_group_inviting
@@ -57,11 +59,33 @@ export default {
         })
       })
     },
+    handleInviteStudentMember ({ commit },{ groupId, list }) {
+      return new Promise((resolve, reject) => {
+        invite_student_member(groupId, list).then(res => {
+          if (res.data.state === 'SUCCESS') {
+            resolve(true)
+          }
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
     handleCreateTeacherGroup ({ commit }, { groupName }) {
       return new Promise((resolve, reject) => {
         create_teacher_group(groupName).then(res => {
           if (res.data.state === 'SUCCESS') {
             resolve(true)
+          }
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
+    handleCreateStudentGroup ({ commit }, { groupName }) {
+      return new Promise((resolve, reject) => {
+        create_student_group(groupName).then(res => {
+          if (res.data.state === 'SUCCESS') {
+            resolve(res.data.body)
           }
         }).catch(err => {
           reject(err)

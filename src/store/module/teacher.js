@@ -1,7 +1,8 @@
 import {
   get_all_teacher,
   get_teacher_by_group_id,
-  get_all_teacher_by_page
+  get_all_teacher_by_page,
+  get_lead_teacher_list
 } from '@/api/teacher'
 
 export default {
@@ -39,6 +40,15 @@ export default {
     handleGetTeacherByGroupId ({ commit }, { groupId }) {
       return new Promise((resolve, reject) => {
         get_teacher_by_group_id(groupId).then(res => {
+          resolve(res.data.body)
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
+    handleGetLeadTeacherList ({ commit }) {
+      return new Promise((resolve, reject) => {
+        get_lead_teacher_list().then(res => {
           resolve(res.data.body)
         }).catch(err => {
           reject(err)

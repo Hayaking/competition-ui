@@ -28,6 +28,14 @@ export const invite_teacher_member = (groupId, account) => {
   })
 }
 
+export const invite_student_member = (groupId, list) => {
+  return axios.request({
+    url: `studentGroup/addMembers/${groupId}`,
+    data: list,
+    method: 'post'
+  })
+}
+
 export const agree_teacher_group_invite = (groupId) => {
   return axios.request({
     url: `teacherGroup/agree/${groupId}`,
@@ -45,6 +53,13 @@ export const refuse_teacher_group_invite = (groupId) => {
 export const create_teacher_group = (groupName) => {
   return axios.request({
     url: `teacherGroup/create/${groupName}`,
+    method: 'post'
+  })
+}
+
+export const create_student_group = (groupName) => {
+  return axios.request({
+    url: `studentGroup/create/${groupName}`,
     method: 'post'
   })
 }

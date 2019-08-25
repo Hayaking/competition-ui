@@ -13,6 +13,8 @@ import permission from './module/persmission'
 import teacher from './module/teacher'
 import student from './module/student'
 import enter from './module/enter'
+import works from './module/works'
+import join from './module/join'
 
 Vue.use(Vuex)
 
@@ -38,6 +40,8 @@ export default new Vuex.Store({
     permission,
     teacher,
     student,
-    enter
+    enter,
+    works,
+    join
   }
 })

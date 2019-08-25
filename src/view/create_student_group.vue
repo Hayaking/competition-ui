@@ -52,7 +52,7 @@
     <Card title="创建作品" v-else-if="index ===2">
       <ButtonGroup slot="extra">
         <Button @click="index--">上一步</Button>
-        <Button @click="index++" type="primary">下一步</Button>
+        <Button @click="step3" type="primary">下一步</Button>
       </ButtonGroup>
       <Form ref="formDynamic"  :model="works" :label-width="80" style="width: 300px">
         <FormItem label="作品名">
@@ -68,9 +68,21 @@
     <Card title="申请指导老师" v-else-if="index ===3">
       <ButtonGroup slot="extra">
         <Button @click="index--">上一步</Button>
+        <Button @click="step4" type="success">确认</Button>
+      </ButtonGroup>
+      <Input search enter-button="搜索" />
+      <Table :columns="tb_head" :data="tb_res" />
+    </Card>
+<!--    第四步-->
+    <Card title="提交" v-else-if="index ===4">
+      <ButtonGroup slot="extra">
+        <Button @click="index--">上一步</Button>
         <Button @click="submit" type="success">提交</Button>
       </ButtonGroup>
-
+      小组名: <div> {{groupName}}</div>
+      小组成员: <div>{{groupMember}}</div>
+      作品：<div>{{works}}</div>
+      指导老师： <div>{{join.teacherId1}}</div>
     </Card>
   </div>
 </template>
@@ -85,6 +97,46 @@ export default {
       getter: this.$store.getters,
       index: 0,
       flag: true,
+      tb_res: [],
+      tb_head: [
+        {
+          title: '帐号',
+          key: 'account'
+        }, {
+          title: '姓名',
+          key: 'teacherName'
+        }, {
+          title: '操作',
+          key: 'action',
+          width: 150,
+          align: 'center',
+          render: (h, params) => {
+            return params.row.state ? h('Button', {
+              props: {
+                type: 'primary',
+                size: 'small',
+                disabled: false
+              },
+              on: {
+                click: () => {
+                  this.inviteLead(params.row._index)
+                }
+              }
+            }, '申请')
+              : h('Button', {
+                props: {
+                  type: 'error',
+                  size: 'small'
+                },
+                on: {
+                  click: () => {
+                    this.cancelInviteLead(params.row._index)
+                  }
+                }
+              }, '取消')
+          }
+        }
+      ],
       groupName: '',
       groupMember: {
         memberNum: 1,
@@ -97,13 +149,26 @@ export default {
         ]
       },
       works: {
-        worksName: ''
-      }
+        worksName: '',
+        stuGroupId: 0
+      },
+      join: {
+        worksId: 0,
+        competitionId: 0,
+        teacherId1: 0,
+        teacherId2: 0
+      },
+      leadTeacherAccount: 0
     }
   },
   methods: {
     ...mapActions([
-      'handleStudentIsExist'
+      'handleStudentIsExist',
+      'handleGetLeadTeacherList',
+      'handleCreateStudentGroup',
+      'handleInviteStudentMember',
+      'handleCreateWorks',
+      'handleCreateJoin'
     ]),
     step1 () {
       this.index += this.competition.typeJoinId
@@ -138,8 +203,44 @@ export default {
         })
       })
     },
-    submit () {
+    step3 () {
+      this.handleGetLeadTeacherList().then(res => {
+        this.tb_res = res.map(item => {
+          item.state = true
+          return item
+        })
+        this.index++
+      })
+    },
+    step4 () {
+      this.index++
       this.$Message.info('!')
+    },
+    submit () {
+      this.handleCreateStudentGroup({ groupName: this.groupName }).then(groupId => {
+        this.handleInviteStudentMember({ groupId: groupId, list: this.groupMember.items.map(item => { return item.value }) }).then(res => {
+          this.works.stuGroupId = groupId
+          this.handleCreateWorks({ works: this.works }).then(worksId => {
+            this.join.worksId = worksId
+            this.join.competitionId = this.competition.id
+            this.handleCreateJoin({ join: this.join }).then(res => {
+              if (res) {
+                this.$Message.success('参赛成功')
+              }
+            })
+          })
+        })
+      })
+    },
+    inviteLead (_index) {
+      this.tb_res[_index].state = false
+      // this.leadTeacherAccount = this.tb_res[_index].account
+      this.join.teacherId1 = this.tb_res[_index].account
+    },
+    cancelInviteLead (_index) {
+      this.tb_res[_index].state = true
+      // this.leadTeacherAccount = 0
+      this.join.teacherId1 = 0
     },
     handleAdd () {
       this.groupMember.memberNum++

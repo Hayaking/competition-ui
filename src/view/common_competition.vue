@@ -196,7 +196,7 @@ export default {
     enter (id) {
       this.handleGetEnterCompetition({ id }).then(res => {
         if (res) {
-          this.$router.push({ name: 'create_student_group' })
+          this.$router.push({ name: 'stu_join' })
         } else {
           this.$Message.error('失败')
         }

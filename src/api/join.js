@@ -7,3 +7,10 @@ export const create_join = (join) => {
     method: 'post'
   })
 }
+
+export const get_join_list = (pageNum, pageSize) => {
+  return axios.request({
+    url: `/join/${pageNum}/${pageSize}`,
+    method: 'get'
+  })
+}

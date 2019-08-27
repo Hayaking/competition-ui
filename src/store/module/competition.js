@@ -1,5 +1,6 @@
 import {
   save_competition,
+  delete_competition,
   get_competition_by_group_id,
   get_competition5_by_type_id,
   get_competition_all,
@@ -17,12 +18,19 @@ export default {
 
   },
   actions: {
-    saveCompetition ({ state, commit }, { cp }) {
+    saveCompetition ({ state, commit }, { competition }) {
       return new Promise((resolve, reject) => {
-        save_competition(cp).then(res => {
-          if (res.data.state === 'SUCCESS') {
-            resolve()
-          }
+        save_competition(competition).then(res => {
+          resolve(res.data.state === 'SUCCESS')
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
+    handleDeleteCompetition ({ commit }, { id }) {
+      return new Promise((resolve, reject) => {
+        delete_competition(id).then(res => {
+          resolve(res.data.state === 'SUCCESS')
         }).catch(err => {
           reject(err)
         })

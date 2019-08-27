@@ -25,6 +25,7 @@ export default {
   name: 'apply_competition',
   data () {
     return {
+      getter: this.$store.getters,
       competition: {
         name: '',
         startTime: '',
@@ -87,10 +88,9 @@ export default {
           key: 'state',
           width: 100,
           render: (h, params) => {
-            return h('Button', {
+            return h('Tag', {
               props: {
-                type: params.row.state === '申请中' ? 'info' : params.row.state === '通过' ? 'success' : 'error',
-                size: 'small'
+                color: params.row.state === '申请中' ? 'default' : params.row.state === '通过' ? 'success' : 'error'
               }
             }, params.row.state)
           }
@@ -103,6 +103,11 @@ export default {
               props: {
                 type: params.row.enterState === '已开始' ? 'success' : params.row.enterState === '结束' ? 'error' : 'info',
                 size: 'small'
+              },
+              on: {
+                click: () => {
+                  this.setEnterState(params.row.id, params.row.enterState !== '已开始')
+                }
               }
             }, params.row.enterState)
           }
@@ -127,7 +132,7 @@ export default {
                     this.setEnterState(params.row.id, true)
                   }
                 }
-              }, '开始'),
+              }, '编辑'),
               h('Button', {
                 props: {
                   type: 'error',
@@ -138,10 +143,10 @@ export default {
                 },
                 on: {
                   click: () => {
-                    this.setEnterState(params.row.id, false)
+                    this.deleteCompetition(params.row.id)
                   }
                 }
-              }, '结束')
+              }, '删除')
             ])
           }
         }
@@ -157,12 +162,9 @@ export default {
   },
   mounted () {
     this.$nextTick(() => {
-      // 获取竞赛级别
-      this.$store.dispatch('handleGetType', { type: 'competition' }).then(res => {
-        this.competitionType = res
-      })
+      this.getCompetitionType()
       // 获取该老师属于的工作组
-      this.$store.dispatch('handleGetTeacherGroup').then(res => {
+      this.handleGetTeacherGroup().then(res => {
         this.groupList = res
         this.currentGroupId = res[0].id
       })
@@ -171,8 +173,15 @@ export default {
   methods: {
     ...mapActions([
       'handleGetByGroupId',
-      'handleSetEnterState'
+      'handleSetEnterState',
+      'handleGetTeacherGroup',
+      'handleGetType',
+      'handleDeleteCompetition'
     ]),
+    /**
+     * 分页
+     * @param index
+     */
     pageChange (index) {
       this.page.current = index
       let start = (index - 1) * this.page.page_size
@@ -180,9 +189,12 @@ export default {
       this.tb_res = this.page.records.slice(start, end)
 
       this.tb_res.map((item) => {
-        item.type = this.competitionType[item.type].typeName
+        item.type = this.competitionType[item.type - 1].typeName
       })
     },
+    /**
+     * 获取竞赛
+     */
     search () {
       let groupId = this.currentGroupId
       let pageNum = this.page.current
@@ -190,15 +202,44 @@ export default {
       this.handleGetByGroupId({ pageNum, pageSize, groupId }).then(res => {
         this.page.records = res.records
         this.page.total = res.records.length
-        this.pageChange(1)
+        this.pageChange(this.page.current)
       })
     },
+    /**
+     * 设置报名状态
+     * @param id
+     * @param flag
+     */
     setEnterState (id, flag) {
       this.handleSetEnterState({ id, flag }).then(res => {
         if (res) {
           this.search()
         }
       })
+    },
+    /**
+     * 获取竞赛级别
+     */
+    getCompetitionType () {
+      this.handleGetType({ type: 'competition' }).then(res => {
+        if (res) {
+          this.competitionType = this.getter.getCompetitionType
+        } else {
+          this.$Message.error('获取竞赛类型失败')
+        }
+      })
+    },
+    deleteCompetition (id) {
+      this.$Message.info('删除' + id)
+      this.handleDeleteCompetition({ id: id }).then(res => {
+        if (res) {
+          this.search()
+          this.$Message.success('删除成功')
+        }
+      })
+    },
+    editCompetition () {
+
     }
   },
   watch: {

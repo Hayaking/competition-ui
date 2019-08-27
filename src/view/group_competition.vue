@@ -13,8 +13,11 @@
           <FormItem label="比赛名称">
             <Input v-model="competition.name"/>
           </FormItem>
-          <FormItem label="开始时间">
-            <DatePicker placeholder="Select date" type="date" v-model="competition.startTime"></DatePicker>
+          <FormItem label="比赛时间" >
+            <DatePicker type="daterange" v-model="startAndEndDate"></DatePicker>
+          </FormItem>
+          <FormItem label="报名时间" >
+            <DatePicker type="daterange" v-model="enterDate"></DatePicker>
           </FormItem>
           <FormItem label="预期参赛人数">
             <Input v-model="competition.groupNum"/>
@@ -47,6 +50,13 @@
             <Select v-model="competition.highestLevel">
               <Option v-for="item in competitionType"  :value="item.id" :key="item.id">
                 {{item.typeName}}
+              </Option>
+            </Select>
+          </FormItem>
+          <FormItem label="参赛形式">
+            <Select v-model="competition.highestLevel">
+              <Option v-for="(item,index) in joinType"  :value="index+1" :key="item.id">
+                {{item}}
               </Option>
             </Select>
           </FormItem>
@@ -83,9 +93,13 @@ export default {
   name: 'apply_competition',
   data () {
     return {
+      getter: this.$store.getters,
       competition: {
         name: '',
         startTime: '',
+        endTime: '',
+        enterStartTime: '',
+        enterEndTime: '',
         groupNum: 0,
         stuNum: 0,
         exRes: '',
@@ -100,12 +114,15 @@ export default {
         groupId: ''
       },
       competitionType: [],
+      startAndEndDate: [],
+      enterDate: [],
+      joinType: ['单人赛', '多人赛'],
       groupList: []
     }
   },
   mounted () {
     this.$nextTick(() => {
-      this.getType('competition')
+      this.getCompetitionType()
       this.handleGetTeacherGroup().then(res => {
         this.groupList = res
         this.competition.groupId = res[0].id
@@ -122,20 +139,29 @@ export default {
      * 提交比赛立项
      */
     save () {
-      let cp = this.competition
-      this.saveCompetition({ cp }).then(() => {
-        console.info('保存成功')
-        this.$Message.success('保存成功')
+      this.competition.startTime = this.startAndEndDate[0]
+      this.competition.endTime = this.startAndEndDate[1]
+      this.competition.enterStartTime = this.enterDate[0]
+      this.competition.enterEndTime = this.enterDate[1]
+      this.saveCompetition({ competition: this.competition }).then(res => {
+        if (res) {
+          this.$Message.success('保存成功')
+        } else {
+          this.$Message.error('保存失败')
+        }
       })
     },
-    getType (type) {
-      this.handleGetType({ type }).then(res => {
-        console.info(res)
-        this.competitionType = res
+    /**
+     * 获取竞赛级别
+     */
+    getCompetitionType () {
+      this.handleGetType({ type: 'competition' }).then(res => {
+        if (res) {
+          this.competitionType = this.getter.getCompetitionType
+        } else {
+          this.$Message.error('获取竞赛类型失败')
+        }
       })
-    },
-    getGroup () {
-
     }
   }
 }

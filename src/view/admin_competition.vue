@@ -19,6 +19,7 @@ export default {
   name: 'review_apply_competition',
   data () {
     return {
+      getter: this.$store.getters,
       competition: {
         name: '',
         startTime: '',
@@ -172,7 +173,7 @@ export default {
   },
   mounted () {
     this.$nextTick(() => {
-      this.getType('competition')
+      this.getCompetitionType()
       this.getGroup()
       this.search()
     })
@@ -185,10 +186,13 @@ export default {
       'handleGetAll',
       'handleSetState'
     ]),
-
-    getType (type) {
-      this.handleGetType({ type }).then(res => {
-        this.competitionType = res
+    getCompetitionType () {
+      this.handleGetType({ type: 'competition' }).then(res => {
+        if (res) {
+          this.competitionType = this.getter.getCompetitionType
+        } else {
+          this.$Message.error('获取竞赛类型失败')
+        }
       })
     },
     getGroup () {

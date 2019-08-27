@@ -15,6 +15,7 @@ import student from './module/student'
 import enter from './module/enter'
 import works from './module/works'
 import join from './module/join'
+import message from './module/message'
 
 Vue.use(Vuex)
 
@@ -42,6 +43,7 @@ export default new Vuex.Store({
     student,
     enter,
     works,
-    join
+    join,
+    message
   }
 })

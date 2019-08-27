@@ -7,6 +7,12 @@ export const save_competition = competition => {
     method: 'post'
   })
 }
+export const delete_competition = (id) => {
+  return axios.request({
+    url: `/competition/${id}`,
+    method: 'delete'
+  })
+}
 
 export const get_competition_by_group_id = (pageNum, pageSize, groupId) => {
   return axios.request({

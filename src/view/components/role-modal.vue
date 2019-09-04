@@ -4,8 +4,8 @@
     title="title"
     v-model="modalShow">
     <DragList :list1.sync="left" :list2.sync="right"  @on-change="handleChange" >
-      <h3 slot="left-title">拥有的角色</h3>
-      <Card class="drag-item" slot="left" slot-scope="left" :padding="3">
+      <h3 slot="left-title">拥有角色</h3>
+      <Card class="drag-item"  slot="left" slot-scope="left" :padding="3">
         {{ left.itemLeft.roleName }}
       </Card>
       <h3 slot="right-title">所有角色</h3>

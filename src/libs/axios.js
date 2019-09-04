@@ -13,6 +13,7 @@ const addErrorLog = errorInfo => {
 }
 // axios请求时带上cookie
 axios.defaults.withCredentials = true
+
 class HttpRequest {
   constructor (baseUrl = baseURL) {
     this.baseUrl = baseUrl

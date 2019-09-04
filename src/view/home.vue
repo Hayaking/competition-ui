@@ -56,7 +56,8 @@ export default{
             return h('Button', {
               props: {
                 type: 'info',
-                size: 'small'
+                size: 'small',
+                disabled: params.row.enterState === '已开始'
               },
               on: {
                 click: () => {

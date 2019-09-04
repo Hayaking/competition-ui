@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Table  :columns="tb_head" :data="tb_res"></Table>
+    <Table  :columns="tb_head" :data="tb_res" stripe></Table>
     <Page show-total
           :total="page.total"
           :current="page.current"
@@ -27,10 +27,6 @@ export default {
           key: 'groupName'
         },
         {
-          title: '状态',
-          key: 'groupState'
-        },
-        {
           title: '创建者',
           key: 'groupCreater'
         },
@@ -39,33 +35,18 @@ export default {
           key: 'groupCreateTime'
         },
         {
-          title: '操作',
+          title: '状态',
           render: (h, params) => {
-            return h('div', [
-              h('Button', {
-                props: {
-                  type: 'info',
-                  size: 'small'
-                },
-                style: { marginRight: '5px' },
-                on: {
-                  click: () => {
-                    this.review(params.row.id, true)
-                  }
+            return h('Button', {
+              props: {
+                type: params.row.groupState === '通过' ? 'success' : params.row.groupState === '申请中' ? 'primary' : 'error'
+              },
+              on: {
+                click: () => {
+                  this.review(params.row.id, params.row.groupState !== '通过')
                 }
-              }, '通过'),
-              h('Button', {
-                props: {
-                  type: 'primary',
-                  size: 'small'
-                },
-                on: {
-                  click: () => {
-                    this.review(params.row.id, false)
-                  }
-                }
-              }, '拒绝')
-            ])
+              }
+            }, params.row.groupState)
           }
         }
       ],

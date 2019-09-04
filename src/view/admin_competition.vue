@@ -79,17 +79,6 @@ export default {
           key: 'type',
           width: 100
         }, {
-          title: '审核状态',
-          key: 'state',
-          width: 100,
-          render: (h, params) => {
-            return h('Tag', {
-              props: {
-                color: params.row.state === '申请中' ? 'primary' : params.row.state === '通过' ? 'success' : 'default'
-              }
-            }, params.row.state)
-          }
-        }, {
           title: '报名状态',
           key: 'enterState',
           width: 100,
@@ -112,41 +101,30 @@ export default {
             }, params.row.enterState)
           }
         }, {
+          title: '审核状态',
+          fixed: 'right',
+          width: 80,
+          render: (h, params) => {
+            return h('Button', {
+              props: {
+                type: params.row.state === '申请中' ? 'info' : params.row.state === '通过' ? 'success' : 'error',
+                size: 'small'
+              },
+              on: {
+                click: () => {
+                  this.review(params.row.id, params.row.state !== '通过')
+                }
+              }
+            }, params.row.state)
+          }
+        }, {
           title: '操作',
           key: 'action',
-          width: 250,
+          width: 100,
           align: 'center',
           fixed: 'right',
           render: (h, params) => {
             return h('div', [
-              h('Button', {
-                props: {
-                  type: 'primary',
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px'
-                },
-                on: {
-                  click: () => {
-                    this.review(params.row.id, true)
-                  }
-                }
-              }, '通过'),
-              h('Button', {
-                props: {
-                  type: 'error',
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px'
-                },
-                on: {
-                  click: () => {
-                    this.review(params.row.id, false)
-                  }
-                }
-              }, '拒绝'),
               h('Button', {
                 props: {
                   type: 'error',
@@ -226,7 +204,6 @@ export default {
       })
     },
     download (id) {
-      console.info(this.url + '/word/' + id + '.doc')
       window.open(this.url + '/word/' + id + '.doc')
     }
   }

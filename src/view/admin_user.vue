@@ -254,14 +254,14 @@ export default {
           this.tb_head = this.tb_student_head
           this.page.records = res.records
           this.page.total = res.records.length
-          this.pageChange(1)
+          this.pageChange(this.page.current)
         })
       } else {
         this.handleGetAllTeacherByPage({ pageNum, pageSize }).then(res => {
           this.tb_head = this.tb_teacher_head
           this.page.records = res.records
           this.page.total = res.records.length
-          this.pageChange(1)
+          this.pageChange(this.page.current)
         })
       }
     },

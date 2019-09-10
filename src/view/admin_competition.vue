@@ -1,5 +1,6 @@
 <template>
-  <div>
+  <Card>
+    <Input search enter-button style="width: 500px"/>
     <Table :columns="tb_head" :data="tb_res" stripe border ></Table>
     <Page show-total
           :total="page.total"
@@ -7,7 +8,7 @@
           :page-size="page.page_size"
           @on-change = "pageChange"
     />
-  </div>
+  </Card>
 </template>
 
 <script>
@@ -153,7 +154,7 @@ export default {
     this.$nextTick(() => {
       this.getCompetitionType()
       this.getGroup()
-      this.search()
+      this.getApply()
     })
   },
   methods: {
@@ -180,26 +181,18 @@ export default {
     },
     pageChange (index) {
       this.page.current = index
-      let start = (index - 1) * this.page.page_size
-      let end = index * this.page.page_size
-      this.tb_res = this.page.records.slice(start, end)
-      this.tb_res.map((item) => {
-        item.type = this.competitionType[item.type - 1].typeName
-      })
+      this.getApply(index, this.page.size)
     },
-    search () {
-      let pageNum = this.page.current
-      let pageSize = this.page.page_size
+    getApply (pageNum = 1, pageSize = 12) {
       this.handleGetAll({ pageNum, pageSize }).then(res => {
-        this.page.records = res.records
-        this.page.total = res.records.length
-        this.pageChange(1)
+        this.page = res
+        this.tb_res = res.records
       })
     },
     review (id, flag) {
       this.handleSetState({ id, flag }).then(res => {
         if (res) {
-          this.search()
+          this.getApply()
         }
       })
     },

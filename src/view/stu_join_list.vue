@@ -1,5 +1,6 @@
 <template>
-  <Row>
+  <Card>
+    <Input search enter-button style="width: 500px"/>
     <Table :columns="tb_head" :data="tb_res" border height="520" size="small" stripe></Table>
     <Page show-total
           :total="page.total"
@@ -7,7 +8,7 @@
           :page-size="page.page_size"
           @on-change = "pageChange"
     />
-  </Row>
+  </Card>
 </template>
 
 <script>
@@ -67,7 +68,7 @@ export default {
   },
   mounted () {
     this.$nextTick(() => {
-      this.search()
+      this.getJoin()
     })
   },
   methods: {
@@ -76,20 +77,15 @@ export default {
     ]),
     pageChange (index) {
       this.page.current = index
-      let start = (index - 1) * this.page.page_size
-      let end = index * this.page.page_size
-      this.tb_res = this.page.records.slice(start, end)
+      this.getJoin(index, this.page.size)
     },
     /**
      * 分页获取学生或教师
      */
-    search () {
-      let pageNum = this.page.current
-      let pageSize = this.page.page_size
+    getJoin (pageNum = 1, pageSize = 12) {
       this.handleGetJoinList({ pageNum, pageSize }).then(res => {
-        this.page.records = res.records
-        this.page.total = res.records.length
-        this.pageChange(1)
+        this.page = res
+        this.tb_res = res.records
       })
     }
   }

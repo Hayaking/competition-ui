@@ -14,18 +14,22 @@
       @cancel="cancelModal">
     </UserInfoModal>
 
-    <Row>
-      <Select v-model="type">
+    <Input search enter-button style="width: 500px">
+      <Select v-model="type" slot="prepend" style="width: 100px">
         <Option value="teacher">教师</option>
         <Option value="student">学生</option>
       </Select>
-    </Row>
+      <div slot="append" >
+        <Button>添加</Button>
+      </div>
+    </Input>
+
     <Row>
       <Table :columns="tb_head" :data="tb_res" border height="520" size="small" stripe></Table>
       <Page show-total
             :total="page.total"
             :current="page.current"
-            :page-size="page.page_size"
+            :page-size="page.size"
             @on-change = "pageChange"
       />
     </Row>
@@ -198,18 +202,9 @@ export default {
         }
       ],
       tb_res: [],
-      tb_role_head: [
-        {
-          title: 'id',
-          key: 'id'
-        }, {
-          title: '角色名',
-          key: 'roleName'
-        }
-      ],
       page: {
         current: 1,
-        page_size: 12,
+        size: 12,
         total: 0,
         records: []
       },
@@ -222,7 +217,7 @@ export default {
   },
   mounted () {
     this.$nextTick(() => {
-      this.search()
+      this.getUser()
       this.$store.dispatch('handleGetRoleList')
     })
   },
@@ -239,29 +234,23 @@ export default {
      */
     pageChange (index) {
       this.page.current = index
-      let start = (index - 1) * this.page.page_size
-      let end = index * this.page.page_size
-      this.tb_res = this.page.records.slice(start, end)
+      this.getUser(index, this.page.size)
     },
     /**
      * 分页获取学生或教师
      */
-    search () {
-      let pageNum = this.page.current
-      let pageSize = this.page.page_size
+    getUser (pageNum = 1, pageSize = 12) {
       if (this.type === 'student') {
         this.handleGetAllStudent({ pageNum, pageSize }).then(res => {
           this.tb_head = this.tb_student_head
-          this.page.records = res.records
-          this.page.total = res.records.length
-          this.pageChange(this.page.current)
+          this.tb_res = res.records
+          this.page = res
         })
       } else {
         this.handleGetAllTeacherByPage({ pageNum, pageSize }).then(res => {
           this.tb_head = this.tb_teacher_head
-          this.page.records = res.records
-          this.page.total = res.records.length
-          this.pageChange(this.page.current)
+          this.tb_res = res.records
+          this.page = res
         })
       }
     },
@@ -302,7 +291,7 @@ export default {
   watch: {
     type (val) {
       this.$store.commit('setEditUser', val)
-      this.search()
+      this.getUser()
     }
   }
 }

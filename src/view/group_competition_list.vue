@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <Card>
     <Row>
         <Select v-model="currentGroupId">
           <Option  v-for="item in groupList"  :value="item.id" :key="item.id">
@@ -15,7 +15,7 @@
           :page-size="page.page_size"
           @on-change = "pageChange"
     />
-  </div>
+  </Card>
 </template>
 
 <script>
@@ -184,25 +184,19 @@ export default {
      */
     pageChange (index) {
       this.page.current = index
-      let start = (index - 1) * this.page.page_size
-      let end = index * this.page.page_size
-      this.tb_res = this.page.records.slice(start, end)
-
-      this.tb_res.map((item) => {
-        item.type = this.competitionType[item.type - 1].typeName
-      })
+      this.getApply(index, this.page.size)
     },
     /**
      * 获取竞赛
      */
-    search () {
+    getApply (pageNum = 1, pageSize = 12) {
       let groupId = this.currentGroupId
-      let pageNum = this.page.current
-      let pageSize = this.page.page_size
       this.handleGetByGroupId({ pageNum, pageSize, groupId }).then(res => {
-        this.page.records = res.records
-        this.page.total = res.records.length
-        this.pageChange(this.page.current)
+        this.page = res
+        this.tb_res = res.records
+        this.tb_res.map((item) => {
+          item.type = this.competitionType[item.type - 1].typeName
+        })
       })
     },
     /**
@@ -213,7 +207,7 @@ export default {
     setEnterState (id, flag) {
       this.handleSetEnterState({ id, flag }).then(res => {
         if (res) {
-          this.search()
+          this.getApply()
         }
       })
     },
@@ -233,7 +227,7 @@ export default {
       this.$Message.info('删除' + id)
       this.handleDeleteCompetition({ id: id }).then(res => {
         if (res) {
-          this.search()
+          this.getApply()
           this.$Message.success('删除成功')
         }
       })
@@ -244,7 +238,7 @@ export default {
   },
   watch: {
     currentGroupId () {
-      this.search()
+      this.getApply()
     }
   }
 

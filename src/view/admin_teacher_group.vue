@@ -1,5 +1,6 @@
 <template>
-  <div>
+  <Card>
+    <Input search enter-button style="width: 500px"/>
     <Table  :columns="tb_head" :data="tb_res" stripe></Table>
     <Page show-total
           :total="page.total"
@@ -7,7 +8,7 @@
           :page-size="page.page_size"
           @on-change = "pageChange"
     />
-  </div>
+  </Card>
 </template>
 
 <script>
@@ -61,7 +62,7 @@ export default {
   },
   mounted () {
     this.$nextTick(() => {
-      this.search()
+      this.getApply()
     })
   },
   methods: {
@@ -71,27 +72,21 @@ export default {
     ]),
     pageChange (index) {
       this.page.current = index
-      let start = (index - 1) * this.page.page_size
-      let end = index * this.page.page_size
-      this.tb_res = this.page.records.slice(start, end)
+      this.getApply(index, this.page.size)
     },
     /**
      * 分页获取学生或教师
      */
-    search () {
-      let pageNum = this.page.current
-      let pageSize = this.page.page_size
+    getApply (pageNum = 1, pageSize = 12) {
       this.handleGetAllTeacherGroup({ pageNum, pageSize }).then(res => {
-        console.info(res)
-        this.page.records = res.records
-        this.page.total = res.records.length
-        this.pageChange(1)
+        this.page = res
+        this.tb_res = res.records
       })
     },
     review (id, flag) {
       this.handleSetTeacherGroupState({ id, flag }).then(res => {
         if (res) {
-          this.search()
+          this.getApply()
         }
       })
     }

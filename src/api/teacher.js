@@ -27,3 +27,10 @@ export const get_lead_teacher_list = () => {
     method: 'get'
   })
 }
+
+export const search_teacher_by_page = (key, pageNum, pageSize) => {
+  return axios.request({
+    url: `/teacher/search/${key}/${pageNum}/${pageSize}`,
+    method: 'get'
+  })
+}

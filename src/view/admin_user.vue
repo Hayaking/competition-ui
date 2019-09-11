@@ -14,7 +14,11 @@
       @cancel="cancelModal">
     </UserInfoModal>
 
-    <Input search enter-button style="width: 500px">
+    <Input search
+           v-model="key"
+           enter-button
+           style="width: 500px"
+           @on-change="search">
       <Select v-model="type" slot="prepend" style="width: 100px">
         <Option value="teacher">教师</option>
         <Option value="student">学生</option>
@@ -212,7 +216,8 @@ export default {
       show2: false,
       user: {
 
-      }
+      },
+      key: ''
     }
   },
   mounted () {
@@ -226,7 +231,9 @@ export default {
       'handleGetAllStudent',
       'handleGetAllTeacherByPage',
       'handleGetStudentRole',
-      'handleGetTeacherRole'
+      'handleGetTeacherRole',
+      'handleSearchStudent',
+      'handleSearchTeacher'
     ]),
     /**
      * 页码改变时执行
@@ -241,17 +248,32 @@ export default {
      */
     getUser (pageNum = 1, pageSize = 12) {
       if (this.type === 'student') {
-        this.handleGetAllStudent({ pageNum, pageSize }).then(res => {
-          this.tb_head = this.tb_student_head
-          this.tb_res = res.records
-          this.page = res
-        })
+        this.getStudent(pageNum, pageSize)
       } else {
-        this.handleGetAllTeacherByPage({ pageNum, pageSize }).then(res => {
-          this.tb_head = this.tb_teacher_head
-          this.tb_res = res.records
-          this.page = res
-        })
+        this.getTeacher(pageNum, pageSize)
+      }
+    },
+    search () {
+      if (this.type === 'student') {
+        if (this.key === '') {
+          this.getStudent(1, 12)
+        } else {
+          this.handleSearchStudent({ key: this.key, pageNum: 1, pageSize: 12 }).then(res => {
+            this.tb_head = this.tb_student_head
+            this.tb_res = res.records
+            this.page = res
+          })
+        }
+      } else {
+        if (this.key === '') {
+          this.getTeacher(1, 12)
+        } else {
+          this.handleSearchTeacher({ key: this.key, pageNum: 1, pageSize: 12 }).then(res => {
+            this.tb_head = this.tb_student_head
+            this.tb_res = res.records
+            this.page = res
+          })
+        }
       }
     },
     /**
@@ -286,6 +308,20 @@ export default {
     showUserInfoModal (obj) {
       this.user = obj
       this.show2 = true
+    },
+    getTeacher (pageNum, pageSize) {
+      this.handleGetAllTeacherByPage({ pageNum, pageSize }).then(res => {
+        this.tb_head = this.tb_student_head
+        this.tb_res = res.records
+        this.page = res
+      })
+    },
+    getStudent (pageNum, pageSize) {
+      this.handleGetAllStudent({ pageNum, pageSize }).then(res => {
+        this.tb_head = this.tb_student_head
+        this.tb_res = res.records
+        this.page = res
+      })
     }
   },
   watch: {

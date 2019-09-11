@@ -1,7 +1,8 @@
 import {
   get_all_student_by_page,
   update_student,
-  is_exist
+  is_exist,
+  search_student_by_page
 } from '@/api/student'
 
 export default {
@@ -35,6 +36,15 @@ export default {
     handleUpdate ({ commit }, { student }) {
       return new Promise((resolve, reject) => {
         update_student(student).then(res => {
+          resolve(res.data.body)
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
+    handleSearchStudent ({ commit }, { key, pageNum, pageSize }) {
+      return new Promise((resolve, reject) => {
+        search_student_by_page(key, pageNum, pageSize).then(res => {
           resolve(res.data.body)
         }).catch(err => {
           reject(err)

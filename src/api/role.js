@@ -20,9 +20,9 @@ export const add_student_role = (account, roleId) => {
   })
 }
 
-export const delete_student_role = (account, roleId) => {
+export const delete_student_role = (id, roleId) => {
   return axios.request({
-    url: `student/role/${account}/${roleId}`,
+    url: `student/role/${id}/${roleId}`,
     method: 'delete'
   })
 }
@@ -34,16 +34,16 @@ export const get_teacher_role = (account) => {
   })
 }
 
-export const add_teacher_role = (account, roleId) => {
+export const add_teacher_role = (id, roleId) => {
   return axios.request({
-    url: `teacher/role/${account}/${roleId}`,
+    url: `teacher/role/${id}/${roleId}`,
     method: 'post'
   })
 }
 
-export const delete_teacher_role = (account, roleId) => {
+export const delete_teacher_role = (id, roleId) => {
   return axios.request({
-    url: `teacher/role/${account}/${roleId}`,
+    url: `teacher/role/${id}/${roleId}`,
     method: 'delete'
   })
 }

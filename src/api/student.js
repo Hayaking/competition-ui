@@ -14,9 +14,9 @@ export const is_exist = (account) => {
   })
 }
 
-export const update_student = (student) => {
+export const insert_or_update_student = (student) => {
   return axios.request({
-    url: `/student/update`,
+    url: `/student`,
     data: student,
     method: 'post'
   })

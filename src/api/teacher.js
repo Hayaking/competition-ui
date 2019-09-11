@@ -34,3 +34,11 @@ export const search_teacher_by_page = (key, pageNum, pageSize) => {
     method: 'get'
   })
 }
+export const insert_or_update_teacher = (teacher) => {
+  return axios.request({
+    url: `/teacher`,
+    data: teacher,
+    method: 'post'
+  })
+}
+

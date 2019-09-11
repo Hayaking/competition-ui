@@ -1,18 +1,21 @@
 import {
   get_all_student_by_page,
-  update_student,
+  insert_or_update_student,
   is_exist,
   search_student_by_page
 } from '@/api/student'
 
 export default {
   state: {
+    edit_student: {}
   },
   mutations: {
-
+    setEditStudent (state, stu) {
+      state.edit_student = stu
+    }
   },
   getters: {
-
+    getEditStudent: state => state.edit_student
   },
   actions: {
     handleGetAllStudent ({ commit }, { pageNum, pageSize }) {
@@ -33,10 +36,10 @@ export default {
         })
       })
     },
-    handleUpdate ({ commit }, { student }) {
+    handleSaveStudent ({ commit }, { student }) {
       return new Promise((resolve, reject) => {
-        update_student(student).then(res => {
-          resolve(res.data.body)
+        insert_or_update_student(student).then(res => {
+          resolve(res.data.state === 'SUCCESS')
         }).catch(err => {
           reject(err)
         })

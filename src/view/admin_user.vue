@@ -4,36 +4,48 @@
     <RoleModal
       :show="show1"
       @ok="cancelModal"
-      @cancel="cancelModal">
-    </RoleModal>
+      @cancel="cancelModal"
+    />
 <!--编辑学生对话框-->
-    <UserInfoModal
+    <StudentEditModal
       :show="show2"
-      :stu="user"
       @ok="cancelModal"
-      @cancel="cancelModal">
-    </UserInfoModal>
+      @cancel="cancelModal"
+    />
+    <TeacherEditModal
+      :show="show3"
+      @ok="cancelModal"
+      @cancel="cancelModal"
+    />
 
     <Input search
            v-model="key"
            enter-button
            style="width: 500px"
+           class="tool-bar"
            @on-change="search">
       <Select v-model="type" slot="prepend" style="width: 100px">
         <Option value="teacher">教师</option>
         <Option value="student">学生</option>
       </Select>
       <div slot="append" >
-        <Button>添加</Button>
+        <Button @click="showUserInfoModal">添加</Button>
       </div>
     </Input>
 
     <Row>
-      <Table :columns="tb_head" :data="tb_res" border height="520" size="small" stripe></Table>
+      <Table :columns="tb_head"
+             :data="tb_res"
+             border
+             height="520"
+             size="small"
+             stripe
+      />
       <Page show-total
             :total="page.total"
             :current="page.current"
             :page-size="page.size"
+            class="page-bar"
             @on-change = "pageChange"
       />
     </Row>
@@ -44,11 +56,12 @@
 
 import { mapActions } from 'vuex'
 import RoleModal from '@/view/components/role-modal'
-import UserInfoModal from '@/view/components/user-info-modal'
+import StudentEditModal from '@/view/components/student-edit-modal'
+import TeacherEditModal from '@/view/components/teacher-edit-modal'
 
 export default {
   name: 'edit_user',
-  components: { RoleModal, UserInfoModal },
+  components: { RoleModal, StudentEditModal, TeacherEditModal },
   created () {
     // 禁止火狐拖拽搜索
     document.body.ondrop = function (event) {
@@ -63,6 +76,10 @@ export default {
       tb_head: [],
       tb_teacher_head: [
         {
+          title: 'id',
+          key: 'id',
+          width: 100
+        }, {
           title: '姓名',
           key: 'teacherName',
           width: 100
@@ -138,6 +155,10 @@ export default {
       ],
       tb_student_head: [
         {
+          title: 'id',
+          key: 'id',
+          width: 100
+        }, {
           title: '姓名',
           key: 'stuName',
           width: 100
@@ -149,10 +170,6 @@ export default {
           title: '密码',
           key: 'password',
           width: 150
-        }, {
-          title: '班级',
-          key: 'stuClass',
-          width: 120
         }, {
           title: '性别',
           key: 'stuSex',
@@ -214,9 +231,8 @@ export default {
       },
       show1: false,
       show2: false,
-      user: {
-
-      },
+      show3: false,
+      user: {},
       key: ''
     }
   },
@@ -258,21 +274,13 @@ export default {
         if (this.key === '') {
           this.getStudent(1, 12)
         } else {
-          this.handleSearchStudent({ key: this.key, pageNum: 1, pageSize: 12 }).then(res => {
-            this.tb_head = this.tb_student_head
-            this.tb_res = res.records
-            this.page = res
-          })
+          this.searchStudent(this.key, 1, 12)
         }
       } else {
         if (this.key === '') {
           this.getTeacher(1, 12)
         } else {
-          this.handleSearchTeacher({ key: this.key, pageNum: 1, pageSize: 12 }).then(res => {
-            this.tb_head = this.tb_student_head
-            this.tb_res = res.records
-            this.page = res
-          })
+          this.searchTeacher(this.key, 1, 12)
         }
       }
     },
@@ -283,13 +291,13 @@ export default {
     showRoleModal (obj) {
       this.$store.commit('setEditUser', obj)
       this.$store.commit('setEditType', this.type)
-      let account = obj.account
+      let id = obj.id
       if (this.type === 'teacher') {
-        this.handleGetTeacherRole({ account }).then(res => {
+        this.handleGetTeacherRole({ id }).then(res => {
           this.show1 = true
         })
       } else {
-        this.handleGetStudentRole({ account }).then(res => {
+        this.handleGetStudentRole({ id }).then(res => {
           this.show1 = true
         })
       }
@@ -300,18 +308,24 @@ export default {
     cancelModal () {
       this.show1 = false
       this.show2 = false
+      this.show3 = false
+      this.$store.commit('setEditUser', {})
     },
     /**
      * 显示编辑对话框
      * @param obj
      */
     showUserInfoModal (obj) {
-      this.user = obj
-      this.show2 = true
+      this.$store.commit('setEditUser', obj)
+      if (this.type === 'teacher') {
+        this.show3 = true
+      } else {
+        this.show2 = true
+      }
     },
     getTeacher (pageNum, pageSize) {
       this.handleGetAllTeacherByPage({ pageNum, pageSize }).then(res => {
-        this.tb_head = this.tb_student_head
+        this.tb_head = this.tb_teacher_head
         this.tb_res = res.records
         this.page = res
       })
@@ -322,11 +336,25 @@ export default {
         this.tb_res = res.records
         this.page = res
       })
+    },
+    searchStudent (key, pageNum, pageSize) {
+      this.handleSearchStudent({ key, pageNum, pageSize }).then(res => {
+        this.tb_head = this.tb_student_head
+        this.tb_res = res.records
+        this.page = res
+      })
+    },
+    searchTeacher (key, pageNum, pageSize) {
+      this.handleSearchTeacher({ key, pageNum, pageSize }).then(res => {
+        this.tb_head = this.tb_teacher_head
+        this.tb_res = res.records
+        this.page = res
+      })
     }
   },
   watch: {
     type (val) {
-      this.$store.commit('setEditUser', val)
+      // this.$store.commit('setEditUser', val)
       this.getUser()
     }
   }
@@ -334,6 +362,12 @@ export default {
 </script>
 
 <style>
+  .tool-bar {
+    margin-bottom: 15px ;
+  }
+  .page-bar {
+    margin-top: 15px;
+  }
   .drag-item{
     margin: 10px;
   }

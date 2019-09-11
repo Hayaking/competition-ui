@@ -26,7 +26,6 @@ export default {
   name: 'RoleModal',
   components: { DragList },
   props: {
-
     show: {
       type: Boolean,
       default: false
@@ -68,14 +67,22 @@ export default {
      */
     saveRole (index) {
       let roleId = this.left[index].id
-      let account = this.user.account
+      let id = this.user.id
       if (this.type === 'student') {
-        this.handleAddStudentRole({ account, roleId }).then(res => {
-          console.info(res)
+        this.handleAddStudentRole({ id, roleId }).then(res => {
+          if (res) {
+            this.$Message.success('成功')
+          } else {
+            this.$Message.error('失败')
+          }
         })
       } else {
-        this.handleAddTeacherRole({ account, roleId }).then(res => {
-          console.info(res)
+        this.handleAddTeacherRole({ id, roleId }).then(res => {
+          if (res) {
+            this.$Message.success('成功')
+          } else {
+            this.$Message.error('失败')
+          }
         })
       }
     },
@@ -85,15 +92,22 @@ export default {
      */
     deleteRole (index) {
       let roleId = this.right[index].id
-      let account = this.user.account
-      console.info(this.type)
+      let id = this.user.id
       if (this.type === 'student') {
-        this.handleDeleteStudentRole({ account, roleId }).then(res => {
-          console.info(res)
+        this.handleDeleteStudentRole({ id, roleId }).then(res => {
+          if (res) {
+            this.$Message.success('成功')
+          } else {
+            this.$Message.error('失败')
+          }
         })
       } else {
-        this.handleDeleteTeacherRole({ account, roleId }).then(res => {
-          console.info(res)
+        this.handleDeleteTeacherRole({ id, roleId }).then(res => {
+          if (res) {
+            this.$Message.success('成功')
+          } else {
+            this.$Message.error('失败')
+          }
         })
       }
     },
@@ -109,7 +123,6 @@ export default {
       return this.getter.getEditUser
     },
     type () {
-      console.info(this.getter.getEditType)
       return this.getter.getEditType
     },
     modalShow: {

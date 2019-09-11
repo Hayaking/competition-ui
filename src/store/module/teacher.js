@@ -3,7 +3,8 @@ import {
   get_teacher_by_group_id,
   get_all_teacher_by_page,
   get_lead_teacher_list,
-  search_teacher_by_page
+  search_teacher_by_page,
+  insert_or_update_teacher
 } from '@/api/teacher'
 
 export default {
@@ -60,6 +61,15 @@ export default {
       return new Promise((resolve, reject) => {
         get_lead_teacher_list().then(res => {
           resolve(res.data.body)
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
+    handleSaveTeacher ({ commit }, { teacher }) {
+      return new Promise((resolve, reject) => {
+        insert_or_update_teacher(teacher).then(res => {
+          resolve(res.data.state === 'SUCCESS')
         }).catch(err => {
           reject(err)
         })

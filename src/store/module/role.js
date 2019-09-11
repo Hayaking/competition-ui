@@ -38,9 +38,9 @@ export default {
         })
       })
     },
-    handleGetStudentRole ({ commit }, { account }) {
+    handleGetStudentRole ({ commit }, { id }) {
       return new Promise((resolve, reject) => {
-        get_student_role(account).then(res => {
+        get_student_role(id).then(res => {
           commit('setUserRoles', res.data.body)
           resolve(res.data.body)
         }).catch(err => {
@@ -48,9 +48,9 @@ export default {
         })
       })
     },
-    handleGetTeacherRole ({ commit }, { account }) {
+    handleGetTeacherRole ({ commit }, { id }) {
       return new Promise((resolve, reject) => {
-        get_teacher_role(account).then(res => {
+        get_teacher_role(id).then(res => {
           commit('setUserRoles', res.data.body)
           resolve(res.data.body)
         }).catch(err => {
@@ -58,37 +58,37 @@ export default {
         })
       })
     },
-    handleAddStudentRole ({ commit }, { account, roleId }) {
+    handleAddStudentRole ({ commit }, { id, roleId }) {
       return new Promise((resolve, reject) => {
-        add_student_role(account, roleId).then(res => {
-          resolve(res.data.body)
+        add_student_role(id, roleId).then(res => {
+          resolve(res.data.state === 'SUCCESS')
         }).catch(err => {
           reject(err)
         })
       })
     },
-    handleAddTeacherRole ({ commit }, { account, roleId }) {
+    handleAddTeacherRole ({ commit }, { id, roleId }) {
       return new Promise((resolve, reject) => {
-        add_teacher_role(account, roleId).then(res => {
-          resolve(res.data.body)
+        add_teacher_role(id, roleId).then(res => {
+          resolve(res.data.state === 'SUCCESS')
         }).catch(err => {
           reject(err)
         })
       })
     },
-    handleDeleteStudentRole ({ commit }, { account, roleId }) {
+    handleDeleteStudentRole ({ commit }, { id, roleId }) {
       return new Promise((resolve, reject) => {
-        delete_student_role(account, roleId).then(res => {
-          resolve(res.data.body)
+        delete_student_role(id, roleId).then(res => {
+          resolve(res.data.state === 'SUCCESS')
         }).catch(err => {
           reject(err)
         })
       })
     },
-    handleDeleteTeacherRole ({ commit }, { account, roleId }) {
+    handleDeleteTeacherRole ({ commit }, { id, roleId }) {
       return new Promise((resolve, reject) => {
-        delete_teacher_role(account, roleId).then(res => {
-          resolve(res.data.body)
+        delete_teacher_role(id, roleId).then(res => {
+          resolve(res.data.state === 'SUCCESS')
         }).catch(err => {
           reject(err)
         })

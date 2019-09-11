@@ -4,27 +4,27 @@
     @on-ok="saveStudent"
     @on-cancel="cancel"
     v-model="modalShow">
-    <Form :model="student" label-position="left" :label-width="70">
+    <Form :model="user" label-position="left" :label-width="70">
+      <FormItem label="id">
+        <Input v-model="user.id"/>
+      </FormItem>
       <FormItem label="账号">
-        <Input v-model="student.account" :disabled="true"/>
+        <Input v-model="user.account"/>
       </FormItem>
       <FormItem label="密码">
-        <Input v-model="student.password"/>
+        <Input v-model="user.password"/>
       </FormItem>
       <FormItem label="姓名">
-        <Input v-model="student.stuName"/>
+        <Input v-model="user.teacherName"/>
       </FormItem>
       <FormItem label="性别">
-        <Input v-model="student.stuSex"/>
-      </FormItem>
-      <FormItem label="班级">
-        <Input v-model="student.stuClass"/>
+        <Input v-model="user.teacherSex"/>
       </FormItem>
       <FormItem label="电话">
-        <Input v-model="student.stuPhone"/>
+        <Input v-model="user.teacherPhone"/>
       </FormItem>
       <FormItem label="银行卡号">
-        <Input v-model="student.stuBankCardNo"/>
+        <Input v-model="user.teacherBankCardNo"/>
       </FormItem>
     </Form>
   </Modal>
@@ -39,51 +39,49 @@ export default {
     show: {
       type: Boolean,
       default: false
-    },
-    stu: {
-      type: Object
     }
   },
   data () {
     return {
-      studentData: {}
+      getter: this.$store.getters
     }
   },
   methods: {
     ...mapActions([
-      'handleUpdate'
+      'handleSaveTeacher'
     ]),
     /**
        * 保存学生
        */
     saveStudent () {
-      this.handleUpdate({ student: this.studentData }).then(res => {
-        console.info(res)
-        this.student = {}
+      this.handleSaveTeacher({ teacher: this.user }).then(res => {
+        if (res) {
+          this.$Message.success('成功')
+        } else {
+          this.$Message.error('失败')
+        }
+        this.user = {}
       })
-      this.$emit('ok')
     },
     cancel () {
       this.$emit('cancel')
     }
   },
   computed: {
-    student: {
-      get () {
-        // eslint-disable-next-line vue/no-side-effects-in-computed-properties,no-return-assign
-        return this.studentData = Object.assign({}, this.stu)
-      },
-      set (val) {
-        console.info(val)
-        this.studentData = val
-      }
-    },
     modalShow: {
       get () {
         return this.show
       },
       set (val) {
         console.info(val)
+      }
+    },
+    user: {
+      get () {
+        return this.getter.getEditUser
+      },
+      set (val) {
+        this.$store.commit('setEditUser', val)
       }
     }
   }

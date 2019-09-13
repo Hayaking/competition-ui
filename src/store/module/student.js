@@ -27,10 +27,10 @@ export default {
         })
       })
     },
-    async handleStudentIsExist ({ commit }, { account }) {
+    handleStudentIsExist ({ commit }, { list }) {
       return new Promise((resolve, reject) => {
-        is_exist(account).then(res => {
-          resolve(res.data.state === 'SUCCESS')
+        is_exist(list).then(res => {
+          resolve(res.data.body)
         }).catch(err => {
           reject(err)
         })

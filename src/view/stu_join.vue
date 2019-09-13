@@ -5,7 +5,15 @@
       <ButtonGroup slot="extra">
         <Button @click="step1" type="primary">下一步</Button>
       </ButtonGroup>
-      <div>比赛名称：{{competition}}</div>
+      <div>比赛名称：{{competition.name}}</div>
+      <div>开始时间：{{competition.startTime}}</div>
+      <div>结束时间：{{competition.endTime}}</div>
+      <div>报名开始时间：{{competition.enterStartTime}}</div>
+      <div>报名结束时间：{{competition.enterEndTime}}</div>
+      <div>主办方：{{competition.org}}</div>
+      <div>比赛地点：{{competition.place}}</div>
+      <div>负责人：{{competition.personInCharge}}</div>
+      <div>比赛最高级别：{{competition.highestLevel}}</div>
     </Card>
 <!--    第二步-->
     <Card title="创建小组" v-else-if="index ===1">
@@ -149,11 +157,9 @@ export default {
         ]
       },
       works: {
-        worksName: '',
-        stuGroupId: 0
+        worksName: ''
       },
       join: {
-        worksId: 0,
         competitionId: 0,
         teacherId1: 0,
         teacherId2: 0
@@ -179,28 +185,25 @@ export default {
       */
       this.$refs['formDynamic'].validate((valid) => {
         if (valid) {
-          this.groupMember.items.forEach(item => {
-            this.handleStudentIsExist({ account: item.value }).then(res => {
-              if (!res) {
-                this.flag = false
-                this.$Message.error('没有找到:' + item.value)
-              }
-            })
+          let memberList = this.groupMember.items.map(item => {
+            return item.value
+          })
+          this.handleStudentIsExist({ list: memberList }).then(res => {
+            if (res.length === 0) {
+              this.index++
+              this.$Message.success('SUCCESS!')
+            } else {
+              res.map(item => {
+                this.$Message.error(item)
+              })
+            }
           })
         } else {
           this.flag = false
         }
-        function sleep (ms) {
-          return new Promise(resolve =>
-            setTimeout(resolve, ms)
-          )
-        }
-        sleep(50).then(res => {
-          if (this.flag) {
-            this.index++
-            this.$Message.success('SUCCESS!')
-          }
-        })
+        // sleep(1000).then(res => {
+        //   this.$Message.error('!!!!!')
+        // })
       })
     },
     step3 () {
@@ -217,19 +220,20 @@ export default {
       this.$Message.info('!')
     },
     submit () {
-      this.handleCreateStudentGroup({ groupName: this.groupName }).then(groupId => {
-        this.handleInviteStudentMember({ groupId: groupId, list: this.groupMember.items.map(item => { return item.value }) }).then(res => {
-          this.works.stuGroupId = groupId
-          this.handleCreateWorks({ works: this.works }).then(worksId => {
-            this.join.worksId = worksId
-            this.join.competitionId = this.competition.id
-            this.handleCreateJoin({ join: this.join }).then(res => {
-              if (res) {
-                this.$Message.success('参赛成功')
-              }
-            })
+      let group = { name: this.groupName }
+      let list = this.groupMember.items.map(item => { return item.value })
+      let works = this.works
+      this.join.competitionId = this.competition.id
+      let join = this.join
+      this.handleCreateJoin({ group, list, works, join }).then(res => {
+        if (res) {
+          this.$Message.success('成功')
+          this.closeTag({
+            name: 'create_student_group'
           })
-        })
+        } else {
+          this.$Message.error('失败')
+        }
       })
     },
     inviteLead (_index) {
@@ -252,7 +256,8 @@ export default {
     },
     handleRemove (index) {
       this.groupMember.memberNum--
-      this.groupMember.items[index].status = 0
+      // this.groupMember.items[index].status = 0
+      this.groupMember.items.splice(index, index)
     }
   },
   computed: {

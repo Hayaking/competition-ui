@@ -300,7 +300,19 @@ export const findNodeUpper = (ele, tag) => {
     }
   }
 }
+export const sleep = (ms) => {
+  return new Promise(resolve =>
+    setTimeout(resolve, ms)
+  )
+}
 
+export const mapToJson = (map) => {
+  let obj = Object.create(null)
+  for (let[k, v] of map) {
+    obj[k] = v
+  }
+  return JSON.stringify(obj)
+}
 export const findNodeUpperByClasses = (ele, classes) => {
   let parentNode = ele.parentNode
   if (parentNode) {

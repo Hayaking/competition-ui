@@ -39,8 +39,19 @@
              border
              height="520"
              size="small"
-             stripe
-      />
+             stripe>
+        <template slot-scope="{ row, index }" slot="action">
+          <Button type="primary" size="small" style="margin-right: 5px" @click="showRoleModal(row)">
+            角色
+          </Button>
+          <Button type="success" size="small" style="margin-right: 5px" @click="showUserInfoModal(row)">
+            编辑
+          </Button>
+          <Button type="error" size="small" @click="deleteUser(row)">
+            删除
+          </Button>
+        </template>
+      </Table>
       <Page show-total
             :total="page.total"
             :current="page.current"
@@ -55,9 +66,9 @@
 <script>
 
 import { mapActions } from 'vuex'
-import RoleModal from '@/view/components/role-modal'
-import StudentEditModal from '@/view/components/student-edit-modal'
-import TeacherEditModal from '@/view/components/teacher-edit-modal'
+import RoleModal from '@/view/components/modal/role-modal'
+import StudentEditModal from '@/view/components/modal/student-edit-modal'
+import TeacherEditModal from '@/view/components/modal/teacher-edit-modal'
 
 export default {
   name: 'edit_user',
@@ -78,11 +89,13 @@ export default {
         {
           title: 'id',
           key: 'id',
-          width: 100
+          width: 100,
+          fixed: 'left'
         }, {
           title: '姓名',
           key: 'teacherName',
-          width: 100
+          width: 100,
+          fixed: 'left'
         }, {
           title: '帐号',
           key: 'account',
@@ -97,74 +110,49 @@ export default {
           width: 70
         }, {
           title: '电话',
-          key: 'teacherPhone'
+          key: 'teacherPhone',
+          width: 150
         }, {
           title: '电话',
-          key: 'teacherPhone'
+          key: 'teacherPhone',
+          width: 150
         }, {
           title: '擅长领域',
-          key: 'teacherMaster'
+          key: 'teacherMaster',
+          width: 150
         }, {
           title: '职称',
-          key: 'teacherLevel'
+          key: 'teacherLevel',
+          width: 150
         }, {
           title: '银行卡号',
-          key: 'teacherBankCardNo'
+          key: 'teacherBankCardNo',
+          width: 150
         }, {
           title: '编辑',
-          key: 'stuPhone',
           width: 200,
-          render: (h, params) => {
-            return h('div', [
-              h('Button', {
-                props: {
-                  type: 'info',
-                  size: 'small'
-                },
-                on: {
-                  click: () => {
-                    this.showRoleModal(params.row)
-                  }
-                }
-              }, '角色'),
-              h('Button', {
-                props: {
-                  type: 'primary',
-                  size: 'small'
-                },
-                on: {
-                  click: () => {
-                    this.showUserInfoModal(params.row)
-                  }
-                }
-              }, '编辑'),
-              h('Button', {
-                props: {
-                  type: 'error',
-                  size: 'small'
-                },
-                on: {
-                  click: () => {
-                    this.$Message.info('撤回')
-                  }
-                }
-              }, '删除')
-            ])
-          }
+          fixed: 'right',
+          slot: 'action'
         }
       ],
       tb_student_head: [
         {
           title: 'id',
           key: 'id',
-          width: 100
+          width: 100,
+          fixed: 'left'
         }, {
           title: '姓名',
           key: 'stuName',
-          width: 100
+          width: 150,
+          fixed: 'left'
         }, {
           title: '帐号',
           key: 'account',
+          width: 150
+        }, {
+          title: '班级',
+          key: 'stuClass',
           width: 150
         }, {
           title: '密码',
@@ -176,50 +164,16 @@ export default {
           width: 70
         }, {
           title: '电话',
-          key: 'stuPhone'
+          key: 'stuPhone',
+          width: 150
         }, {
           title: '银行卡号',
-          key: 'stuBankCardNo'
+          key: 'stuBankCardNo',
+          width: 150
         }, {
           title: '编辑',
-          key: 'stuPhone',
-          render: (h, params) => {
-            return h('div', [
-              h('Button', {
-                props: {
-                  type: 'info',
-                  size: 'small'
-                },
-                on: {
-                  click: () => {
-                    this.showRoleModal(params.row)
-                  }
-                }
-              }, '角色'),
-              h('Button', {
-                props: {
-                  type: 'primary',
-                  size: 'small'
-                },
-                on: {
-                  click: () => {
-                    this.showUserInfoModal(params.row)
-                  }
-                }
-              }, '编辑'),
-              h('Button', {
-                props: {
-                  type: 'error',
-                  size: 'small'
-                },
-                on: {
-                  click: () => {
-                    this.$Message.info('撤回')
-                  }
-                }
-              }, '删除')
-            ])
-          }
+          width: 200,
+          slot: 'action'
         }
       ],
       tb_res: [],
@@ -233,7 +187,8 @@ export default {
       show2: false,
       show3: false,
       user: {},
-      key: ''
+      key: '',
+      deleteObject: {}
     }
   },
   mounted () {
@@ -268,6 +223,18 @@ export default {
       } else {
         this.getTeacher(pageNum, pageSize)
       }
+    },
+    deleteUser (obj) {
+      this.deleteObject = obj
+      this.$Modal.warning({
+        title: '删除',
+        content: '三思啊',
+        onOk: this.submitDelete
+      })
+    },
+    submitDelete () {
+      console.info(this.deleteObject)
+      this.$Message.error(this.deleteObject)
     },
     search () {
       if (this.type === 'student') {

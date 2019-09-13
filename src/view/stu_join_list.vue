@@ -43,17 +43,30 @@ export default {
         }, {
           title: '操作',
           render: (h, params) => {
-            return h('Button', {
-              props: {
-                type: 'primary',
-                size: 'small'
-              },
-              on: {
-                click: () => {
-                  this.inviteLead(params.row._index)
+            return h('div', [
+              h('Button', {
+                props: {
+                  type: 'primary',
+                  size: 'small'
+                },
+                on: {
+                  click: () => {
+                    this.inviteLead(params.row)
+                  }
                 }
-              }
-            }, '编辑')
+              }, '编辑'),
+              h('Button', {
+                props: {
+                  type: 'error',
+                  size: 'small'
+                },
+                on: {
+                  click: () => {
+                    this.deleteJoin(params.row)
+                  }
+                }
+              }, '删除')
+            ])
           }
         }
       ],
@@ -73,7 +86,8 @@ export default {
   },
   methods: {
     ...mapActions([
-      'handleGetJoinList'
+      'handleGetJoinList',
+      'handleDeleteJoin'
     ]),
     pageChange (index) {
       this.page.current = index
@@ -86,6 +100,17 @@ export default {
       this.handleGetJoinList({ pageNum, pageSize }).then(res => {
         this.page = res
         this.tb_res = res.records
+      })
+    },
+    deleteJoin (obj) {
+      let id = obj.id
+      this.handleDeleteJoin({ id }).then(res => {
+        if (res) {
+          this.getJoin()
+          this.$Message.success('成功')
+        } else {
+          this.$Message.error('失败')
+        }
       })
     }
   }

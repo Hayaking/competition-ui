@@ -1,4 +1,4 @@
-import { create_join , get_join_list} from '@/api/join'
+import { create_join, delete_join, get_join_list } from '@/api/join'
 
 export default {
   state: {
@@ -8,9 +8,18 @@ export default {
   getters: {
   },
   actions: {
-    handleCreateJoin ({ commit }, { join }) {
+    handleCreateJoin ({ commit }, { group, list, works, join }) {
       return new Promise((resolve, reject) => {
-        create_join(join).then(res => {
+        create_join(group, list, works, join).then(res => {
+          resolve(res.data.state === 'SUCCESS')
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
+    handleDeleteJoin ({ commit }, { id }) {
+      return new Promise((resolve, reject) => {
+        delete_join(id).then(res => {
           resolve(res.data.state === 'SUCCESS')
         }).catch(err => {
           reject(err)

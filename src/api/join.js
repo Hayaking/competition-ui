@@ -1,10 +1,17 @@
 import axios from '@/libs/api.request'
 
-export const create_join = (join) => {
+export const create_join = (group, list, works, join) => {
   return axios.request({
     url: `/join`,
-    data: join,
+    data: { group: group, list: list, works: works, join: join },
     method: 'post'
+  })
+}
+
+export const delete_join = (id) => {
+  return axios.request({
+    url: `/join/${id}`,
+    method: 'delete'
   })
 }
 

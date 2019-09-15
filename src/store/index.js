@@ -4,7 +4,6 @@ import Vuex from 'vuex'
 import user from './module/user'
 import user_edit from './module/user_edit'
 import app from './module/app'
-import data from './module/data'
 import competition from './module/competition'
 import type from './module/type'
 import group from './module/group'
@@ -16,6 +15,7 @@ import enter from './module/enter'
 import works from './module/works'
 import join from './module/join'
 import message from './module/message'
+import menu from './module/menu'
 
 Vue.use(Vuex)
 
@@ -33,7 +33,6 @@ export default new Vuex.Store({
     user,
     user_edit,
     app,
-    data,
     competition,
     type,
     group,
@@ -44,6 +43,7 @@ export default new Vuex.Store({
     enter,
     works,
     join,
-    message
+    message,
+    menu
   }
 })

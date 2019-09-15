@@ -45,7 +45,7 @@ router.beforeEach((to, from, next) => {
         ]
       }
     ]
-    store.dispatch('getRoutes').then(res => {
+    store.dispatch('handleGetRoute').then(res => {
       menuData = menuData.concat(res)
       initRouterNode(constRoutes, menuData)
       store.commit('setHomeRoute', menuData)

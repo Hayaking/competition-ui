@@ -1,7 +1,25 @@
 <template>
   <Card>
+    <JoinModal :show="show"
+               @cancel="cancel"
+    />
     <Input search enter-button style="width: 500px"/>
-    <Table :columns="tb_head" :data="tb_res" border height="520" size="small" stripe></Table>
+    <Table :columns="tb_head" :data="tb_res" border height="520" size="small" stripe>
+      <template slot-scope="{ row, index }" slot="works">
+        <div>{{row.works.worksName}}</div>
+      </template>
+      <template slot-scope="{ row, index }" slot="competition">
+        <div>{{row.competition.name}}</div>
+      </template>
+      <template slot-scope="{ row, index }" slot="action">
+        <Button type="success" size="small" style="margin-right: 5px" @click="editJoin(row)">
+          编辑
+        </Button>
+        <Button type="error" size="small" @click="deleteJoin(row)">
+          删除
+        </Button>
+      </template>
+    </Table>
     <Page show-total
           :total="page.total"
           :current="page.current"
@@ -12,10 +30,12 @@
 </template>
 
 <script>
+import JoinModal from '@/view/components/modal/join-modal'
 import { mapActions } from 'vuex'
 
 export default {
   name: 'stu_join_list',
+  components: { JoinModal },
   data () {
     return {
       tb_head: [
@@ -23,11 +43,11 @@ export default {
           key: 'id',
           title: 'id'
         }, {
-          key: 'worksId',
-          title: '作品id'
+          title: '作品id',
+          slot: 'works'
         }, {
-          key: 'competitionId',
-          title: '比赛id'
+          title: '比赛id',
+          slot: 'competition'
         }, {
           key: 'teacherId1',
           title: '指导老师'
@@ -42,32 +62,7 @@ export default {
           title: '参赛状态'
         }, {
           title: '操作',
-          render: (h, params) => {
-            return h('div', [
-              h('Button', {
-                props: {
-                  type: 'primary',
-                  size: 'small'
-                },
-                on: {
-                  click: () => {
-                    this.inviteLead(params.row)
-                  }
-                }
-              }, '编辑'),
-              h('Button', {
-                props: {
-                  type: 'error',
-                  size: 'small'
-                },
-                on: {
-                  click: () => {
-                    this.deleteJoin(params.row)
-                  }
-                }
-              }, '删除')
-            ])
-          }
+          slot: 'action'
         }
       ],
       tb_res: [],
@@ -76,7 +71,8 @@ export default {
         page_size: 12,
         total: 0,
         records: []
-      }
+      },
+      show: false
     }
   },
   mounted () {
@@ -94,13 +90,17 @@ export default {
       this.getJoin(index, this.page.size)
     },
     /**
-     * 分页获取学生或教师
-     */
+       * 分页获取学生或教师
+       */
     getJoin (pageNum = 1, pageSize = 12) {
       this.handleGetJoinList({ pageNum, pageSize }).then(res => {
         this.page = res
         this.tb_res = res.records
       })
+    },
+    editJoin (obj) {
+      this.show = true
+      this.$store.commit('setEditJoin', obj)
     },
     deleteJoin (obj) {
       let id = obj.id
@@ -112,6 +112,9 @@ export default {
           this.$Message.error('失败')
         }
       })
+    },
+    cancel () {
+      this.show = false
     }
   }
 }

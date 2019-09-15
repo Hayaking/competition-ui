@@ -2,10 +2,15 @@ import { create_join, delete_join, get_join_list } from '@/api/join'
 
 export default {
   state: {
+    edit_join: {}
   },
   mutations: {
+    setEditJoin (state, join) {
+      state.edit_join = join
+    }
   },
   getters: {
+    getEditJoin: state => state.edit_join
   },
   actions: {
     handleCreateJoin ({ commit }, { group, list, works, join }) {

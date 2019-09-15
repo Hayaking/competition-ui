@@ -1,28 +1,59 @@
 <template>
-  <Card>
-    <Row align="middle" justify="center" type="flex">
-      <Col span="15">
-        <Table :columns="tb_head" :data="tb_res" :row-class-name="rowClassName1" @on-row-click="click1" border
-               height="700" size="small"></Table>
-      </Col>
-      <Col span="2">
+  <div>
+    <MenuEditModal :show="show"
+                   @cancel="cancel"/>
+
+    <Card title="!">
+      <ButtonGroup slot="extra">
         <Button type="primary" @click="save">提交</Button>
-      </Col>
-      <Col span="7">
-        <Table :columns="tb_all_permission_head" :data="tb_all_permission" :row-class-name="rowClassName2"
-               @on-row-click="click2"
-               border height="700" size="small"></Table>
-      </Col>
-    </Row>
-  </Card>
+      </ButtonGroup>
+      <Row>
+        <Col span="18">
+          <Table :columns="tb_head"
+                 :data="tb_res"
+                 :row-class-name="rowClassName1"
+                 @on-row-click="click1"
+                 border
+                 height="650"
+                 size="small">
+            <template slot-scope="{ row, index }" slot="meta.title">
+              {{row.meta.title}}
+            </template>
+            <template slot-scope="{ row, index }" slot="meta.icon">
+              {{row.meta.icon}}
+            </template>
+            <template slot-scope="{ row, index }" slot="meta.hideInMenu">
+              {{row.meta.hideInMenu}}
+            </template>
+            <template slot-scope="{ row, index }" slot="action">
+              <Button type="success" size="small" style="margin-right: 5px" @click="editMenu(row)">
+                编辑
+              </Button>
+              <Button type="error" size="small" @click="deleteMenu(row)">
+                删除
+              </Button>
+            </template>
+          </Table>
+        </Col>
+        <Col span="5" offset="1">
+          <Table :columns="tb_all_permission_head"
+                 :data="tb_all_permission" :row-class-name="rowClassName2"
+                 @on-row-click="click2"
+                 border height="650"
+                 size="small">
+          </Table>
+        </Col>
+      </Row>
+    </Card>
+  </div>
 </template>
 
 <script>
 import { mapActions } from 'vuex'
-
+import MenuEditModal from '@/view/components/modal/menu-edit-modal'
 export default {
-
   name: 'edit_menu',
+  components: { MenuEditModal },
   data () {
     return {
       roleId: 0,
@@ -34,13 +65,34 @@ export default {
           align: 'center'
         }, {
           title: '名字',
-          key: 'name'
+          key: 'name',
+          width: 150,
+          fixed: 'left'
         }, {
           title: '路径',
-          key: 'path'
+          key: 'path',
+          width: 200
         }, {
           title: '组件名',
+          width: 200,
           key: 'component'
+        }, {
+          title: '标题',
+          width: 100,
+          slot: 'meta.title'
+        }, {
+          title: 'icon',
+          width: 100,
+          slot: 'meta.icon'
+        }, {
+          title: 'hideInMenu',
+          width: 80,
+          slot: 'meta.hideInMenu'
+        }, {
+          title: '操作',
+          fixed: 'right',
+          width: 130,
+          slot: 'action'
         }
       ],
       tb_res: [],
@@ -56,7 +108,8 @@ export default {
       ],
       tb_all_permission: [],
       highlight_row1: -1,
-      highlight_row2: -1
+      highlight_row2: -1,
+      show: false
     }
   },
   mounted () {
@@ -130,6 +183,16 @@ export default {
           this.$Message.success('成功')
         }
       })
+    },
+    editMenu (obj) {
+      this.$store.commit('setEditMenu', obj)
+      this.show = true
+    },
+    deleteMenu (obj) {
+      this.console.info(obj)
+    },
+    cancel () {
+      this.show = false
     }
   }
 }

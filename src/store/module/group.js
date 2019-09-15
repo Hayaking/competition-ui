@@ -8,7 +8,8 @@ import {
   create_student_group,
   get_teacher_group_all,
   set_teacher_group_state,
-  get_teacher_group_inviting
+  get_teacher_group_inviting,
+  get_student_group
 } from '@/api/group'
 
 export default {
@@ -59,7 +60,7 @@ export default {
         })
       })
     },
-    handleInviteStudentMember ({ commit },{ groupId, list }) {
+    handleInviteStudentMember ({ commit }, { groupId, list }) {
       return new Promise((resolve, reject) => {
         invite_student_member(groupId, list).then(res => {
           if (res.data.state === 'SUCCESS') {
@@ -122,6 +123,15 @@ export default {
           if (res.data.state === 'SUCCESS') {
             resolve(true)
           }
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
+    handleGetStudentGroup ({ commit }, { pageNum, pageSize }) {
+      return new Promise((resolve, reject) => {
+        get_student_group(pageNum, pageSize).then(res => {
+          resolve(res.data.body)
         }).catch(err => {
           reject(err)
         })

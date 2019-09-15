@@ -70,3 +70,10 @@ export const set_teacher_group_state = (id, flag) => {
     method: 'post'
   })
 }
+
+export const get_student_group = (pageNum, pageSize) => {
+  return axios.request({
+    url: `studentGroup/${pageNum}/${pageSize}`,
+    method: 'get'
+  })
+}

@@ -96,10 +96,10 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapMutations } from 'vuex'
 
 export default {
-  name: 'create_student_group',
+  name: 'stu_join',
   data () {
     return {
       getter: this.$store.getters,
@@ -168,6 +168,9 @@ export default {
     }
   },
   methods: {
+    ...mapMutations([
+      'closeTag'
+    ]),
     ...mapActions([
       'handleStudentIsExist',
       'handleGetLeadTeacherList',
@@ -217,7 +220,6 @@ export default {
     },
     step4 () {
       this.index++
-      this.$Message.info('!')
     },
     submit () {
       let group = { name: this.groupName }
@@ -228,9 +230,8 @@ export default {
       this.handleCreateJoin({ group, list, works, join }).then(res => {
         if (res) {
           this.$Message.success('成功')
-          this.closeTag({
-            name: 'create_student_group'
-          })
+          this.closeTag({ name: 'stu_join' })
+          this.$router.push({ name: 'stu_join_list' })
         } else {
           this.$Message.error('失败')
         }
@@ -238,12 +239,10 @@ export default {
     },
     inviteLead (_index) {
       this.tb_res[_index].state = false
-      // this.leadTeacherAccount = this.tb_res[_index].account
       this.join.teacherId1 = this.tb_res[_index].account
     },
     cancelInviteLead (_index) {
       this.tb_res[_index].state = true
-      // this.leadTeacherAccount = 0
       this.join.teacherId1 = 0
     },
     handleAdd () {
@@ -256,7 +255,6 @@ export default {
     },
     handleRemove (index) {
       this.groupMember.memberNum--
-      // this.groupMember.items[index].status = 0
       this.groupMember.items.splice(index, index)
     }
   },

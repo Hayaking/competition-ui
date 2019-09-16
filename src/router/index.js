@@ -46,10 +46,16 @@ router.beforeEach((to, from, next) => {
       }
     ]
     store.dispatch('handleGetRoute').then(res => {
-      menuData = menuData.concat(res)
-      initRouterNode(constRoutes, menuData)
-      store.commit('setHomeRoute', menuData)
-      store.commit('updateAppRouter', constRoutes)
+      if (!res) {
+        next({
+          name: LOGIN_PAGE_NAME // 跳转到登录页
+        })
+      } else {
+        menuData = menuData.concat(res)
+        initRouterNode(constRoutes, menuData)
+        store.commit('setHomeRoute', menuData)
+        store.commit('updateAppRouter', constRoutes)
+      }
     })
   }
 

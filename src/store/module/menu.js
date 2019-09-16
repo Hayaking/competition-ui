@@ -3,6 +3,7 @@ import {
   get_all_route,
   save_menu
 } from '@/api/routers'
+import { removeToken, setToken } from '@/libs/util'
 
 export default {
   state: {
@@ -22,8 +23,12 @@ export default {
     handleGetRoute ({ commit, rootState }) {
       return new Promise((resolve, reject) => {
         get_route(rootState.user.type).then(res => {
-          console.info(res.data)
-          resolve(res.data)
+          if (res.data.state === 'SUCCESS') {
+            resolve(res.data.body)
+          } else {
+            removeToken()
+            resolve(false)
+          }
         }).catch(err => {
           reject(err)
         })

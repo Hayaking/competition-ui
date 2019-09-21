@@ -5,7 +5,7 @@ import {
   get_competition5_by_type_id,
   get_competition_all,
   set_competition_state,
-  set_competition_enter_state, search_competition
+  set_competition_enter_state, search_competition, get_competition_pass_all, search_pass_competition
 } from '@/api/competition'
 
 export default {
@@ -58,9 +58,20 @@ export default {
         })
       })
     },
-    handleGetAll ({ state, commit }, { pageNum, pageSize }) {
+    handleGetAllCompetition ({ state, commit }, { pageNum, pageSize }) {
       return new Promise((resolve, reject) => {
         get_competition_all(pageNum, pageSize).then(res => {
+          if (res.data.state === 'SUCCESS') {
+            resolve(res.data.body)
+          }
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
+    handleGetAllPassCompetition ({ state, commit }, { pageNum, pageSize }) {
+      return new Promise((resolve, reject) => {
+        get_competition_pass_all(pageNum, pageSize).then(res => {
           if (res.data.state === 'SUCCESS') {
             resolve(res.data.body)
           }
@@ -98,6 +109,17 @@ export default {
     handleSearchCompetition ({ commit }, { key, pageNum, pageSize }) {
       return new Promise((resolve, reject) => {
         search_competition(key, pageNum, pageSize).then(res => {
+          if (res.data.state === 'SUCCESS') {
+            resolve(res.data.body)
+          }
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
+    handleSearchPassCompetition ({ commit }, { key, pageNum, pageSize }) {
+      return new Promise((resolve, reject) => {
+        search_pass_competition(key, pageNum, pageSize).then(res => {
           if (res.data.state === 'SUCCESS') {
             resolve(res.data.body)
           }

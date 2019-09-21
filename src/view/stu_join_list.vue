@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import JoinModal from '@/view/components/modal/join-modal'
+import JoinModal from '@/view/components/modal/join-edit_modal'
 import { mapActions } from 'vuex'
 
 export default {

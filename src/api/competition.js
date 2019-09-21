@@ -36,6 +36,13 @@ export const get_competition_all = (pageNum, pageSize) => {
   })
 }
 
+export const get_competition_pass_all = (pageNum, pageSize) => {
+  return axios.request({
+    url: `competition/pass/${pageNum}/${pageSize}`,
+    method: 'get'
+  })
+}
+
 export const set_competition_state = (id, flag) => {
   return axios.request({
     url: `competition/state/${id}/${flag}`,
@@ -53,6 +60,12 @@ export const set_competition_enter_state = (id, flag) => {
 export const search_competition = (key, pageNum, pageSize) => {
   return axios.request({
     url: `/competition/judge/search/${key}/${pageNum}/${pageSize}`,
+    method: 'get'
+  })
+}
+export const search_pass_competition = (key, pageNum, pageSize) => {
+  return axios.request({
+    url: `/competition/pass/search/${key}/${pageNum}/${pageSize}`,
     method: 'get'
   })
 }

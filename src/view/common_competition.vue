@@ -1,7 +1,22 @@
 <template>
   <Card>
-    <Input search enter-button style="width: 500px"/>
-    <Table :columns="tb_head" :data="tb_res" stripe border ></Table>
+    <Input
+      search
+      enter-button
+      style="width: 500px;"
+      @on-change="search"
+      v-model="key"
+    />
+    <Table :columns="tb_head" :data="tb_res" stripe border >
+      <template slot-scope="{ row, index }" slot="action">
+        <Button @click="enter(row.id)"
+                type="primary"
+                size="small"
+                :disabled="row.enterState === '结束'">
+          参赛
+        </Button>
+      </template>
+    </Table>
     <Page show-total
           :total="page.total"
           :current="page.current"
@@ -132,23 +147,7 @@ export default {
           width: 100,
           align: 'center',
           fixed: 'right',
-          render: (h, params) => {
-            return h('Button', {
-              props: {
-                type: 'primary',
-                size: 'small',
-                disabled: params.row.enterState === '结束'
-              },
-              style: {
-                marginRight: '5px'
-              },
-              on: {
-                click: () => {
-                  this.enter(params.row.id)
-                }
-              }
-            }, '参赛')
-          }
+          slot: 'action'
         }
       ],
       tb_res: [],
@@ -163,14 +162,15 @@ export default {
   mounted () {
     this.$nextTick(() => {
       this.getCompetitionType()
-      this.search()
+      this.getCompetitionPage()
     })
   },
   methods: {
     ...mapActions([
       'handleGetType',
-      'handleGetAll',
-      'handleGetEnterCompetition'
+      'handleGetAllPassCompetition',
+      'handleGetEnterCompetition',
+      'handleSearchPassCompetition'
     ]),
     /**
      * 获取竞赛级别
@@ -188,8 +188,8 @@ export default {
       this.page.current = index
       this.search(index, this.page.size)
     },
-    search (pageNum = 1, pageSize = 12) {
-      this.handleGetAll({ pageNum, pageSize }).then(res => {
+    getCompetitionPage (pageNum = 1, pageSize = 12) {
+      this.handleGetAllPassCompetition({ pageNum, pageSize }).then(res => {
         this.page = res
         this.tb_res = res.records
         this.tb_res.map((item) => {
@@ -204,6 +204,21 @@ export default {
         } else {
           this.$Message.error('失败')
         }
+      })
+    },
+    search () {
+      if (this.key === '') {
+        this.getCompetitionPage()
+        return
+      }
+      let params = {
+        key: this.key,
+        pageNum: this.page.current,
+        pageSize: this.page.size
+      }
+      this.handleSearchPassCompetition(params).then(res => {
+        this.page = res
+        this.tb_res = res.records
       })
     }
   }

@@ -159,7 +159,7 @@ export default {
     this.$nextTick(() => {
       this.getCompetitionType()
       this.getGroup()
-      this.getApply()
+      this.getApplyPage()
     })
   },
   methods: {
@@ -167,7 +167,7 @@ export default {
       'handleGetType',
       'handleGetTeacherGroup',
       'handleGetByGroupId',
-      'handleGetAll',
+      'handleGetAllCompetition',
       'handleSetState',
       'handleSearchCompetition'
     ]),
@@ -187,10 +187,10 @@ export default {
     },
     pageChange (index) {
       this.page.current = index
-      this.getApply(index, this.page.size)
+      this.getApplyPage(index, this.page.size)
     },
-    getApply (pageNum = 1, pageSize = 12) {
-      this.handleGetAll({ pageNum, pageSize }).then(res => {
+    getApplyPage (pageNum = 1, pageSize = 12) {
+      this.handleGetAllCompetition({ pageNum, pageSize }).then(res => {
         this.page = res
         this.tb_res = res.records
       })
@@ -198,7 +198,7 @@ export default {
     review (id, flag) {
       this.handleSetState({ id, flag }).then(res => {
         if (res) {
-          this.getApply()
+          this.getApplyPage()
         }
       })
     },
@@ -207,7 +207,7 @@ export default {
     },
     search () {
       if (this.key === '') {
-        this.getApply()
+        this.getApplyPage()
         return
       }
       let params = {

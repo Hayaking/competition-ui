@@ -5,7 +5,7 @@ import {
   get_competition5_by_type_id,
   get_competition_all,
   set_competition_state,
-  set_competition_enter_state
+  set_competition_enter_state, search_competition
 } from '@/api/competition'
 
 export default {
@@ -89,6 +89,17 @@ export default {
             resolve(true)
           } else {
             resolve(false)
+          }
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
+    handleSearchCompetition ({ commit }, { key, pageNum, pageSize }) {
+      return new Promise((resolve, reject) => {
+        search_competition(key, pageNum, pageSize).then(res => {
+          if (res.data.state === 'SUCCESS') {
+            resolve(res.data.body)
           }
         }).catch(err => {
           reject(err)

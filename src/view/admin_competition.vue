@@ -1,6 +1,10 @@
 <template>
   <Card>
-    <Input search enter-button style="width: 500px"/>
+    <Input search
+           enter-button
+           style="width: 500px"
+           @on-change="search"
+           v-model="key"/>
     <Table :columns="tb_head" :data="tb_res" stripe border ></Table>
     <Page show-total
           :total="page.total"
@@ -20,6 +24,7 @@ export default {
   name: 'review_apply_competition',
   data () {
     return {
+      key: '',
       getter: this.$store.getters,
       competition: {
         name: '',
@@ -163,7 +168,8 @@ export default {
       'handleGetTeacherGroup',
       'handleGetByGroupId',
       'handleGetAll',
-      'handleSetState'
+      'handleSetState',
+      'handleSearchCompetition'
     ]),
     getCompetitionType () {
       this.handleGetType({ type: 'competition' }).then(res => {
@@ -198,6 +204,21 @@ export default {
     },
     download (id) {
       window.open(this.url + '/word/' + id + '.doc')
+    },
+    search () {
+      if (this.key === '') {
+        this.getApply()
+        return
+      }
+      let params = {
+        key: this.key,
+        pageNum: this.page.current,
+        pageSize: this.page.size
+      }
+      this.handleSearchCompetition(params).then(res => {
+        this.page = res
+        this.tb_res = res.records
+      })
     }
   }
 }

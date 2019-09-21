@@ -77,3 +77,10 @@ export const get_student_group = (pageNum, pageSize) => {
     method: 'get'
   })
 }
+
+export const search_teacher_group = (key, pageNum, pageSize) => {
+  return axios.request({
+    url: `/teacherGroup/search/${key}/${pageNum}/${pageSize}`,
+    method: 'get'
+  })
+}

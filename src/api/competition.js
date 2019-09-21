@@ -7,6 +7,7 @@ export const save_competition = competition => {
     method: 'post'
   })
 }
+
 export const delete_competition = (id) => {
   return axios.request({
     url: `/competition/${id}`,
@@ -46,5 +47,12 @@ export const set_competition_enter_state = (id, flag) => {
   return axios.request({
     url: `competition/enterState/${id}/${flag}`,
     method: 'post'
+  })
+}
+
+export const search_competition = (key, pageNum, pageSize) => {
+  return axios.request({
+    url: `/competition/judge/search/${key}/${pageNum}/${pageSize}`,
+    method: 'get'
   })
 }

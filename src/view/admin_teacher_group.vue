@@ -1,12 +1,16 @@
 <template>
   <Card>
-    <Input search enter-button style="width: 500px"/>
-    <Table  :columns="tb_head" :data="tb_res" stripe></Table>
-    <Page show-total
-          :total="page.total"
-          :current="page.current"
+    <Input enter-button
+           search
+           style="width: 500px"
+           @on-change="search"
+           v-model="key"/>
+    <Table :columns="tb_head" :data="tb_res" stripe></Table>
+    <Page :current="page.current"
           :page-size="page.page_size"
-          @on-change = "pageChange"
+          :total="page.total"
+          @on-change="pageChange"
+          show-total
     />
   </Card>
 </template>
@@ -18,6 +22,7 @@ export default {
   name: 'review_apply_competition',
   data () {
     return {
+      key: '',
       tb_head: [
         {
           title: 'id',
@@ -68,15 +73,16 @@ export default {
   methods: {
     ...mapActions([
       'handleGetAllTeacherGroup',
-      'handleSetTeacherGroupState'
+      'handleSetTeacherGroupState',
+      'handleSearchTeacherGroup'
     ]),
     pageChange (index) {
       this.page.current = index
       this.getApply(index, this.page.size)
     },
     /**
-     * 分页获取学生或教师
-     */
+       * 分页获取学生或教师
+       */
     getApply (pageNum = 1, pageSize = 12) {
       this.handleGetAllTeacherGroup({ pageNum, pageSize }).then(res => {
         this.page = res
@@ -88,6 +94,21 @@ export default {
         if (res) {
           this.getApply()
         }
+      })
+    },
+    search () {
+      if (this.key === '') {
+        this.getApply()
+        return
+      }
+      let params = {
+        key: this.key,
+        pageNum: this.page.current,
+        pageSize: this.page.size
+      }
+      this.handleSearchTeacherGroup(params).then(res => {
+        this.page = res
+        this.tb_res = res.records
       })
     }
   }

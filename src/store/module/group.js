@@ -9,7 +9,7 @@ import {
   get_teacher_group_all,
   set_teacher_group_state,
   get_teacher_group_inviting,
-  get_student_group
+  get_student_group, search_teacher_group
 } from '@/api/group'
 
 export default {
@@ -131,6 +131,15 @@ export default {
     handleGetStudentGroup ({ commit }, { pageNum, pageSize }) {
       return new Promise((resolve, reject) => {
         get_student_group(pageNum, pageSize).then(res => {
+          resolve(res.data.body)
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
+    handleSearchTeacherGroup ({ commit }, { key, pageNum, pageSize }) {
+      return new Promise((resolve, reject) => {
+        search_teacher_group(key, pageNum, pageSize).then(res => {
           resolve(res.data.body)
         }).catch(err => {
           reject(err)

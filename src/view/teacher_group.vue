@@ -22,7 +22,7 @@ export default {
     apply () {
       this.handleCreateTeacherGroup({ groupName: this.groupName }).then(res => {
         if (res) {
-          this.$Message.info('申请中')
+          this.$Message.success('申请中')
         }
       })
     }

@@ -1,13 +1,20 @@
 <template>
     <div class="demo-split">
       <Split v-model="split">
+        <!--左边列表-->
         <div slot="left" class="left-split-pane">
           <Card :padding="0" title="消息列表">
             <CellGroup @on-click="switchGroup">
-              <Cell v-for="(item,index) in message.group"
+              <Cell v-for="(item,index) in message.teacher_group"
                     :key="item.id"
                     :name="index"
-                    :title="item.groupName" />
+                    :title="item" />
+            </CellGroup>
+            <CellGroup @on-click="switchGroup">
+              <Cell v-for="(item,index) in message.student_group"
+                    :key="item.id"
+                    :name="index"
+                    :title="item" />
             </CellGroup>
             <CellGroup @on-click="switchJoin">
               <Cell v-for="(item,index) in message.join"
@@ -17,8 +24,10 @@
             </CellGroup>
           </Card>
         </div>
+        <!--右边-->
         <div slot="right" class="demo-split-pane">
-          <InviteMessage :content="content" style="margin: 15px"></InviteMessage>
+          <InviteMessage :content="content" style="margin: 15px"  v-if="switch_index === 0"/>
+          <StuInviteMessage :content="content" style="margin: 15px"  v-else-if="switch_index === 1"/>
         </div>
       </Split>
     </div>
@@ -28,16 +37,18 @@
 import { mapActions } from 'vuex'
 
 import InviteMessage from '@/view/components/invite-message'
+import StuInviteMessage from '@/view/components/stu-invite-message'
 
 export default {
   name: 'message',
-  components: { InviteMessage },
+  components: { InviteMessage, StuInviteMessage },
   data () {
     return {
       split: 0.3,
       message: new Map(),
       group: [],
-      content: null
+      content: null,
+      switch_index: 0
     }
   },
   mounted () {
@@ -50,7 +61,13 @@ export default {
       'handleGetMessage'
     ]),
     switchGroup (index) {
-      this.content = this.message.group[index]
+      if (this.message.hasOwnProperty('student_group')) {
+        this.switch_index = 1
+        this.content = this.message.student_group[index]
+      } else if (this.message.hasOwnProperty('teacher_group')) {
+        this.switch_index = 0
+        this.content = this.message.teacher_group[index]
+      }
     },
     switchJoin (index) {
       this.content = this.message.join[index]

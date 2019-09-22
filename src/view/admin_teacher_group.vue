@@ -30,15 +30,15 @@ export default {
         },
         {
           title: '名称',
-          key: 'groupName'
+          key: 'name'
         },
         {
           title: '创建者',
-          key: 'groupCreater'
+          key: 'creator'
         },
         {
           title: '申请时间',
-          key: 'groupCreateTime'
+          key: 'createTime'
         },
         {
           title: '状态',
@@ -52,7 +52,7 @@ export default {
                   this.review(params.row.id, params.row.groupState !== '通过')
                 }
               }
-            }, params.row.groupState)
+            }, params.row.state)
           }
         }
       ],

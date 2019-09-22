@@ -5,7 +5,7 @@
         <Row>
           <Select v-model="groupId">
             <Option :key="item.id" :value="item.id" v-for="item in groupList">
-              {{item.groupName}}
+              {{item.name}}
             </Option>
           </Select>
         </Row>

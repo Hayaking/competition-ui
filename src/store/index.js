@@ -16,6 +16,7 @@ import works from './module/works'
 import join from './module/join'
 import message from './module/message'
 import menu from './module/menu'
+import lead from './module/lead'
 
 Vue.use(Vuex)
 
@@ -44,6 +45,7 @@ export default new Vuex.Store({
     works,
     join,
     message,
-    menu
+    menu,
+    lead
   }
 })

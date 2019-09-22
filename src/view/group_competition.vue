@@ -9,7 +9,7 @@
           <FormItem label="当前工作组">
             <Select v-model="competition.groupId">
               <Option  v-for="item in groupList"  :value="item.id" :key="item.id">
-                {{item.groupName}}
+                {{item.name}}
               </Option>
             </Select>
           </FormItem>

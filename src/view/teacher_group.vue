@@ -20,9 +20,15 @@ export default {
       'handleCreateTeacherGroup'
     ]),
     apply () {
+      if (this.groupName.trim() === '') {
+        this.$Message.error('申请失败')
+        return
+      }
       this.handleCreateTeacherGroup({ groupName: this.groupName }).then(res => {
         if (res) {
           this.$Message.success('申请中')
+        } else {
+          this.$Message.error('申请失败')
         }
       })
     }

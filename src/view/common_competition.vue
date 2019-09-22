@@ -186,7 +186,7 @@ export default {
     },
     pageChange (index) {
       this.page.current = index
-      this.search(index, this.page.size)
+      this.getCompetitionPage(index, this.page.size)
     },
     getCompetitionPage (pageNum = 1, pageSize = 12) {
       this.handleGetAllPassCompetition({ pageNum, pageSize }).then(res => {

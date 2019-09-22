@@ -45,11 +45,11 @@ export default {
           render: (h, params) => {
             return h('Button', {
               props: {
-                type: params.row.groupState === '通过' ? 'success' : params.row.groupState === '申请中' ? 'primary' : 'error'
+                type: params.row.state === '通过' ? 'success' : params.row.state === '申请中' ? 'primary' : 'error'
               },
               on: {
                 click: () => {
-                  this.review(params.row.id, params.row.groupState !== '通过')
+                  this.review(params.row.id, params.row.state !== '通过')
                 }
               }
             }, params.row.state)

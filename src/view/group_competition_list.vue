@@ -3,7 +3,7 @@
     <Row>
         <Select v-model="currentGroupId">
           <Option  v-for="item in groupList"  :value="item.id" :key="item.id">
-            {{item.groupName}}
+            {{item.name}}
           </Option>
         </Select>
     </Row>

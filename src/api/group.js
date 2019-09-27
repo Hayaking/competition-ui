@@ -7,6 +7,13 @@ export const get_teacher_group = () => {
   })
 }
 
+export const get_teacher_group_by_page = (pageNum, pageSize) => {
+  return axios.request({
+    url: `teacherGroup/list/${pageNum}/${pageSize}`,
+    method: 'get'
+  })
+}
+
 export const get_teacher_group_all = (pageNum, pageSize) => {
   return axios.request({
     url: `teacherGroup/all/${pageNum}/${pageSize}`,
@@ -50,9 +57,10 @@ export const refuse_teacher_group_invite = (groupId) => {
   })
 }
 
-export const create_teacher_group = (groupName) => {
+export const create_teacher_group = (group) => {
   return axios.request({
-    url: `teacherGroup/create/${groupName}`,
+    url: `teacherGroup/create`,
+    data: group,
     method: 'post'
   })
 }

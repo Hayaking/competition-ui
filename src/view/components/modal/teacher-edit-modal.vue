@@ -6,7 +6,7 @@
     v-model="modalShow">
     <Form :model="user" label-position="left" :label-width="70">
       <FormItem label="id">
-        <Input v-model="user.id"/>
+        <Input v-model="user.id" disabled/>
       </FormItem>
       <FormItem label="账号">
         <Input v-model="user.account"/>
@@ -61,6 +61,7 @@ export default {
           this.$Message.error('失败')
         }
         this.user = {}
+        this.$emit('cancel', true)
       })
     },
     cancel () {

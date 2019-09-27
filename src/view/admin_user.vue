@@ -272,11 +272,14 @@ export default {
     /**
      * 取消角色对话框
      */
-    cancelModal () {
+    cancelModal (flag = false) {
       this.show1 = false
       this.show2 = false
       this.show3 = false
       this.$store.commit('setEditUser', {})
+      if (flag) {
+        this.getUser()
+      }
     },
     /**
      * 显示编辑对话框

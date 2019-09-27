@@ -1,10 +1,5 @@
 <template>
   <Card>
-    <Input enter-button
-           search
-           style="width: 500px"
-           @on-change="search"
-           v-model="key"/>
     <Table :columns="tb_head" :data="tb_res" stripe>
       <template slot-scope="{ row, index }" slot="creator">
         <div>{{row.creator.teacherName}}</div>
@@ -23,7 +18,7 @@
 import { mapActions } from 'vuex'
 
 export default {
-  name: 'review_apply_competition',
+  name: 'teacher_group_list',
   data () {
     return {
       key: '',
@@ -51,14 +46,9 @@ export default {
         {
           title: '状态',
           render: (h, params) => {
-            return h('Button', {
+            return h('Tag', {
               props: {
-                type: params.row.state === '通过' ? 'success' : params.row.state === '申请中' ? 'primary' : 'error'
-              },
-              on: {
-                click: () => {
-                  this.review(params.row.id, params.row.state !== '通过')
-                }
+                color: params.row.state === '通过' ? 'success' : params.row.state === '申请中' ? 'default' : 'error'
               }
             }, params.row.state)
           }
@@ -80,7 +70,7 @@ export default {
   },
   methods: {
     ...mapActions([
-      'handleGetAllTeacherGroup',
+      'handleGetTeacherGroupByPage',
       'handleSetTeacherGroupState',
       'handleSearchTeacherGroup'
     ]),
@@ -92,29 +82,7 @@ export default {
        * 分页获取学生或教师
        */
     getApply (pageNum = 1, pageSize = 12) {
-      this.handleGetAllTeacherGroup({ pageNum, pageSize }).then(res => {
-        this.page = res
-        this.tb_res = res.records
-      })
-    },
-    review (id, flag) {
-      this.handleSetTeacherGroupState({ id, flag }).then(res => {
-        if (res) {
-          this.getApply()
-        }
-      })
-    },
-    search () {
-      if (this.key === '') {
-        this.getApply()
-        return
-      }
-      let params = {
-        key: this.key,
-        pageNum: this.page.current,
-        pageSize: this.page.size
-      }
-      this.handleSearchTeacherGroup(params).then(res => {
+      this.handleGetTeacherGroupByPage({ pageNum, pageSize }).then(res => {
         this.page = res
         this.tb_res = res.records
       })

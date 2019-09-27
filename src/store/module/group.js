@@ -9,7 +9,7 @@ import {
   get_teacher_group_all,
   set_teacher_group_state,
   get_teacher_group_inviting,
-  get_student_group, search_teacher_group
+  get_student_group, search_teacher_group, get_teacher_group_by_page
 } from '@/api/group'
 
 export default {
@@ -22,9 +22,23 @@ export default {
 
   },
   actions: {
+    /**
+     * 获取所在工作组
+     * @param commit
+     * @returns {Promise<unknown>}
+     */
     handleGetTeacherGroup ({ commit }) {
       return new Promise((resolve, reject) => {
         get_teacher_group().then(res => {
+          resolve(res.data.body)
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
+    handleGetTeacherGroupByPage ({ commit }, { pageNum, pageSize }) {
+      return new Promise((resolve, reject) => {
+        get_teacher_group_by_page(pageNum, pageSize).then(res => {
           resolve(res.data.body)
         }).catch(err => {
           reject(err)
@@ -71,12 +85,10 @@ export default {
         })
       })
     },
-    handleCreateTeacherGroup ({ commit }, { groupName }) {
+    handleCreateTeacherGroup ({ commit }, { group }) {
       return new Promise((resolve, reject) => {
-        create_teacher_group(groupName).then(res => {
-          if (res.data.state === 'SUCCESS') {
-            resolve(true)
-          }
+        create_teacher_group(group).then(res => {
+          resolve(res.data.state === 'SUCCESS')
         }).catch(err => {
           reject(err)
         })

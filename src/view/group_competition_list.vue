@@ -195,7 +195,7 @@ export default {
         this.page = res
         this.tb_res = res.records
         this.tb_res.map((item) => {
-          item.type = this.competitionType[item.type - 1].typeName
+          item.type = this.competitionType[item.typeId - 1].typeName
         })
       })
     },

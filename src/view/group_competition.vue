@@ -7,7 +7,7 @@
       <Row>
         <Col offset="1" span="10">
           <FormItem label="当前工作组">
-            <Select v-model="competition.groupId">
+            <Select v-model="competition.teacherGroupId">
               <Option  v-for="item in groupList"  :value="item.id" :key="item.id">
                 {{item.name}}
               </Option>
@@ -43,7 +43,7 @@
             <Input v-model="competition.personInCharge"/>
           </FormItem>
           <FormItem label="竞赛级别" prop="type">
-            <Select v-model="competition.type">
+            <Select v-model="competition.typeId">
               <Option v-for="item in competitionType"  :value="item.id" :key="item.id">
                 {{item.typeName}}
               </Option>
@@ -68,7 +68,7 @@
       <Row>
         <Col offset="1" span="10">
           <FormItem label="比赛过程" prop="process">
-            <Input :rows="4" placeholder="比赛过程" type="textarea" v-model="competition.type"/>
+            <Input :rows="4" placeholder="比赛过程" type="textarea" v-model="competition.process"/>
           </FormItem>
         </Col>
         <Col offset="1" span="11">

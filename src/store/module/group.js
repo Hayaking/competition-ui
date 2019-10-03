@@ -13,7 +13,7 @@ import {
   refuse_teacher_group_invite,
   search_teacher_group,
   set_teacher_group_state,
-  get_teacher_by_group_id
+  get_teacher_by_group_id, remove_teacher_from_group
 } from '@/api/group'
 
 export default {
@@ -69,7 +69,7 @@ export default {
     },
     handleInviteTeacherMember ({ commit }, { groupId, teacherId }) {
       return new Promise((resolve, reject) => {
-        invite_teacher_member(res.data.state === 'SUCCESS').then(res => {
+        invite_teacher_member(groupId, teacherId).then(res => {
           resolve(res.data.state === 'SUCCESS')
         }).catch(err => {
           reject(err)
@@ -177,6 +177,15 @@ export default {
           reject(err)
         })
       })
-    }
+    },
+    handleRemoveTeacherFromGroup ({ commit }, { groupId, teacherId }) {
+      return new Promise((resolve, reject) => {
+        remove_teacher_from_group(groupId, teacherId).then(res => {
+          resolve(res.data.state === 'SUCCESS')
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
   }
 }

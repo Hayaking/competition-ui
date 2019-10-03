@@ -106,3 +106,10 @@ export const get_teacher_by_group_id = (groupId) => {
     method: 'get'
   })
 }
+
+export const remove_teacher_from_group = (groupId, teacherId) => {
+  return axios.request({
+    url: `/teacherGroup/${groupId}/${teacherId}`,
+    method: 'delete'
+  })
+}

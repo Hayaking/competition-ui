@@ -9,10 +9,25 @@
             </Option>
           </Select>
         </Row>
-        <Table :columns="tb_head1" :data="tb_res1" border height="520" size="small" stripe></Table>
+        <Table :columns="tb_head1" :data="tb_res1" border height="520" size="small" stripe>
+          <template slot-scope="{ row, index }" slot="action">
+            <Button v-if="row.state === '邀请成功'" type="error" size="small" @click="remove(row.id)">
+              删除
+            </Button>
+            <Button v-else type="success" size="small" disabled >
+              {{row.state}}
+            </Button>
+          </template>
+        </Table>
       </Col>
       <Col span="11" offset="2">
-        <Table :columns="tb_head2" :data="tb_res2" border height="520" size="small" stripe></Table>
+        <Table :columns="tb_head2" :data="tb_res2" border height="520" size="small" stripe>
+          <template slot-scope="{ row, index }" slot="action">
+            <Button type="primary" size="small" @click="invite(row._index)">
+              邀请
+            </Button>
+          </template>
+        </Table>
       </Col>
     </Row>
 
@@ -36,37 +51,9 @@ export default {
           key: 'teacherName'
         }, {
           title: '操作',
-          key: 'action',
+          slot: 'action',
           width: 150,
-          align: 'center',
-          render: (h, params) => {
-            if (params.row.state === '邀请成功') {
-              return h('Button', {
-                props: {
-                  type: 'error',
-                  size: 'small'
-                },
-                on: {
-                  click: () => {
-                    this.remove(params.row._index)
-                  }
-                }
-              }, '删除')
-            } else {
-              return h('Button', {
-                props: {
-                  type: 'error',
-                  size: 'small',
-                  disabled: true
-                },
-                on: {
-                  click: () => {
-                    this.remove(params.row._index)
-                  }
-                }
-              }, params.row.state)
-            }
-          }
+          align: 'center'
         }
       ],
       tb_res1: [],
@@ -79,24 +66,9 @@ export default {
           key: 'teacherName'
         }, {
           title: '操作',
-          key: 'action',
+          slot: 'action',
           width: 150,
-          align: 'center',
-          render: (h, params) => {
-            return h('div', [
-              h('Button', {
-                props: {
-                  type: 'primary',
-                  size: 'small'
-                },
-                on: {
-                  click: () => {
-                    this.invite(params.row._index)
-                  }
-                }
-              }, '邀请')
-            ])
-          }
+          align: 'center'
         }
       ],
       tb_res2: [],
@@ -105,17 +77,15 @@ export default {
     }
   },
   mounted () {
-    this.$store.dispatch('handleGetTeacherGroup').then(res => {
-      this.groupList = res
-      this.groupId = res[0].id
-    })
-    this.$store.dispatch('handleGetAllTeacher').then(res => {
-      this.tb_res2 = res
-    })
+    this.getTeacherGroup()
+    this.getAllTeacher()
   },
   methods: {
     ...mapActions([
-      'handleInviteTeacherMember'
+      'handleInviteTeacherMember',
+      'handleGetTeacherGroup',
+      'handleGetAllTeacher',
+      'handleRemoveTeacherFromGroup'
     ]),
     /**
      * 差集
@@ -141,6 +111,34 @@ export default {
             this.$Message.info('邀请中')
           })
         }
+      })
+    },
+    remove (id) {
+      console.info(id)
+      this.handleRemoveTeacherFromGroup({ groupId: this.groupId, teacherId: id }).then(res => {
+        if (res) {
+          this.$Message.info('!')
+          this.differSet()
+        } else {
+          this.$Message.info('?')
+        }
+      })
+    },
+    /**
+     * 获取教师所在工作组
+     */
+    getTeacherGroup () {
+      this.handleGetTeacherGroup().then(res => {
+        this.groupList = res
+        this.groupId = res[0].id
+      })
+    },
+    /**
+     * 获取所有教师
+     */
+    getAllTeacher () {
+      this.handleGetAllTeacher().then(res => {
+        this.tb_res2 = res
       })
     }
   },

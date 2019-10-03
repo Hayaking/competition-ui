@@ -1,15 +1,19 @@
 import {
-  get_teacher_group,
-  invite_teacher_member,
-  invite_student_member,
   agree_teacher_group_invite,
-  refuse_teacher_group_invite,
-  create_teacher_group,
   create_student_group,
+  create_teacher_group,
+  exit_teacher_group,
+  get_student_group,
+  get_teacher_group,
   get_teacher_group_all,
-  set_teacher_group_state,
+  get_teacher_group_by_page,
   get_teacher_group_inviting,
-  get_student_group, search_teacher_group, get_teacher_group_by_page
+  invite_student_member,
+  invite_teacher_member,
+  refuse_teacher_group_invite,
+  search_teacher_group,
+  set_teacher_group_state,
+  get_teacher_by_group_id
 } from '@/api/group'
 
 export default {
@@ -63,12 +67,10 @@ export default {
         })
       })
     },
-    handleInviteTeacherMember ({ commit }, { groupId, account }) {
+    handleInviteTeacherMember ({ commit }, { groupId, teacherId }) {
       return new Promise((resolve, reject) => {
-        invite_teacher_member(groupId, account).then(res => {
-          if (res.data.state === 'SUCCESS') {
-            resolve(true)
-          }
+        invite_teacher_member(res.data.state === 'SUCCESS').then(res => {
+          resolve(res.data.state === 'SUCCESS')
         }).catch(err => {
           reject(err)
         })
@@ -152,6 +154,24 @@ export default {
     handleSearchTeacherGroup ({ commit }, { key, pageNum, pageSize }) {
       return new Promise((resolve, reject) => {
         search_teacher_group(key, pageNum, pageSize).then(res => {
+          resolve(res.data.body)
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
+    handleExitTeacherGroup ({ commit }, { groupId }) {
+      return new Promise((resolve, reject) => {
+        exit_teacher_group(groupId).then(res => {
+          resolve(res.data.state === 'SUCCESS')
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
+    handleGetTeacherByGroupId ({ commit }, { groupId }) {
+      return new Promise((resolve, reject) => {
+        get_teacher_by_group_id(groupId).then(res => {
           resolve(res.data.body)
         }).catch(err => {
           reject(err)

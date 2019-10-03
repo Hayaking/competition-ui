@@ -28,9 +28,9 @@ export const get_teacher_group_inviting = () => {
   })
 }
 
-export const invite_teacher_member = (groupId, account) => {
+export const invite_teacher_member = (groupId, teacherId) => {
   return axios.request({
-    url: `teacherGroup/invite/${groupId}/${account}`,
+    url: `teacherGroup/invite/${groupId}/${teacherId}`,
     method: 'post'
   })
 }
@@ -89,6 +89,20 @@ export const get_student_group = (pageNum, pageSize) => {
 export const search_teacher_group = (key, pageNum, pageSize) => {
   return axios.request({
     url: `/teacherGroup/search/${key}/${pageNum}/${pageSize}`,
+    method: 'get'
+  })
+}
+
+export const exit_teacher_group = (groupId) => {
+  return axios.request({
+    url: `/teacherGroup/${groupId}`,
+    method: 'delete'
+  })
+}
+
+export const get_teacher_by_group_id = (groupId) => {
+  return axios.request({
+    url: `teacherGroup/${groupId}/teachers`,
     method: 'get'
   })
 }

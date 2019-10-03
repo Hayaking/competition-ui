@@ -1,10 +1,9 @@
 import {
   get_all_teacher,
-  get_teacher_by_group_id,
   get_all_teacher_by_page,
   get_lead_teacher_list,
-  search_teacher_by_page,
-  insert_or_update_teacher
+  insert_or_update_teacher,
+  search_teacher_by_page
 } from '@/api/teacher'
 
 export default {
@@ -42,15 +41,6 @@ export default {
     handleSearchTeacher ({ commit }, { key, pageNum, pageSize }) {
       return new Promise((resolve, reject) => {
         search_teacher_by_page(key, pageNum, pageSize).then(res => {
-          resolve(res.data.body)
-        }).catch(err => {
-          reject(err)
-        })
-      })
-    },
-    handleGetTeacherByGroupId ({ commit }, { groupId }) {
-      return new Promise((resolve, reject) => {
-        get_teacher_by_group_id(groupId).then(res => {
           resolve(res.data.body)
         }).catch(err => {
           reject(err)

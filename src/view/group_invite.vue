@@ -123,14 +123,14 @@ export default {
     differSet () {
       this.tb_res2 = this.tb_res2.filter(item => {
         return this.tb_res1.every((i) => {
-          return i.account !== item.account
+          return i.id !== item.id
         })
       })
     },
     invite (index) {
       let params = {
         groupId: this.groupId,
-        account: this.tb_res2[index].account
+        teacherId: this.tb_res2[index].id
       }
       this.handleInviteTeacherMember(params).then(res => {
         if (res) {

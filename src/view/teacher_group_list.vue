@@ -4,6 +4,9 @@
       <template slot-scope="{ row, index }" slot="creator">
         <div>{{row.creator.teacherName}}</div>
       </template>
+      <template slot-scope="{ row, index }" slot="action">
+        <Button type="error" @click="exit(row.id)">退出</Button>
+      </template>
     </Table>
     <Page :current="page.current"
           :page-size="page.page_size"
@@ -52,6 +55,10 @@ export default {
               }
             }, params.row.state)
           }
+        },
+        {
+          title: '操作',
+          slot: 'action'
         }
       ],
       tb_res: [],
@@ -72,19 +79,29 @@ export default {
     ...mapActions([
       'handleGetTeacherGroupByPage',
       'handleSetTeacherGroupState',
-      'handleSearchTeacherGroup'
+      'handleSearchTeacherGroup',
+      'handleExitTeacherGroup'
     ]),
     pageChange (index) {
       this.page.current = index
       this.getApply(index, this.page.size)
     },
     /**
-       * 分页获取学生或教师
-       */
+     * 分页获取学生或教师
+     */
     getApply (pageNum = 1, pageSize = 12) {
       this.handleGetTeacherGroupByPage({ pageNum, pageSize }).then(res => {
         this.page = res
         this.tb_res = res.records
+      })
+    },
+    exit (groupId) {
+      this.handleExitTeacherGroup({ groupId }).then(res => {
+        if (res) {
+          this.$Message.success('成功')
+        } else {
+          this.$Message.error('失败')
+        }
       })
     }
   }

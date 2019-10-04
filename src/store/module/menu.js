@@ -22,7 +22,7 @@ export default {
   actions: {
     handleGetRoute ({ commit, rootState }) {
       return new Promise((resolve, reject) => {
-        get_route(rootState.user.type).then(res => {
+        get_route().then(res => {
           if (res.data.state === 'SUCCESS') {
             resolve(res.data.body)
           } else {

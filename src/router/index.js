@@ -83,6 +83,13 @@ router.afterEach(to => {
   setTitle(to, router.app)
   iView.LoadingBar.finish()
   window.scrollTo(0, 0)
+  store.dispatch('handleGetUserInfo').then(res => {
+    if (res) {
+      this.$Message.success('获取成功')
+    } else {
+      this.$Message.error('获取失败')
+    }
+  })
 })
 
 export default router

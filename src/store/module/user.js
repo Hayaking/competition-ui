@@ -1,4 +1,4 @@
-import { getUserInfo, login, logout, sign } from '@/api/user'
+import { get_user_info, login, logout, sign } from '@/api/user'
 import { getToken, getType, setToken, setType } from '@/libs/util'
 
 export default {
@@ -6,7 +6,6 @@ export default {
     user: {
       account: ''
     },
-
     hasGetInfo: false,
     // 当前用户类型;将type存入localstage
     type: getType(),
@@ -33,7 +32,8 @@ export default {
     }
   },
   getters: {
-    getToken: state => state.token
+    getToken: state => state.token,
+    getUserInfo: state => state.user
   },
   actions: {
     // 登录
@@ -41,11 +41,10 @@ export default {
       account = account.trim()
       return new Promise((resolve, reject) => {
         login(type, account, password).then(res => {
-          let data = res.data
-          if (data.state === 'SUCCESS') {
-            commit('setToken', data.body)
-            resolve()
+          if (res.data.state === 'SUCCESS') {
+            commit('setToken', res.data.body)
           }
+          resolve(res.data.state)
         }).catch(err => {
           reject(err)
         })
@@ -65,24 +64,18 @@ export default {
       })
     },
     // 获取用户相关信息
-    getUserInfo ({ state, commit }, { type }) {
+    handleGetUserInfo ({ commit }) {
       return new Promise((resolve, reject) => {
-        try {
-          getUserInfo(type).then(res => {
-            let data = res.data
-            if (data.state === 'SUCCESS') {
-              commit('setHasGetInfo', true)
-              commit('setType', type)
-              commit('setUser', data.body)
-              console.info(state.user)
-              resolve(data.body)
-            }
-          }).catch(err => {
-            reject(err)
-          })
-        } catch (e) {
-          console.info(e)
-        }
+        get_user_info().then(res => {
+          let data = res.data
+          if (data.state === 'SUCCESS') {
+            commit('setHasGetInfo', true)
+            commit('setUser', data.body)
+          }
+          resolve(data.state === 'SUCCESS')
+        }).catch(err => {
+          reject(err)
+        })
       })
     },
     // 注册

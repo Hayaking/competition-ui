@@ -9,9 +9,9 @@ export const login = (type, account, password) => {
   })
 }
 
-export const getUserInfo = (type) => {
+export const get_user_info = () => {
   return axios.request({
-    url: `info/${type}`,
+    url: `info`,
     method: 'get'
   })
 }

@@ -1,15 +1,15 @@
 import axios from '@/libs/api.request'
 
-export const get_route = (type) => {
+export const get_route = () => {
   return axios.request({
-    url: `menu/${type}`,
+    url: `menu`,
     method: 'get'
   })
 }
 
 export const get_all_route = () => {
   return axios.request({
-    url: `menu`,
+    url: `menu/all`,
     method: 'get'
   })
 }

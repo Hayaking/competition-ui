@@ -7,6 +7,9 @@
       <Icon :size="18" type="md-arrow-dropdown"></Icon>
       <DropdownMenu slot="list">
         <DropdownItem name="message">
+          {{userName}}
+        </DropdownItem>
+        <DropdownItem name="message">
           消息中心<Badge style="margin-left: 10px" :count="messageUnreadCount"></Badge>
         </DropdownItem>
         <DropdownItem name="logout">退出登录</DropdownItem>
@@ -28,6 +31,11 @@ export default {
     messageUnreadCount: {
       type: Number,
       default: 0
+    }
+  },
+  data () {
+    return {
+      getter: this.$store.getters
     }
   },
   methods: {
@@ -52,6 +60,19 @@ export default {
           break
         case 'common_message.vue': this.message()
           break
+      }
+    }
+  },
+  computed: {
+    userName: {
+      get () {
+        console.info(this.getter.getUserInfo)
+        if (this.getter.getUserInfo.stuName) {
+          return this.getter.getUserInfo.stuName
+        }
+        if (this.getter.getUserInfo.teacherName) {
+          return this.getter.getUserInfo.teacherName
+        }
       }
     }
   }

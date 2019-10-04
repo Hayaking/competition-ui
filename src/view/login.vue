@@ -41,14 +41,25 @@ export default {
     ...mapActions([
       'handleLogin',
       'handleSign',
-      'getUserInfo'
+      'handleGetUserInfo'
     ]),
     toLogin ({ account, password }) {
       let type = this.type
       this.handleLogin({ type, account, password }).then(res => {
-        this.getUserInfo({ type }).then(res => {
-          this.$router.push({ name: 'home' })
-        })
+        if (res) {
+          this.$Message.success('登陆成功')
+          this.$Message.success('正在获取用户信息')
+          this.handleGetUserInfo().then(res => {
+            if (res) {
+              this.$Message.success('获取成功')
+              this.$router.push({ name: 'home' })
+            } else {
+              this.$Message.error('获取失败')
+            }
+          })
+        } else {
+          this.$Message.error('登陆失败')
+        }
       })
     },
     toSign ({ account, password }) {

@@ -27,6 +27,7 @@
 
 <script>
 import { mapActions } from 'vuex'
+import { dateFomat } from '@/libs/tools'
 
 export default {
   name: 'group-invite-modal',
@@ -176,6 +177,15 @@ export default {
         records: []
       }
     }
+  },
+  mounted () {
+    this.$nextTick(() => {
+      this.getCompetitionType()
+      this.handleGetTeacherGroup().then(res => {
+        this.groupList = res
+        this.competition.groupId = res[0].id
+      })
+    })
   },
   methods: {
     cancel () {

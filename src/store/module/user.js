@@ -69,7 +69,6 @@ export default {
         get_user_info().then(res => {
           let data = res.data
           if (data.state === 'SUCCESS') {
-            commit('setHasGetInfo', true)
             commit('setUser', data.body)
           }
           resolve(data.state === 'SUCCESS')

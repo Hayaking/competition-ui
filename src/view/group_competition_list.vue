@@ -1,14 +1,37 @@
 <template>
   <Card>
-    <Row>
-        <Select v-model="currentGroupId">
-          <Option  v-for="item in groupList"  :value="item.id" :key="item.id">
-            {{item.name}}
-          </Option>
-        </Select>
-    </Row>
+    <div slot="title">
+      <Row>
+        <Col span="3">
+          <Select v-model="groupId">
+            <Option  v-for="item in groupList"  :value="item.id" :key="item.id">
+              {{item.name}}
+            </Option>
+          </Select>
+        </Col>
+        <Col span="5">
+          <Input search
+                 class="tool-bar"/>
+        </Col>
+        <Col span="5">
+          <Button type="primary" @click="addCompetition">增加</Button>
+        </Col>
+      </Row>
+    </div>
 
-    <Table :columns="tb_head" :data="tb_res" stripe border ></Table>
+    <Table :columns="tb_head" :data="tb_res" stripe border >
+      <template slot-scope="{ row, index }" slot="action">
+        <Button type="primary" size="small" style="margin-right: 5px" @click="toEnterList(row.id)">
+          报名列表
+        </Button>
+        <Button type="success" size="small" style="margin-right: 5px" @click="setEnterState(row.id, true)">
+          编辑
+        </Button>
+        <Button type="error" size="small" @click="deleteCompetition(row.id)">
+          删除
+        </Button>
+      </template>
+    </Table>
     <Page show-total
           :total="page.total"
           :current="page.current"
@@ -22,7 +45,7 @@
 import { mapActions } from 'vuex'
 import { dateFomat } from '@/libs/tools'
 export default {
-  name: 'apply_competition',
+  name: 'group_competition_list',
   data () {
     return {
       getter: this.$store.getters,
@@ -33,7 +56,7 @@ export default {
         personInCharge: '',
         type: ''
       },
-      currentGroupId: 0,
+      groupId: 0,
       competitionType: [],
       groupList: [],
       tb_head: [
@@ -75,11 +98,18 @@ export default {
           render: (h, params) => {
             return h('div', {}, dateFomat(params.row.enterEndTime))
           }
-        }, {
+        },
+        {
           title: '主办方',
           key: 'org',
           width: 100
-        }, {
+        },
+        {
+          title: '参赛形式',
+          key: 'typeJoinId',
+          width: 100
+        },
+        {
           title: '竞赛级别',
           key: 'type',
           width: 100
@@ -113,42 +143,9 @@ export default {
           }
         }, {
           title: '操作',
-          key: 'action',
-          width: 150,
-          align: 'center',
-          fixed: 'right',
-          render: (h, params) => {
-            return h('div', [
-              h('Button', {
-                props: {
-                  type: 'primary',
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px'
-                },
-                on: {
-                  click: () => {
-                    this.setEnterState(params.row.id, true)
-                  }
-                }
-              }, '编辑'),
-              h('Button', {
-                props: {
-                  type: 'error',
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px'
-                },
-                on: {
-                  click: () => {
-                    this.deleteCompetition(params.row.id)
-                  }
-                }
-              }, '删除')
-            ])
-          }
+          slot: 'action',
+          width: 200,
+          fixed: 'right'
         }
       ],
       tb_res: [],
@@ -162,11 +159,15 @@ export default {
   },
   mounted () {
     this.$nextTick(() => {
+      this.groupId = this.$route.params.id
+      this.getApply()
       this.getCompetitionType()
       // 获取该老师属于的工作组
       this.handleGetTeacherGroup().then(res => {
         this.groupList = res
-        this.currentGroupId = res[0].id
+        if (this.groupId === 0) {
+          this.groupId = res[0].id
+        }
       })
     })
   },
@@ -190,7 +191,7 @@ export default {
      * 获取竞赛
      */
     getApply (pageNum = 1, pageSize = 12) {
-      let groupId = this.currentGroupId
+      let groupId = this.groupId
       this.handleGetByGroupId({ pageNum, pageSize, groupId }).then(res => {
         this.page = res
         this.tb_res = res.records
@@ -234,14 +235,23 @@ export default {
     },
     editCompetition () {
 
+    },
+    addCompetition () {
+      this.$router.push({ name: 'group_competition' })
+    },
+    toEnterList (id) {
+      this.$router.push({
+        name: 'competition_enter_list',
+        params: {
+          id: id
+        } })
     }
   },
   watch: {
-    currentGroupId () {
+    groupId () {
       this.getApply()
     }
   }
-
 }
 </script>
 

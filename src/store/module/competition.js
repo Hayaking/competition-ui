@@ -5,19 +5,38 @@ import {
   get_competition5_by_type_id,
   get_competition_all,
   set_competition_state,
-  set_competition_enter_state, search_competition, get_competition_pass_all, search_pass_competition
+  set_competition_enter_state,
+  search_competition,
+  get_competition_pass_all,
+  search_pass_competition,
+  get_competition_by_id
 } from '@/api/competition'
 
 export default {
   state: {
+    temp_competition: {}
   },
   mutations: {
-
+    setTempCompetition (state, competition) {
+      state.temp_competition = competition
+    }
   },
   getters: {
-
+    getTempCompetition: state => state.temp_competition
   },
   actions: {
+    handleGetCompetitionById ({ commit }, { id }) {
+      return new Promise((resolve, reject) => {
+        get_competition_by_id(id).then(res => {
+          if (res.data.state === 'SUCCESS') {
+            commit('setTempCompetition', res.data.body)
+          }
+          resolve(res.data.state === 'SUCCESS')
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
     saveCompetition ({ state, commit }, { competition }) {
       return new Promise((resolve, reject) => {
         save_competition(competition).then(res => {

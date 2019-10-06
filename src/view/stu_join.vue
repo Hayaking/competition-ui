@@ -260,7 +260,7 @@ export default {
   },
   computed: {
     competition () {
-      return this.getter.getEnterCompetition
+      return this.getter.getTempCompetition
     }
   }
 }

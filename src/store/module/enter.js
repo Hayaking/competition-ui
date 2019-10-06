@@ -1,29 +1,33 @@
-import {
-  get_enter_competition
-} from '@/api/enter'
+import { export_enter_excel, get_enter_list_by_competition_id } from '@/api/enter'
 
 export default {
   state: {
-    enter_competition: {}
+
   },
   mutations: {
-    setEnterCompetition (state, cp) {
-      state.enter_competition = cp
-    }
+
   },
   getters: {
-    getEnterCompetition: state => state.enter_competition
+
   },
   actions: {
-    handleGetEnterCompetition ({ state }, { id }) {
+    handleGetEnterListByCompetitionId ({ commit }, { pageNum, pageSize, competitionId }) {
       return new Promise((resolve, reject) => {
-        get_enter_competition(id).then(res => {
+        get_enter_list_by_competition_id(pageNum, pageSize, competitionId).then(res => {
           if (res.data.state === 'SUCCESS') {
-            state.enter_competition = res.data.body
-            resolve(true)
+            resolve(res.data.body)
           } else {
             resolve(false)
           }
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
+    handleExportEnterExcel ({ commit }, { competitionId }) {
+      return new Promise((resolve, reject) => {
+        export_enter_excel(competitionId).then(res => {
+          resolve(res.data.state === 'SUCCESS')
         }).catch(err => {
           reject(err)
         })

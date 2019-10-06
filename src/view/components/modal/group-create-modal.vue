@@ -1,11 +1,12 @@
 <template>
   <Modal
     title="创建工作组"
+    @on-ok="apply"
     @on-cancel="cancel"
     v-model="modalShow">
     <Row>
-      <Col span="8">&nbsp;</Col>
-      <Col span="8">
+      <Col span="2">&nbsp;</Col>
+      <Col span="20">
         <Form  ref="form" :model="group" :rules= "rules">
           <FormItem label="工作组名：" prop="name">
             <Input v-model="group.name" placeholder="请输入" type="text"/>
@@ -13,12 +14,9 @@
           <FormItem label="申请理由：" prop="reason">
             <Input v-model="group.reason" placeholder="请输入" type="textarea" />
           </FormItem>
-          <FormItem>
-            <Button type="primary" @click="apply">申请</Button>
-          </FormItem>
         </Form>
       </Col>
-      <Col span="8">&nbsp;</Col>
+      <Col span="2">&nbsp;</Col>
     </Row>
   </Modal>
 </template>

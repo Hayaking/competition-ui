@@ -8,6 +8,13 @@ export const save_competition = competition => {
   })
 }
 
+export const get_competition_by_id = (id) => {
+  return axios.request({
+    url: `/competition/${id}`,
+    method: 'get'
+  })
+}
+
 export const delete_competition = (id) => {
   return axios.request({
     url: `/competition/${id}`,
@@ -24,7 +31,7 @@ export const get_competition_by_group_id = (pageNum, pageSize, groupId) => {
 
 export const get_competition5_by_type_id = (typeId) => {
   return axios.request({
-    url: `/competition/${typeId}`,
+    url: `/competition/rank/${typeId}`,
     method: 'get'
   })
 }

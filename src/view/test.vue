@@ -1,9 +1,17 @@
 <template>
   <Card>
     <!--工具栏-->
-    <ButtonGroup slot="title">
-      <Button @click="showCreate" type="primary">创建工作组</Button>
-    </ButtonGroup>
+    <div slot="title">
+      <Row>
+        <Col span="5">
+          <Input search
+                 class="tool-bar"/>
+        </Col>
+        <Col span="3">
+          <Button @click="showCreate" type="primary">创建工作组</Button>
+        </Col>
+      </Row>
+    </div>
     <!--内容-->
     <div>
       <Table :columns="tb_head" :data="tb_res" stripe>
@@ -11,9 +19,23 @@
           <div>{{row.creator.teacherName}}</div>
         </template>
         <template slot-scope="{ row, index }" slot="action">
-          <Button type="primary" @click="showCompetition(row.id)">查看比赛立项</Button>
-          <Button type="primary" @click="showInvite(row.id)">邀请组员</Button>
-          <Button type="error" @click="exit(row.id)">退出</Button>
+          <Button type="primary"
+                  @click="showCompetition(row.id)">
+            查看比赛立项
+          </Button>
+          <Button type="primary"
+                  :disabled="isDisabled(row.creator.teacherName)"
+                  @click="showInvite(row.id)">
+            邀请组员
+          </Button>
+          <Button type="primary"
+                  :disabled="isDisabled(row.creator.teacherName)"
+                  @click="toPost()">
+            发表公告
+          </Button>
+          <Button type="error" @click="exit(row.id)">
+            退出
+          </Button>
         </template>
       </Table>
       <Page :current="page.current"
@@ -44,29 +66,34 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapMutations } from 'vuex'
 import InviteModal from '@/view/components/modal/group-invite-modal'
 import CompetitionModal from '@/view/components/modal/group-competition-modal'
 import CreateModal from '@/view/components/modal/group-create-modal'
+import { sleep } from '@/libs/util'
 
 export default {
   name: 'test',
   components: { InviteModal, CompetitionModal, CreateModal },
   data () {
     return {
+      getter: this.$store.getters,
       key: '',
       tb_head: [
         {
           title: 'id',
-          key: 'id'
+          key: 'id',
+          width: 80
         },
         {
           title: '名称',
-          key: 'name'
+          key: 'name',
+          width: 100
         },
         {
           title: '创建者',
-          slot: 'creator'
+          slot: 'creator',
+          width: 100
         },
         {
           title: '申请理由',
@@ -74,10 +101,12 @@ export default {
         },
         {
           title: '申请时间',
-          key: 'createTime'
+          key: 'createTime',
+          width: 150
         },
         {
           title: '状态',
+          width: 100,
           render: (h, params) => {
             return h('Tag', {
               props: {
@@ -88,7 +117,6 @@ export default {
         },
         {
           title: '操作',
-          width: 300,
           slot: 'action'
         }
       ],
@@ -102,7 +130,8 @@ export default {
       showInviteModal: false,
       showCompetitionModal: false,
       showCreateModal: false,
-      groupId: 0
+      groupId: 0,
+      preGroupId: 0
     }
   },
   mounted () {
@@ -111,6 +140,9 @@ export default {
     })
   },
   methods: {
+    ...mapMutations([
+      'closeTag'
+    ]),
     ...mapActions([
       'handleGetTeacherGroupByPage',
       'handleSetTeacherGroupState',
@@ -149,11 +181,39 @@ export default {
       this.showInviteModal = true
     },
     showCompetition (id) {
-      this.groupId = id
-      this.showCompetitionModal = true
+      // this.groupId = id
+      // this.showCompetitionModal = true
+      this.closeTag({
+        name: 'group_competition_list',
+        params: {
+          id: this.preGroupId
+        }
+      })
+      sleep(10).then(() => {
+        this.$router.push({
+          name: 'group_competition_list',
+          params: {
+            id: id
+          }
+        })
+        this.preGroupId = id
+      })
     },
     showCreate () {
       this.showCreateModal = true
+    },
+    isDisabled (creatorName) {
+      return !(this.userName === creatorName)
+    },
+    toPost () {
+      this.$router.push({ name: 'group_post' })
+    }
+  },
+  computed: {
+    userName: {
+      get () {
+        return this.getter.getUserInfo.teacherName
+      }
     }
   }
 }

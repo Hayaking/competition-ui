@@ -15,11 +15,12 @@ const router = new Router({
   mode: 'history'
 })
 const LOGIN_PAGE_NAME = 'login'
+const HOME_PAGE_NAME = '_home'
 
 router.beforeEach((to, from, next) => {
   iView.LoadingBar.start()
   const token = getToken()
-
+  console.info('to:' + to.name)
   if (store.getters.getRoutes.length === 0 && store.getters.getToken) {
     let constRoutes = []
     let menuData = [
@@ -69,10 +70,12 @@ router.beforeEach((to, from, next) => {
     // 未登陆且要跳转的页面是登录页
     console.info('未登陆且要跳转的页面是登录页')
     next() // 跳转
-  } else if (token && to.name === homeName) {
+  } else if (token && to.name === LOGIN_PAGE_NAME) {
     // 已登录且要跳转的页面是登录页
     console.info('已登录且要跳转的页面是登录页')
-    next()
+    next({
+      name: HOME_PAGE_NAME
+    })
   } else {
     console.info('else')
     next()
@@ -83,13 +86,7 @@ router.afterEach(to => {
   setTitle(to, router.app)
   iView.LoadingBar.finish()
   window.scrollTo(0, 0)
-  store.dispatch('handleGetUserInfo').then(res => {
-    if (res) {
-      this.$Message.success('获取成功')
-    } else {
-      this.$Message.error('获取失败')
-    }
-  })
+  store.dispatch('handleGetUserInfo')
 })
 
 export default router

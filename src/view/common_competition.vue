@@ -169,8 +169,8 @@ export default {
     ...mapActions([
       'handleGetType',
       'handleGetAllPassCompetition',
-      'handleGetEnterCompetition',
-      'handleSearchPassCompetition'
+      'handleSearchPassCompetition',
+      'handleGetCompetitionById'
     ]),
     /**
      * 获取竞赛级别
@@ -198,7 +198,7 @@ export default {
       })
     },
     enter (id) {
-      this.handleGetEnterCompetition({ id }).then(res => {
+      this.handleGetCompetitionById({ id }).then(res => {
         if (res) {
           this.$router.push({ name: 'stu_join' })
         } else {

@@ -93,7 +93,7 @@
 import { mapActions } from 'vuex'
 
 export default {
-  name: 'apply_competition',
+  name: 'group_competition',
   data () {
     return {
       getter: this.$store.getters,

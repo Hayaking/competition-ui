@@ -1,12 +1,15 @@
 <template>
   <Card>
-    <Input
-      search
-      enter-button
-      style="width: 500px;"
-      @on-change="search"
-      v-model="key"
-    />
+    <div slot="title">
+      <Input
+        search
+        enter-button
+        style="width: 500px;"
+        @on-change="search"
+        v-model="key"
+      />
+    </div>
+
     <Table :columns="tb_head" :data="tb_res" stripe border >
       <template slot-scope="{ row, index }" slot="action">
         <Button @click="enter(row.id)"
@@ -193,7 +196,7 @@ export default {
         this.page = res
         this.tb_res = res.records
         this.tb_res.map((item) => {
-          item.type = this.competitionType[item.type - 1].typeName
+          item.type = this.competitionType[item.typeId - 1].typeName
         })
       })
     },

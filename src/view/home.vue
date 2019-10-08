@@ -1,6 +1,18 @@
 <template>
   <div>
     <Row>
+      <Col span="24">
+        <Card title="公告" padding="0">
+          <a href="#" slot="extra" @click="more">
+            <Icon type="ios-loop-strong"></Icon>更多
+          </a>
+          <br>
+          <br>
+          <br>
+        </Card>
+      </Col>
+    </Row>
+    <Row>
       <Col span="11">
         <Card title="国赛" padding="0">
           <a href="#" slot="extra" @click="more">

@@ -1,12 +1,13 @@
 <template>
   <Card>
     <Form :label-width="70"
+          ref="createForm"
           :rules="rules"
           :model="competition"
           label-position="left">
       <Row>
         <Col offset="1" span="10">
-          <FormItem label="当前工作组">
+          <FormItem label="当前工作组" prop="groupId">
             <Select v-model="competition.teacherGroupId">
               <Option  v-for="item in groupList"  :value="item.id" :key="item.id">
                 {{item.name}}
@@ -16,10 +17,10 @@
           <FormItem label="比赛名称" prop = "name">
             <Input v-model="competition.name"/>
           </FormItem>
-          <FormItem label="比赛时间" >
+          <FormItem label="比赛时间" prop="startDate">
             <DatePicker type="daterange" v-model="startAndEndDate"></DatePicker>
           </FormItem>
-          <FormItem label="报名时间" >
+          <FormItem label="报名时间" prop="enterDate">
             <DatePicker type="daterange" v-model="enterDate"></DatePicker>
           </FormItem>
           <FormItem label="预期参赛队数" prop="groupNum">
@@ -122,10 +123,13 @@ export default {
       joinType: ['单人赛', '多人赛'],
       groupList: [],
       rules: {
+        groupId: [{ required: true, message: '不为空' }],
         name: [{ required: true, message: '不为空' }],
         groupNum: [{ required: true, message: '不为空' }],
         stuNum: [{ required: true, message: '不为空' }],
         place: [{ required: true, message: '不为空' }],
+        startDate: [{ required: true, message: '不为空' }],
+        enterDate: [{ required: true, message: '不为空' }],
         org: [{ required: true, message: '不为空' }],
         coOrg: [{ required: true, message: '不为空' }],
         type: [{ required: true, message: '不为空' }],
@@ -156,15 +160,19 @@ export default {
      * 提交比赛立项
      */
     save () {
-      this.competition.startTime = this.startAndEndDate[0]
-      this.competition.endTime = this.startAndEndDate[1]
-      this.competition.enterStartTime = this.enterDate[0]
-      this.competition.enterEndTime = this.enterDate[1]
-      this.saveCompetition({ competition: this.competition }).then(res => {
-        if (res) {
-          this.$Message.success('保存成功')
-        } else {
-          this.$Message.error('保存失败')
+      this.$refs.createForm.validate(valid => {
+        if (valid) {
+          this.competition.startTime = this.startAndEndDate[0]
+          this.competition.endTime = this.startAndEndDate[1]
+          this.competition.enterStartTime = this.enterDate[0]
+          this.competition.enterEndTime = this.enterDate[1]
+          this.saveCompetition({ competition: this.competition }).then(res => {
+            if (res) {
+              this.$Message.success('保存成功')
+            } else {
+              this.$Message.error('保存失败')
+            }
+          })
         }
       })
     },

@@ -1,10 +1,13 @@
 <template>
   <Card>
-    <Input search
-           enter-button
-           style="width: 500px"
-           @on-change="search"
-           v-model="key"/>
+    <div slot="title">
+      <Input search
+             enter-button
+             style="width: 500px"
+             @on-change="search"
+             v-model="key"/>
+    </div>
+
     <Table :columns="tb_head" :data="tb_res" stripe border ></Table>
     <Page show-total
           :total="page.total"

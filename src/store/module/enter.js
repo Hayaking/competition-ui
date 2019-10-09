@@ -27,7 +27,17 @@ export default {
     handleExportEnterExcel ({ commit }, { competitionId }) {
       return new Promise((resolve, reject) => {
         export_enter_excel(competitionId).then(res => {
-          resolve(res.data.state === 'SUCCESS')
+          let val = res.headers['content-disposition'] + ''
+          const blob = new Blob([res.data])
+          const fileName = val.substring(val.indexOf('filename=') + 'filename='.length, val.length)
+          const elink = document.createElement('a')
+          elink.download = fileName
+          elink.style.display = 'none'
+          elink.href = URL.createObjectURL(blob)
+          document.body.appendChild(elink)
+          elink.click()
+          URL.revokeObjectURL(elink.href)
+          document.body.removeChild(elink)
         }).catch(err => {
           reject(err)
         })

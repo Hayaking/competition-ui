@@ -9,7 +9,8 @@ export const get_enter_list_by_competition_id = (pageNum, pageSize, competitionI
 
 export const export_enter_excel = (competitionId) => {
   return axios.request({
-    url: `/enter/${competitionId}/export`,
-    method: 'get'
+    url: `/download/${competitionId}/enter/list`,
+    method: 'post',
+    responseType: 'blob'
   })
 }

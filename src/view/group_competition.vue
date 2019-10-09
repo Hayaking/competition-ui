@@ -18,10 +18,10 @@
             <Input v-model="competition.name"/>
           </FormItem>
           <FormItem label="比赛时间" prop="startDate">
-            <DatePicker type="daterange" v-model="startAndEndDate"></DatePicker>
+            <DatePicker type="daterange" v-model="competition.startDate"></DatePicker>
           </FormItem>
           <FormItem label="报名时间" prop="enterDate">
-            <DatePicker type="daterange" v-model="enterDate"></DatePicker>
+            <DatePicker type="daterange" v-model="competition.enterDate"></DatePicker>
           </FormItem>
           <FormItem label="预期参赛队数" prop="groupNum">
             <Input v-model="competition.groupNum"/>
@@ -43,7 +43,7 @@
           <FormItem label="负责人" prop="personInCharge">
             <Input v-model="competition.personInCharge"/>
           </FormItem>
-          <FormItem label="竞赛级别" prop="type">
+          <FormItem label="竞赛级别" prop="typeId">
             <Select v-model="competition.typeId">
               <Option v-for="item in competitionType"  :value="item.id" :key="item.id">
                 {{item.typeName}}
@@ -114,12 +114,12 @@ export default {
         highestLevel: '',
         process: '',
         intro: '',
-        type: '',
-        groupId: ''
+        typeId: '',
+        groupId: '',
+        startDate: [],
+        enterDate: []
       },
       competitionType: [],
-      startAndEndDate: [],
-      enterDate: [],
       joinType: ['单人赛', '多人赛'],
       groupList: [],
       rules: {
@@ -132,7 +132,7 @@ export default {
         enterDate: [{ required: true, message: '不为空' }],
         org: [{ required: true, message: '不为空' }],
         coOrg: [{ required: true, message: '不为空' }],
-        type: [{ required: true, message: '不为空' }],
+        typeId: [{ required: true, message: '不为空' }],
         personInCharge: [{ required: true, message: '不为空' }],
         highestLevel: [{ required: true, message: '不为空' }],
         typeJoinId: [{ required: true, message: '不为空' }],
@@ -162,10 +162,10 @@ export default {
     save () {
       this.$refs.createForm.validate(valid => {
         if (valid) {
-          this.competition.startTime = this.startAndEndDate[0]
-          this.competition.endTime = this.startAndEndDate[1]
-          this.competition.enterStartTime = this.enterDate[0]
-          this.competition.enterEndTime = this.enterDate[1]
+          this.competition.startTime = this.competition.startDate[0]
+          this.competition.endTime = this.competition.startDate[1]
+          this.competition.enterStartTime = this.competition.enterDate[0]
+          this.competition.enterEndTime = this.competition.enterDate[1]
           this.saveCompetition({ competition: this.competition }).then(res => {
             if (res) {
               this.$Message.success('保存成功')
@@ -173,6 +173,8 @@ export default {
               this.$Message.error('保存失败')
             }
           })
+        } else {
+          this.$Message.error('表单')
         }
       })
     },

@@ -172,7 +172,8 @@ export default {
       'handleGetByGroupId',
       'handleGetAllCompetition',
       'handleSetState',
-      'handleSearchCompetition'
+      'handleSearchCompetition',
+      'handleGetCompetitionWord'
     ]),
     getCompetitionType () {
       this.handleGetType({ type: 'competition' }).then(res => {
@@ -206,7 +207,15 @@ export default {
       })
     },
     download (id) {
-      window.open(this.url + '/word/' + id + '.doc')
+      this.handleGetCompetitionWord({ competitionId: id }).then(res => {
+        if (res) {
+          this.$Message.success('成功')
+        } else {
+          this.$Message.error('失败')
+        }
+      })
+
+      // window.open(this.url + '/word/' + id + '.doc')
     },
     search () {
       if (this.key === '') {

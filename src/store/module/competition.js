@@ -9,7 +9,7 @@ import {
   search_competition,
   get_competition_pass_all,
   search_pass_competition,
-  get_competition_by_id
+  get_competition_by_id, get_competition_word
 } from '@/api/competition'
 
 export default {
@@ -142,6 +142,25 @@ export default {
           if (res.data.state === 'SUCCESS') {
             resolve(res.data.body)
           }
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
+    handleGetCompetitionWord ({ commit }, { competitionId }) {
+      return new Promise((resolve, reject) => {
+        get_competition_word(competitionId).then(res => {
+          let val = res.headers['content-disposition'] + ''
+          const blob = new Blob([res.data])
+          const fileName = val.substring(val.indexOf('filename=') + 'filename='.length, val.length)
+          const elink = document.createElement('a')
+          elink.download = fileName
+          elink.style.display = 'none'
+          elink.href = URL.createObjectURL(blob)
+          document.body.appendChild(elink)
+          elink.click()
+          URL.revokeObjectURL(elink.href)
+          document.body.removeChild(elink)
         }).catch(err => {
           reject(err)
         })

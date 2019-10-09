@@ -28,11 +28,11 @@
         </div>
       </template>
       <template slot-scope="{ row, index }" slot="action">
-        <Button type="success" size="small" style="margin-right: 5px" @click="editJoin(row)">
-          编辑
+        <Button type="success" size="small" style="margin-right: 5px" @click="review(row)">
+          通过
         </Button>
-        <Button type="error" size="small" @click="deleteJoin(row)">
-          删除
+        <Button type="error" size="small" @click="review(row)">
+          拒绝
         </Button>
       </template>
     </Table>
@@ -152,7 +152,8 @@ export default {
           this.$Message.error('失败')
         }
       })
-    }
+    },
+
   },
   watch: {
     competitionId () {

@@ -12,6 +12,7 @@
         <Col span="5">
           <Button type="primary" >增加</Button>
           <Button type="primary" @click="exportsExcel">导出报名列表</Button>
+          <Button type="primary" @click="reviewAll">全部通过</Button>
         </Col>
       </Row>
     </div>
@@ -28,10 +29,10 @@
         </div>
       </template>
       <template slot-scope="{ row, index }" slot="action">
-        <Button type="success" size="small" style="margin-right: 5px" @click="review(row)">
+        <Button type="success" size="small" style="margin-right: 5px" @click="review(row,true)">
           通过
         </Button>
-        <Button type="error" size="small" @click="review(row)">
+        <Button type="error" size="small" @click="review(row,false)">
           拒绝
         </Button>
       </template>
@@ -112,7 +113,8 @@ export default {
     ...mapActions([
       'handleGetEnterListByCompetitionId',
       'handleExportEnterExcel',
-      'handleGetType'
+      'handleGetType',
+      'handleSetJoinEnterState'
     ]),
     /**
      * 分页
@@ -144,6 +146,9 @@ export default {
         }
       })
     },
+    /**
+     * 导出报名表
+     */
     exportsExcel () {
       this.handleExportEnterExcel({ competitionId: this.competitionId }).then(res => {
         if (res) {
@@ -153,6 +158,26 @@ export default {
         }
       })
     },
+    review (obj, flag) {
+      if (this.check(obj)) {
+        this.handleSetJoinEnterState({ joinId: obj.id, flag: flag }).then(res => {
+          if (res) {
+            this.$Message.success('成功')
+            this.getEnterPage()
+          } else {
+            this.$Message.error('失败')
+          }
+        })
+      } else {
+        this.$Message.error('失败')
+      }
+    },
+    reviewAll () {
+      // 审核全部
+    },
+    check (obj) {
+      return obj.apply_state === '通过' && obj.enter_state === '通过'
+    }
 
   },
   watch: {

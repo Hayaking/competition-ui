@@ -21,3 +21,10 @@ export const get_join_list = (pageNum, pageSize) => {
     method: 'get'
   })
 }
+
+export const set_enter_state = (joinId, flag) => {
+  return axios.request({
+    url: `/enter/${joinId}/${flag}`,
+    method: 'post'
+  })
+}

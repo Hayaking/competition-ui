@@ -20,20 +20,36 @@
         </template>
         <template slot-scope="{ row, index }" slot="action">
           <Button type="primary"
+                  size="small"
+                  style="margin-right: 5px"
                   @click="showCompetition(row.id)">
             查看比赛立项
           </Button>
           <Button type="primary"
+                  size="small"
+                  style="margin-right: 5px"
                   :disabled="isDisabled(row.creator.teacherName)"
                   @click="showInvite(row.id)">
             邀请组员
           </Button>
           <Button type="primary"
+                  size="small"
+                  style="margin-right: 5px"
+                  :disabled="isDisabled(row.creator.teacherName)"
+                  @click="showInvite(row.id)">
+            提交比赛过程
+          </Button>
+          <Button type="primary"
+                  size="small"
+                  style="margin-right: 5px"
                   :disabled="isDisabled(row.creator.teacherName)"
                   @click="toPost()">
             发表公告
           </Button>
-          <Button type="error" @click="exit(row.id)">
+          <Button type="error"
+                  size="small"
+                  style="margin-right: 5px"
+                  @click="exit(row.id)">
             退出
           </Button>
         </template>
@@ -94,10 +110,6 @@ export default {
           title: '创建者',
           slot: 'creator',
           width: 100
-        },
-        {
-          title: '申请理由',
-          key: 'reason'
         },
         {
           title: '申请时间',

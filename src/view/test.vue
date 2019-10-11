@@ -22,7 +22,7 @@
           <Button type="primary"
                   size="small"
                   style="margin-right: 5px"
-                  @click="showCompetition(row.id)">
+                  @click="toCompetition(row)">
             查看比赛立项
           </Button>
           <Button type="primary"
@@ -31,13 +31,6 @@
                   :disabled="isDisabled(row.creator.teacherName)"
                   @click="showInvite(row.id)">
             邀请组员
-          </Button>
-          <Button type="primary"
-                  size="small"
-                  style="margin-right: 5px"
-                  :disabled="isDisabled(row.creator.teacherName)"
-                  @click="showInvite(row.id)">
-            提交比赛过程
           </Button>
           <Button type="primary"
                   size="small"
@@ -142,6 +135,7 @@ export default {
       showInviteModal: false,
       showCompetitionModal: false,
       showCreateModal: false,
+      showProcessModal: false,
       groupId: 0,
       preGroupId: 0
     }
@@ -192,9 +186,9 @@ export default {
       this.groupId = id
       this.showInviteModal = true
     },
-    showCompetition (id) {
-      // this.groupId = id
-      // this.showCompetitionModal = true
+    toCompetition (group) {
+      let id = group.id
+      let creatorName = group.creator.teacherName
       this.closeTag({
         name: 'group_competition_list',
         params: {
@@ -205,7 +199,8 @@ export default {
         this.$router.push({
           name: 'group_competition_list',
           params: {
-            id: id
+            id: id,
+            flag: this.isDisabled(creatorName)
           }
         })
         this.preGroupId = id

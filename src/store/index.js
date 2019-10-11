@@ -17,6 +17,8 @@ import join from './module/join'
 import message from './module/message'
 import menu from './module/menu'
 import lead from './module/lead'
+import process from './module/process'
+import pic from './module/pic'
 
 Vue.use(Vuex)
 
@@ -46,6 +48,8 @@ export default new Vuex.Store({
     join,
     message,
     menu,
-    lead
+    lead,
+    process,
+    pic
   }
 })

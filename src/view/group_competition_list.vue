@@ -18,11 +18,17 @@
         </Col>
       </Row>
     </div>
-
     <Table :columns="tb_head" :data="tb_res" stripe border >
       <template slot-scope="{ row, index }" slot="action">
         <Button type="primary" size="small" style="margin-right: 5px" @click="toEnterList(row.id)">
           报名列表
+        </Button>
+        <Button type="primary"
+                size="small"
+                style="margin-right: 5px"
+                :disabled="flag"
+                @click="showProcess(row.id)">
+          提交比赛过程
         </Button>
         <Button type="success" size="small" style="margin-right: 5px" @click="setEnterState(row.id, true)">
           编辑
@@ -38,14 +44,22 @@
           :page-size="page.page_size"
           @on-change = "pageChange"
     />
+    <!--提交比赛过程-->
+    <SubmitProcess
+      :showModal="showProcessModal"
+      :competitionId="competitionId"
+    />
   </Card>
 </template>
 
 <script>
 import { mapActions } from 'vuex'
 import { dateFomat } from '@/libs/tools'
+import SubmitProcess from '@/view/components/modal/submit-process-modal'
+
 export default {
   name: 'group_competition_list',
+  components: { SubmitProcess },
   data () {
     return {
       getter: this.$store.getters,
@@ -154,12 +168,16 @@ export default {
         page_size: 12,
         total: 0,
         records: []
-      }
+      },
+      showProcessModal: false,
+      competitionId: 0,
+      flag: false
     }
   },
   mounted () {
     this.$nextTick(() => {
       this.groupId = this.$route.params.id
+      this.flag = this.$route.params.flag
       this.getApply()
       this.getCompetitionType()
       // 获取该老师属于的工作组
@@ -244,7 +262,13 @@ export default {
         name: 'competition_enter_list',
         params: {
           id: id
-        } })
+        }
+      })
+    },
+    showProcess (id) {
+      this.showProcessModal = true
+      this.competitionId = id
+      console.info('!')
     }
   },
   watch: {

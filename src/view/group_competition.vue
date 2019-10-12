@@ -1,93 +1,115 @@
 <template>
-  <Card>
-    <Form :label-width="70"
-          ref="createForm"
-          :rules="rules"
-          :model="competition"
-          label-position="left">
+  <div>
+    <Card title="填写申请资料">
+      <div slot="extra">
+        <Button @click="stepIndex--" type="primary" v-if="stepIndex!==0">上一步</Button>
+        <Button @click="step1" type="primary">下一步</Button>
+      </div>
+      <!--步骤条-->
       <Row>
-        <Col offset="1" span="10">
-          <FormItem label="当前工作组" prop="groupId">
-            <Select v-model="competition.teacherGroupId">
-              <Option  v-for="item in groupList"  :value="item.id" :key="item.id">
-                {{item.name}}
-              </Option>
-            </Select>
-          </FormItem>
-          <FormItem label="比赛名称" prop = "name">
-            <Input v-model="competition.name"/>
-          </FormItem>
-          <FormItem label="比赛时间" prop="startDate">
-            <DatePicker type="daterange" v-model="competition.startDate"></DatePicker>
-          </FormItem>
-          <FormItem label="报名时间" prop="enterDate">
-            <DatePicker type="daterange" v-model="competition.enterDate"></DatePicker>
-          </FormItem>
-          <FormItem label="预期参赛队数" prop="groupNum">
-            <Input v-model="competition.groupNum"/>
-          </FormItem>
-          <FormItem label="预期参赛人数" prop="stuNum">
-            <Input v-model="competition.stuNum"/>
-          </FormItem>
-          <FormItem label="比赛地点" prop="place">
-            <Input v-model="competition.place"/>
-          </FormItem>
-        </Col>
-        <Col offset="1" span="11">
-          <FormItem label="主办方" prop="org">
-            <Input v-model="competition.org"/>
-          </FormItem>
-          <FormItem label="协办方" prop="coOrg">
-            <Input v-model="competition.coOrg"/>
-          </FormItem>
-          <FormItem label="负责人" prop="personInCharge">
-            <Input v-model="competition.personInCharge"/>
-          </FormItem>
-          <FormItem label="竞赛级别" prop="typeId">
-            <Select v-model="competition.typeId">
-              <Option v-for="item in competitionType"  :value="item.id" :key="item.id">
-                {{item.typeName}}
-              </Option>
-            </Select>
-          </FormItem>
-          <FormItem label="最高级别" prop="highestLevel">
-            <Select v-model="competition.highestLevel">
-              <Option v-for="item in competitionType"  :value="item.id" :key="item.id">
-                {{item.typeName}}
-              </Option>
-            </Select>
-          </FormItem>
-          <FormItem label="参赛形式" prop="typeJoinId">
-            <Select v-model="competition.typeJoinId">
-              <Option v-for="(item,index) in joinType"  :value="index+1" :key="item.id">
-                {{item}}
-              </Option>
-            </Select>
-          </FormItem>
+        <Col span="24" style="text-align: center">
+          <Steps :current="stepIndex">
+            <Step :title="stepTitle[0]" content="填写竞赛信息1"></Step>
+            <Step :title="stepTitle[1]" content="填写竞赛信息1"></Step>
+            <Step :title="stepTitle[2]" content="填写预算信息"></Step>
+            <Step :title="stepTitle[3]" content="预览信息"></Step>
+          </Steps>
         </Col>
       </Row>
-      <Row>
-        <Col offset="1" span="10">
-          <FormItem label="比赛过程" prop="process">
-            <Input :rows="4" placeholder="比赛过程" type="textarea" v-model="competition.process"/>
-          </FormItem>
-        </Col>
-        <Col offset="1" span="11">
-          <FormItem label="比赛介绍" prop="intro">
-            <Input :rows="4" placeholder="比赛介绍" type="textarea" v-model="competition.intro"/>
-          </FormItem>
+      <Row v-if="stepIndex ===0" align="middle">
+        <Col span="24" >
+          <Form :label-width="70"
+                ref="createForm"
+                :rules="rules"
+                :model="competition"
+                :hide-required-mark="true"
+                label-position="left">
+            <Row>
+              <Col offset="7" span="10">
+                <FormItem label="当前工作组" prop="groupId">
+                  <Select v-model="competition.teacherGroupId">
+                    <Option  v-for="item in groupList"  :value="item.id" :key="item.id">
+                      {{item.name}}
+                    </Option>
+                  </Select>
+                </FormItem>
+                <FormItem label="比赛名称" prop = "name">
+                  <Input v-model="competition.name"/>
+                </FormItem>
+                <FormItem label="比赛地点" prop="place">
+                  <Input v-model="competition.place"/>
+                </FormItem>
+                <FormItem label="主办方" prop="org">
+                  <Input v-model="competition.org"/>
+                </FormItem>
+                <FormItem label="协办方" prop="coOrg">
+                  <Input v-model="competition.coOrg"/>
+                </FormItem>
+                <FormItem label="竞赛级别" prop="typeId">
+                  <Select v-model="competition.typeId">
+                    <Option v-for="item in competitionType"  :value="item.id" :key="item.id">
+                      {{item.typeName}}
+                    </Option>
+                  </Select>
+                </FormItem>
+                <FormItem label="最高级别" prop="highestLevel">
+                  <Select v-model="competition.highestLevel">
+                    <Option v-for="item in competitionType"  :value="item.id" :key="item.id">
+                      {{item.typeName}}
+                    </Option>
+                  </Select>
+                </FormItem>
+              </Col>
+            </Row>
+          </Form>
         </Col>
       </Row>
-      <Row>
-        <Col offset="20" span="2">
-          <FormItem>
-            <Button type="primary" @click="save">提交</Button>
-          </FormItem>
+      <Row v-else-if="stepIndex===1">
+        <Col span="24">
+          <Form :label-width="70"
+                ref="createForm"
+                :rules="rules"
+                :model="competition"
+                label-position="left">
+            <Row>
+              <Col span="10" offset="7">
+                <FormItem label="比赛时间" prop="startDate">
+                  <DatePicker type="daterange" v-model="competition.startDate"></DatePicker>
+                </FormItem>
+                <FormItem label="报名时间" prop="enterDate">
+                  <DatePicker type="daterange" v-model="competition.enterDate"></DatePicker>
+                </FormItem>
+                <FormItem label="预期参赛队数" prop="groupNum">
+                  <Input v-model="competition.groupNum"/>
+                </FormItem>
+                <FormItem label="预期参赛人数" prop="stuNum">
+                  <Input v-model="competition.stuNum"/>
+                </FormItem>
+                <FormItem label="负责人" prop="personInCharge">
+                  <Input v-model="competition.personInCharge"/>
+                </FormItem>
+                <FormItem label="参赛形式" prop="typeJoinId">
+                  <Select v-model="competition.typeJoinId">
+                    <Option v-for="(item,index) in joinType"  :value="index+1" :key="item.id">
+                      {{item}}
+                    </Option>
+                  </Select>
+                </FormItem>
+                <FormItem label="比赛过程" prop="process">
+                  <Input :rows="4" placeholder="比赛过程" type="textarea" v-model="competition.process"/>
+                </FormItem>
+                <FormItem label="比赛介绍" prop="intro">
+                  <Input :rows="4" placeholder="比赛介绍" type="textarea" v-model="competition.intro"/>
+                </FormItem>
+              </Col>
+            </Row>
+          </Form>
         </Col>
       </Row>
-    </Form>
-
-  </Card>
+      <Row v-else-if="stepIndex===2"></Row>
+      <Row v-else-if="stepIndex===3"></Row>
+    </Card>
+  </div>
 </template>
 
 <script>
@@ -138,7 +160,9 @@ export default {
         typeJoinId: [{ required: true, message: '不为空' }],
         process: [{ required: true, message: '不为空' }],
         intro: [{ required: true, message: '不为空' }]
-      }
+      },
+      stepIndex: 0,
+      stepTitle: ['进行中', '待进行', '待进行', '待进行']
     }
   },
   mounted () {
@@ -189,6 +213,9 @@ export default {
           this.$Message.error('获取竞赛类型失败')
         }
       })
+    },
+    step1 () {
+      this.stepIndex++
     }
   }
 }

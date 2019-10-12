@@ -56,7 +56,7 @@ export default {
           commit('setToken', '')
           commit('setAccess', [])
           localStorage.removeItem('tagNaveList')
-          resolve(res)
+          resolve(res.data.body)
         }).catch(err => {
           reject(err)
         })

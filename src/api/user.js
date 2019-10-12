@@ -1,11 +1,11 @@
 import axios from '@/libs/api.request'
 
-export const login = (type, account, password) => {
+export const login = (token) => {
   return axios.request({
-    url: `login/${type}`,
-    params: { 'account': account, 'password': password },
-    method: 'post',
-    headers: { 'content-type': 'application/x-www-form-urlencoded' }
+    url: `login`,
+    data: token,
+    method: 'post'
+    // headers: { 'content-type': 'application/x-www-form-urlencoded' }
   })
 }
 
@@ -23,11 +23,10 @@ export const logout = () => {
   })
 }
 
-export const sign = (account, password) => {
+export const sign = (student) => {
   return axios.request({
     url: 'sign',
-    params: { 'account': account, 'password': password },
-    method: 'post',
-    headers: { 'content-type': 'application/x-www-form-urlencoded' }
+    data: student,
+    method: 'post'
   })
 }

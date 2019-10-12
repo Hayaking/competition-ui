@@ -2,7 +2,8 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import routes from './routers'
 import store from '@/store'
-import iView from 'iview'
+// import iView from 'iview'
+import ViewUI from 'view-design'
 // eslint-disable-next-line no-unused-vars
 import { getToken, initRouterNode, setTitle } from '@/libs/util'
 import config from '@/config'
@@ -18,7 +19,7 @@ const LOGIN_PAGE_NAME = 'login'
 const HOME_PAGE_NAME = '_home'
 
 router.beforeEach((to, from, next) => {
-  iView.LoadingBar.start()
+  ViewUI.LoadingBar.start()
   const token = getToken()
   console.info('to:' + to.name)
   if (store.getters.getRoutes.length === 0 && store.getters.getToken) {
@@ -48,9 +49,8 @@ router.beforeEach((to, from, next) => {
     ]
     store.dispatch('handleGetRoute').then(res => {
       if (!res) {
-        next({
-          name: LOGIN_PAGE_NAME // 跳转到登录页
-        })
+        // 跳转到登录页
+        next({ name: LOGIN_PAGE_NAME })
       } else {
         menuData = menuData.concat(res)
         initRouterNode(constRoutes, menuData)
@@ -84,7 +84,7 @@ router.beforeEach((to, from, next) => {
 
 router.afterEach(to => {
   setTitle(to, router.app)
-  iView.LoadingBar.finish()
+  ViewUI.LoadingBar.finish()
   window.scrollTo(0, 0)
   store.dispatch('handleGetUserInfo')
 })

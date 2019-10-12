@@ -1,5 +1,8 @@
 <template>
-  <Form :model="form" :rules="rules" @keydown.enter.native="handleSubmit" ref="loginForm">
+  <Form :model="form"
+        :rules="rules"
+        @keydown.enter.native="submit"
+        ref="signForm">
     <FormItem prop="userName">
       <Input placeholder="请输入用户名" v-model="form.account">
         <span slot="prepend">
@@ -21,9 +24,7 @@
         </span>
       </Input>
     </FormItem>
-    <FormItem>
-      <Button @click="handleSubmit" long type="primary">注册</Button>
-    </FormItem>
+    <Button @click="submit" long type="primary">注册</Button>
   </Form>
 </template>
 <script>
@@ -70,9 +71,9 @@ export default {
     }
   },
   methods: {
-    handleSubmit () {
-      this.$refs.loginForm.validate((valid) => {
-        if (valid) {
+    submit () {
+      this.$refs.signForm.validate(res => {
+        if (res) {
           this.$emit('on-success-valid', {
             account: this.form.account,
             password: this.form.password

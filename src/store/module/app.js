@@ -38,9 +38,9 @@ export default {
   },
   getters: {
     menuList: (state, getters, rootState) => {
-      for (let item of otherRouters) {
+      otherRouters.forEach(item => {
         state.routers.push(item)
-      }
+      })
       return getMenuByRouter(state.routers, rootState.user.access)
     },
     errorCount: state => state.errorList.length,

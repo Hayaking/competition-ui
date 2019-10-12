@@ -37,10 +37,9 @@ export default {
   },
   actions: {
     // 登录
-    handleLogin ({ commit }, { type, account, password }) {
-      account = account.trim()
+    handleLogin ({ commit }, { token }) {
       return new Promise((resolve, reject) => {
-        login(type, account, password).then(res => {
+        login(token).then(res => {
           if (res.data.state === 'SUCCESS') {
             commit('setToken', res.data.body)
           }
@@ -51,13 +50,13 @@ export default {
       })
     },
     // 退出登录
-    handleLogOut ({ state, commit }) {
+    handleLogOut ({ commit }) {
       return new Promise((resolve, reject) => {
-        logout().then(() => {
+        logout().then(res => {
           commit('setToken', '')
           commit('setAccess', [])
           localStorage.removeItem('tagNaveList')
-          resolve()
+          resolve(res)
         }).catch(err => {
           reject(err)
         })
@@ -67,23 +66,23 @@ export default {
     handleGetUserInfo ({ commit }) {
       return new Promise((resolve, reject) => {
         get_user_info().then(res => {
-          let data = res.data
-          if (data.state === 'SUCCESS') {
-            commit('setUser', data.body)
+          if (res.data.state === 'SUCCESS') {
+            commit('setUser', res.data.body)
           }
-          resolve(data.state === 'SUCCESS')
+          resolve(res.data.state === 'SUCCESS')
         }).catch(err => {
           reject(err)
         })
       })
     },
     // 注册
-    handleSign ({ state }, { account, password }) {
-      console.info('handle')
-      console.info(account + ',' + password)
+    handleSign ({ state }, { student }) {
       return new Promise((resolve, reject) => {
-        sign(account, password).then(res => {
-          resolve()
+        sign(student).then(res => {
+          resolve({
+            'flag': res.data.state === 'SUCCESS',
+            'body': res.data.body
+          })
         }).catch(err => {
           reject(err)
         })

@@ -1,40 +1,41 @@
 <template>
   <div class="login">
-    <div class="login-con">
-      <Card icon="log-in"  :bordered="false">
-        <Tabs v-model="type"  >
-          <TabPane label="学生" name="student">
-            <div class="form-con">
-              <login-form @on-success-valid="toLogin"></login-form>
-            </div>
-          </TabPane>
-          <TabPane label="教师" name="teacher" >
-            <div class="form-con">
-              <login-form @on-success-valid="toLogin"></login-form>
-            </div>
-          </TabPane>
-          <TabPane label="注册" name="name3">
-            <div class="form-con">
-              <SignForm @on-success-valid="toSign"/>
-            </div>
-          </TabPane>
-        </Tabs>
-      </Card>
-    </div>
+    <Card class="login-con">
+      <Tabs v-model="type"  :animated="isAnimated">
+        <TabPane label="学生" :name="TAB_NAME.student">
+          <div class="form-con">
+            <login-form @on-success-valid="toLogin"></login-form>
+          </div>
+        </TabPane>
+        <TabPane label="教师" :name="TAB_NAME.teacher" >
+          <div class="form-con">
+            <login-form @on-success-valid="toLogin"></login-form>
+          </div>
+        </TabPane>
+        <TabPane label="注册" :name="TAB_NAME.sign">
+          <div class="form-con">
+            <SignForm @on-success-valid="toSign"/>
+          </div>
+        </TabPane>
+      </Tabs>
+    </Card>
   </div>
 </template>
 
 <script>
-import LoginForm from '@/components/login-form/login-form'
-import SignForm from '@/components/login-form/sign-form'
+import LoginForm from '@/view/components/form/login-form'
+import SignForm from '@/view/components/form/sign-form'
 import { mapActions } from 'vuex'
 export default {
-  components: {
-    LoginForm, SignForm
-  },
+  components: { LoginForm, SignForm },
   data () {
     return {
-      type: 'student'
+      type: 'student',
+      TAB_NAME: {
+        student: 'student',
+        teacher: 'teacher',
+        sign: 'sign'
+      }
     }
   },
   methods: {
@@ -43,29 +44,43 @@ export default {
       'handleSign',
       'handleGetUserInfo'
     ]),
-    toLogin ({ account, password }) {
-      let type = this.type
-      this.handleLogin({ type, account, password }).then(res => {
-        if (res) {
-          this.$Message.success('登陆成功')
-          this.$Message.success('正在获取用户信息')
-          this.handleGetUserInfo().then(res => {
-            if (res) {
-              this.$Message.success('获取成功')
-              this.$router.push({ name: 'home' })
-            } else {
-              this.$Message.error('获取失败')
-            }
-          })
-        } else {
-          this.$Message.error('登陆失败')
-        }
+    /**
+     * 登录
+     * @param account
+     * @param password
+     * @param isRemember
+     */
+    toLogin ({ account, password, isRemember }) {
+      let token = {
+        'type': this.type,
+        'username': account,
+        password,
+        isRemember
+      }
+      this.handleLogin({ token }).then(res => {
+        res ? this.handleGetUserInfo().then(res2 => {
+          res2 ? this.$router.push({ name: 'home' })
+            : this.$Message.error('获取失败')
+        }) : this.$Message.error('登陆失败')
       })
     },
+    /**
+     * 注册
+     * @param account
+     * @param password
+     */
     toSign ({ account, password }) {
-      console.info('#注册#')
-      console.info(account + ',' + password)
-      this.handleSign({ account, password })
+      let student = { account, password }
+      this.handleSign({ student }).then(res => {
+        res.flag
+          ? this.$Message.success(res.body)
+          : this.$Message.error(res.body)
+      })
+    }
+  },
+  computed: {
+    isAnimated () {
+      return this.type === this.TAB_NAME.sign
     }
   }
 }

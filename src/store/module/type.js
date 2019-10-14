@@ -31,21 +31,10 @@ export default {
     handleGetType ({ commit }, { type }) {
       return new Promise((resolve, reject) => {
         get_type(type).then(res => {
-          if (res.data.state === 'SUCCESS') {
-            switch (type) {
-              case 'competition': commit('setCompetitionType', res.data.body)
-                break
-              case 'cost': commit('setCostType', res.data.body)
-                break
-              case 'join': commit('setJoinType', res.data.body)
-                break
-              case 'price': commit('setPriceType', res.data.body)
-                break
-            }
-            resolve(true)
-          } else {
-            resolve(false)
-          }
+          resolve({
+            flag: res.data.state === 'SUCCESS',
+            body: res.data.body
+          })
         }).catch(err => {
           reject(err)
         })

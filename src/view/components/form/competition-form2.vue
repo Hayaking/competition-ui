@@ -19,8 +19,8 @@
     <FormItem label="负责人" prop="personInCharge">
       <Input v-model="competition.personInCharge"/>
     </FormItem>
-    <FormItem label="参赛形式" prop="typeJoinId">
-      <Select v-model="competition.typeJoinId">
+    <FormItem label="参赛形式" prop="joinTypeId">
+      <Select v-model="competition.joinTypeId">
         <Option v-for="(item,index) in JOIN_TYPE"  :value="index+1" :key="item.id">
           {{item}}
         </Option>
@@ -49,7 +49,7 @@ export default {
         groupNum: 0,
         stuNum: 0,
         personInCharge: '',
-        typeJoinId: '',
+        joinTypeId: 0,
         process: '',
         intro: '',
         startTime: '',
@@ -63,7 +63,7 @@ export default {
         groupNum: [{ required: true, message: '不为空' }],
         stuNum: [{ required: true, message: '不为空' }],
         personInCharge: [{ required: true, message: '不为空' }],
-        typeJoinId: [{ required: true, message: '不为空' }],
+        joinTypeId: [{ required: true, message: '不为空' }],
         process: [{ required: true, message: '不为空' }],
         intro: [{ required: true, message: '不为空' }]
       },
@@ -88,24 +88,23 @@ export default {
       'handleGetTeacherGroup'
     ]),
     submit () {
-      this.$refs.form.validate(res => {
-        this.competition.startTime = this.competition.startDate[0]
-        this.competition.endTime = this.competition.startDate[1]
-        this.competition.enterStartTime = this.competition.enterDate[0]
-        this.competition.enterEndTime = this.competition.enterDate[1]
-        this.$emit('on-success-valid', res, this.competition)
-      })
+      // this.$refs.form.validate(res => {
+      //   this.competition.startTime = this.competition.startDate[0]
+      //   this.competition.endTime = this.competition.startDate[1]
+      //   this.competition.enterStartTime = this.competition.enterDate[0]
+      //   this.competition.enterEndTime = this.competition.enterDate[1]
+      //   this.$emit('on-success-valid', res, this.competition)
+      // })
+      this.$emit('on-success-valid', true, this.competition)
     },
     /**
      * 获取竞赛级别
      */
     getCompetitionType () {
       this.handleGetType({ type: 'competition' }).then(res => {
-        if (res) {
-          this.competitionType = this.getter.getCompetitionType
-        } else {
-          this.$Message.error('获取竞赛类型失败')
-        }
+        res.flag
+          ? this.competitionType = res.body
+          : this.$Message.error('获取竞赛类型失败')
       })
     }
   },

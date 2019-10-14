@@ -1,9 +1,11 @@
 <template>
   <div>
     <Card title="填写申请资料">
+      <!--工具栏-->
       <div slot="extra">
-        <Button @click="prev" type="default" v-if="stepIndex!==0">上一步</Button>
-        <Button @click="next" type="primary">下一步</Button>
+        <Button @click="next(false)" type="default" v-if="stepIndex!==0">上一步</Button>
+        <Button  type="success" v-if="stepIndex===3">提交</Button>
+        <Button @click="next(true)" type="primary" v-if="stepIndex!==3">下一步</Button>
       </div>
       <!--步骤条-->
       <Row>
@@ -23,8 +25,22 @@
           <Form2 @on-success-valid="callForm2"  :flag="flag2"/>
         </Col>
       </Row>
-      <Row v-else-if="stepIndex===2"></Row>
-      <Row v-else-if="stepIndex===3"></Row>
+      <Row v-else-if="stepIndex===2">
+        <Col span="10" offset="7" >
+          <Form3 @on-success-valid="callForm3"
+                 :min-level-id="competition.minLevelId"
+                 :max-level-id="competition.maxLevelId"
+                 :flag="flag3"/>
+        </Col>
+      </Row>
+      <Row v-else-if="stepIndex===3">
+        <Col span="10" offset="7" >
+          <Form4 @on-success-valid="callForm3"
+                 :competition="competition"
+                 :budgets="budgets"
+                 :flag="flag4"/>
+        </Col>
+      </Row>
     </Card>
   </div>
 </template>
@@ -34,9 +50,11 @@ import { mapActions } from 'vuex'
 import FormStep from '@/view/components/form-step'
 import Form1 from '@/view/components/form/competition-form1'
 import Form2 from '@/view/components/form/competition-form2'
+import Form3 from '@/view/components/form/competition-form3'
+import Form4 from '@/view/components/form/competition-form4'
 export default {
   name: 'group_competition',
-  components: { FormStep, Form1, Form2 },
+  components: { FormStep, Form1, Form2, Form3, Form4 },
   data () {
     return {
       stepIndex: 0,
@@ -44,7 +62,10 @@ export default {
       // flag不要使用数组的形式，否则单个元素传值到子组件时，一旦发生变化watch即便开启deep也检测不到
       flag1: false,
       flag2: false,
-      flag3: false
+      flag3: false,
+      flag4: false,
+      competition: {},
+      budgets: []
     }
   },
   methods: {
@@ -73,30 +94,44 @@ export default {
         }
       })
     },
-    next () {
-      if (this.stepIndex === 0) {
-        this.flag1 = true
-      } else if (this.stepIndex === 1) {
-        this.flag2 = true
+    next (flag = true) {
+      if (!flag) {
+        this.stepIndex--
       }
-    },
-    prev () {
-      this.stepIndex--
       if (this.stepIndex === 0) {
-        this.flag1 = false
+        this.flag1 = flag
       } else if (this.stepIndex === 1) {
-        this.flag2 = false
+        this.flag2 = flag
+      } else if (this.stepIndex === 2) {
+        this.flag3 = flag
+      } else if (this.stepIndex === 3) {
+        this.flag4 = flag
       }
     },
     callForm1 (flag, competition) {
       if (flag) {
+        Object.assign(this.competition, competition)
+        console.info(this.competition)
         this.stepIndex++
       } else {
         this.$Message.error('失败')
       }
     },
     callForm2 (flag, competition) {
-
+      if (flag) {
+        Object.assign(this.competition, competition)
+        this.stepIndex++
+      } else {
+        this.$Message.error('失败')
+      }
+    },
+    callForm3 (res = { flag, budgets }) {
+      if (res.flag) {
+        this.budgets = res.budgets
+        this.stepIndex++
+      } else {
+        this.$Message.error('失败')
+      }
     }
   }
 }

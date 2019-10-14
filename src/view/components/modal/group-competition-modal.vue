@@ -239,11 +239,9 @@ export default {
      */
     getCompetitionType () {
       this.handleGetType({ type: 'competition' }).then(res => {
-        if (res) {
-          this.competitionType = this.getter.getCompetitionType
-        } else {
-          this.$Message.error('获取竞赛类型失败')
-        }
+        res.flag
+          ? this.competitionType = res.body
+          : this.$Message.error('获取竞赛类型失败')
       })
     },
     deleteCompetition (id) {

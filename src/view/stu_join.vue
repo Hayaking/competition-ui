@@ -180,7 +180,7 @@ export default {
       'handleCreateJoin'
     ]),
     step1 () {
-      this.index += this.competition.typeJoinId
+      this.index += this.competition.joinTypeId
     },
     step2 () {
       /*

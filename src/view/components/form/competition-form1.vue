@@ -24,15 +24,15 @@
     <FormItem label="协办方" prop="coOrg">
       <Input v-model="competition.coOrg"/>
     </FormItem>
-    <FormItem label="竞赛级别" prop="typeId">
-      <Select v-model="competition.typeId">
+    <FormItem label="最低级别" prop="minLevelId">
+      <Select v-model="competition.minLevelId">
         <Option v-for="item in competitionType"  :value="item.id" :key="item.id">
           {{item.typeName}}
         </Option>
       </Select>
     </FormItem>
-    <FormItem label="最高级别" prop="highestLevel">
-      <Select v-model="competition.highestLevel">
+    <FormItem label="最高级别" prop="maxLevelId">
+      <Select v-model="competition.maxLevelId">
         <Option v-for="item in competitionType"  :value="item.id" :key="item.id">
           {{item.typeName}}
         </Option>
@@ -55,8 +55,8 @@ export default {
         place: '',
         org: '',
         coOrg: '',
-        highestLevel: '',
-        typeId: ''
+        minLevelId: 0,
+        maxLevelId: 0
       },
       rules: {
         groupId: [{ required: true, message: '不为空' }],
@@ -64,8 +64,8 @@ export default {
         place: [{ required: true, message: '不为空' }],
         org: [{ required: true, message: '不为空' }],
         coOrg: [{ required: true, message: '不为空' }],
-        highestLevel: [{ required: true, message: '不为空' }],
-        typeId: [{ required: true, message: '不为空' }]
+        minLevelId: [{ required: true, message: '不为空' }],
+        maxLevelId: [{ required: true, message: '不为空' }]
       },
       competitionType: [],
       groupList: []
@@ -102,16 +102,14 @@ export default {
      */
     getCompetitionType () {
       this.handleGetType({ type: 'competition' }).then(res => {
-        if (res) {
-          this.competitionType = this.getter.getCompetitionType
-        } else {
-          this.$Message.error('获取竞赛类型失败')
-        }
+        res.flag
+          ? this.competitionType = res.body
+          : this.$Message.error('获取竞赛类型失败')
       })
     }
   },
   watch: {
-    flag (newVal, oldVal) {
+    flag (newVal) {
       if (newVal) {
         this.submit()
       }

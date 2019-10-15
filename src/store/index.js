@@ -19,6 +19,7 @@ import menu from './module/menu'
 import lead from './module/lead'
 import process from './module/process'
 import pic from './module/pic'
+import budget from './module/budget'
 
 Vue.use(Vuex)
 
@@ -50,6 +51,7 @@ export default new Vuex.Store({
     menu,
     lead,
     process,
-    pic
+    pic,
+    budget
   }
 })

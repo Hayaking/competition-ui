@@ -4,7 +4,7 @@
       <!--工具栏-->
       <div slot="extra">
         <Button @click="next(false)" type="default" v-if="stepIndex!==0">上一步</Button>
-        <Button  type="success" v-if="stepIndex===3">提交</Button>
+        <Button @click="submit" type="success" v-if="stepIndex===3">提交</Button>
         <Button @click="next(true)" type="primary" v-if="stepIndex!==3">下一步</Button>
       </div>
       <!--步骤条-->
@@ -104,8 +104,6 @@ export default {
         this.flag2 = flag
       } else if (this.stepIndex === 2) {
         this.flag3 = flag
-      } else if (this.stepIndex === 3) {
-        this.flag4 = flag
       }
     },
     callForm1 (flag, competition) {
@@ -132,6 +130,9 @@ export default {
       } else {
         this.$Message.error('失败')
       }
+    },
+    submit () {
+      this.flag4 = true
     }
   }
 }

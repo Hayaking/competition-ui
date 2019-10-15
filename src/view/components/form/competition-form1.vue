@@ -38,6 +38,9 @@
         </Option>
       </Select>
     </FormItem>
+    <FormItem label="预期结果" prop="exRes">
+      <Input :rows="4" placeholder="预期结果" type="textarea" v-model="competition.exRes"/>
+    </FormItem>
   </Form>
 </template>
 
@@ -56,7 +59,8 @@ export default {
         org: '',
         coOrg: '',
         minLevelId: 0,
-        maxLevelId: 0
+        maxLevelId: 0,
+        exRes: ''
       },
       rules: {
         groupId: [{ required: true, message: '不为空' }],
@@ -65,7 +69,8 @@ export default {
         org: [{ required: true, message: '不为空' }],
         coOrg: [{ required: true, message: '不为空' }],
         minLevelId: [{ required: true, message: '不为空' }],
-        maxLevelId: [{ required: true, message: '不为空' }]
+        maxLevelId: [{ required: true, message: '不为空' }],
+        exRes: [{ required: true, message: '不为空' }]
       },
       competitionType: [],
       groupList: []

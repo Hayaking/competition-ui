@@ -1,8 +1,70 @@
 <template>
   <div>
-    <Table :columns="tb_head" :data="competitionData" />
-    {{competition}}
-    {{budgets}}
+    <Card title="竞赛信息" icon="ios-options" :padding="0" shadow >
+      <CellGroup>
+        <Cell>
+          <div slot="icon">工作组</div>
+          <div slot="label">{{competition.groupId}}</div>
+        </Cell>
+        <Cell>
+          <div slot="icon">比赛名称</div>
+          <div slot="label">{{competition.name}}</div>
+        </Cell>
+        <Cell>
+          <div slot="icon">比赛地点</div>
+          <div slot="label">{{competition.place}}</div>
+        </Cell>
+        <Cell>
+          <div slot="icon">主办方</div>
+          <div slot="label">{{competition.org}}</div>
+        </Cell>
+        <Cell>
+          <div slot="icon">协办方</div>
+          <div slot="label">{{competition.coOrg}}</div>
+        </Cell>
+        <Cell>
+          <div slot="icon">最低级别</div>
+          <div slot="label">{{competition.minLevelId}}</div>
+        </Cell>
+        <Cell>
+          <div slot="icon">最高级别</div>
+          <div slot="label">{{competition.maxLevelId}}</div>
+        </Cell>
+        <Cell>
+          <div slot="icon">比赛开始时间</div>
+          <div slot="label">{{competition.startTime}}</div>
+        </Cell>
+        <Cell>
+          <div slot="icon">比赛结束时间</div>
+          <div slot="label">{{competition.endTime}}</div>
+        </Cell>
+        <Cell>
+          <div slot="icon">报名开始时间</div>
+          <div slot="label">{{competition.enterStartTime}}</div>
+        </Cell>
+        <Cell>
+          <div slot="icon">报名结束时间</div>
+          <div slot="label">{{competition.enterEndTime}}</div>
+        </Cell>
+        <Cell>
+          <div slot="icon">负责人</div>
+          <div slot="label">{{competition.personInCharge}}</div>
+        </Cell>
+        <Cell>
+          <div slot="icon">参赛形式</div>
+          <div slot="label">{{competition.joinTypeId}}</div>
+        </Cell>
+        <Cell>
+          <div slot="icon">比赛过程</div>
+          <div slot="label">{{competition.process}}</div>
+        </Cell>
+        <Cell>
+          <div slot="icon">比赛介绍</div>
+          <div slot="label">{{competition.intro}}</div>
+        </Cell>
+      </CellGroup>
+    </Card>
+    <Table :columns="tb_head2" :data="budgets" />
   </div>
 </template>
 
@@ -35,67 +97,32 @@ export default {
           key: 'val'
         }
       ],
-      tb_head1: [
+      tb_head2: [
         {
-          title: 'groupId',
-          key: 'groupId',
-          width: 100,
-          fixed: 'left'
-        }, {
-          title: 'name',
-          key: 'name'
-        }, {
-          title: 'place',
-          key: 'place'
-        }, {
-          title: 'org',
-          key: 'org'
-        }, {
-          title: 'coOrg',
-          key: 'coOrg'
-        }, {
-          title: 'minLevelId',
-          key: 'minLevelId'
-        }, {
-          title: 'maxLevelId',
-          key: 'maxLevelId'
-        }, {
-          title: 'teacherGroupId',
-          key: 'teacherGroupId'
-        }, {
-          title: 'enterDate',
-          key: 'enterDate'
-        }, {
-          title: 'groupNum',
-          key: 'groupNum'
-        }, {
-          title: 'stuNum',
-          key: 'stuNum'
-        }, {
-          title: 'personInCharge',
-          key: 'personInCharge'
-        }, {
-          title: 'joinTypeId',
-          key: 'joinTypeId'
-        }, {
-          title: 'process',
-          key: 'process'
-        }, {
-          title: 'intro',
-          key: 'intro'
-        }, {
-          title: 'startTime',
-          key: 'startTime'
-        }, {
-          title: 'endTime',
-          key: 'endTime'
-        }, {
-          title: 'enterStartTime',
-          key: 'enterStartTime'
-        }, {
-          title: 'enterEndTime',
-          key: 'enterEndTime'
-        }]
+          title: '阶段',
+          key: 'typeId'
+        },
+        {
+          title: '报名费',
+          key: 'enter'
+        },
+        {
+          title: '差旅费',
+          key: 'travel'
+        },
+        {
+          title: '材料费',
+          key: 'thing'
+        },
+        {
+          title: '原因',
+          key: 'reason'
+        },
+        {
+          title: '其它',
+          key: 'other'
+        }
+      ]
     }
   },
   props: {
@@ -117,12 +144,14 @@ export default {
   },
   methods: {
     ...mapActions([
-      'handleGetType'
+      'handleGetType',
+      'handleSaveCompetition',
+      'handleSaveBudgets'
     ]),
     submit () {
-      // budgets数组直接穿过去会undefined
-      let res = { flag: true, budgets: this.budgets }
-      this.$emit('on-success-valid', res)
+      // budgets数组直接传过去会undefined
+      // let res = { flag: true, budgets: this.budgets }
+      // this.$emit('on-success-valid', res)
     },
     /**
      * 获取竞赛级别
@@ -133,13 +162,33 @@ export default {
           ? this.COMPETITION_TYPE = res.body
           : this.$Message.error('获取竞赛类型失败')
       })
+    },
+    save () {
+      this.handleSaveCompetition({ competition: this.competition }).then(res => {
+        if (res.flag) {
+          this.budgets = this.budgets.map(item => {
+            item.competitionId = res.body
+            return item
+          })
+          this.handleSaveBudgets({ budgets: this.budgets }).then(res => {
+            res
+              ? this.$Message.success('保存成功')
+              : this.$Message.error('保存失败')
+          })
+        } else {
+          this.$Message.error('保存失败')
+        }
+      })
     }
   },
   computed: {
     competitionData () {
       let data = []
       for (let key in this.competition) {
-        data.push({ 'field': key, 'val': this.competition[key] })
+        data.push({
+          'field': key,
+          'val': this.competition[key]
+        })
       }
       return data
     }
@@ -147,7 +196,7 @@ export default {
   watch: {
     flag (newVal) {
       if (newVal) {
-        this.submit()
+        this.save()
       }
     }
   }

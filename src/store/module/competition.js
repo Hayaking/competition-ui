@@ -46,6 +46,18 @@ export default {
         })
       })
     },
+    handleSaveCompetition ({ commit }, { competition }) {
+      return new Promise((resolve, reject) => {
+        save_competition(competition).then(res => {
+          resolve({
+            flag: res.data.state === 'SUCCESS',
+            body: res.data.body
+          })
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
     handleDeleteCompetition ({ commit }, { id }) {
       return new Promise((resolve, reject) => {
         delete_competition(id).then(res => {

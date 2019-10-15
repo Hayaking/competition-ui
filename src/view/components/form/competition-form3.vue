@@ -91,6 +91,7 @@ export default {
   },
   computed: {
     typeList () {
+      // 返回有效类型区间
       let arr = this.COMPETITION_TYPE.filter(item => {
         if (item.id >= this.minLevelId && item.id <= this.maxLevelId) {
           // eslint-disable-next-line vue/no-side-effects-in-computed-properties
@@ -99,7 +100,8 @@ export default {
             travel: '',
             thing: '',
             other: '',
-            reason: ''
+            reason: '',
+            typeId: item.id
           })
           return true
         }

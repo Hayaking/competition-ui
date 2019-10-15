@@ -89,10 +89,14 @@ export default {
     ]),
     submit () {
       // this.$refs.form.validate(res => {
-      //   this.competition.startTime = this.competition.startDate[0]
-      //   this.competition.endTime = this.competition.startDate[1]
-      //   this.competition.enterStartTime = this.competition.enterDate[0]
-      //   this.competition.enterEndTime = this.competition.enterDate[1]
+      // 拆分
+      this.competition.startTime = this.competition.startDate[0]
+      this.competition.endTime = this.competition.startDate[1]
+      this.competition.enterStartTime = this.competition.enterDate[0]
+      this.competition.enterEndTime = this.competition.enterDate[1]
+      // 删除enterDate属性,startDate属性
+      delete this.competition.enterDate
+      delete this.competition.startDate
       //   this.$emit('on-success-valid', res, this.competition)
       // })
       this.$emit('on-success-valid', true, this.competition)

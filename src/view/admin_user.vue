@@ -1,43 +1,42 @@
 <template>
   <Card>
-<!--角色对话框-->
+    <!--角色对话框-->
     <RoleModal
       :show="show1"
       @ok="cancelModal"
       @cancel="cancelModal"
     />
-<!--编辑学生对话框-->
+    <!--编辑学生对话框-->
     <StudentEditModal
       :show="show2"
       @ok="cancelModal"
       @cancel="cancelModal"
     />
+    <!--编辑老师对话框-->
     <TeacherEditModal
       :show="show3"
       @ok="cancelModal"
       @cancel="cancelModal"
     />
-
-    <Input search
-           v-model="key"
-           enter-button
-           style="width: 500px"
-           class="tool-bar"
-           @on-change="search">
-      <Select v-model="type" slot="prepend" style="width: 100px">
+    <div slot="title">
+      <Select v-model="type"  style="width: 100px">
         <Option value="teacher">教师</option>
         <Option value="student">学生</option>
       </Select>
-      <div slot="append" >
-        <Button @click="showUserInfoModal">添加</Button>
-      </div>
-    </Input>
+      <Input search
+             v-model="key"
+             style="width: 300px"
+             @on-change="search">
+      </Input>
+      <ButtonGroup>
+        <Button @click="showUserInfoModal" type="primary">添加</Button>
+      </ButtonGroup>
+    </div>
 
     <Row>
-      <Table :columns="tb_head"
-             :data="tb_res"
+      <Table :columns="TABLE_HEAD"
+             :data="page.records"
              border
-             height="520"
              size="small"
              stripe>
         <template slot-scope="{ row, index }" slot="action">
@@ -82,9 +81,8 @@ export default {
   },
   data () {
     return {
-      getter: this.$store.getters,
       type: 'student',
-      tb_head: [],
+      TABLE_HEAD: [],
       tb_teacher_head: [
         {
           title: 'id',
@@ -176,7 +174,6 @@ export default {
           slot: 'action'
         }
       ],
-      tb_res: [],
       page: {
         current: 1,
         size: 12,
@@ -186,7 +183,6 @@ export default {
       show1: false,
       show2: false,
       show3: false,
-      user: {},
       key: '',
       deleteObject: {}
     }
@@ -194,6 +190,7 @@ export default {
   mounted () {
     this.$nextTick(() => {
       this.getUser()
+      this.TABLE_HEAD = this.tb_student_head
       this.$store.dispatch('handleGetRoleList')
     })
   },
@@ -212,44 +209,80 @@ export default {
      */
     pageChange (index) {
       this.page.current = index
-      this.getUser(index, this.page.size)
+      this.key === ''
+        ? this.search(index, this.page.size)
+        : this.getUser(index, this.page.size)
     },
     /**
      * 分页获取学生或教师
      */
     getUser (pageNum = 1, pageSize = 12) {
-      if (this.type === 'student') {
-        this.getStudent(pageNum, pageSize)
-      } else {
-        this.getTeacher(pageNum, pageSize)
-      }
+      this.type === 'student'
+        ? this.getStudent(pageNum, pageSize)
+        : this.getTeacher(pageNum, pageSize)
     },
-    deleteUser (obj) {
-      this.deleteObject = obj
-      this.$Modal.warning({
-        title: '删除',
-        content: '三思啊',
-        onOk: this.submitDelete
+    getTeacher (pageNum, pageSize) {
+      this.handleGetAllTeacherByPage({ pageNum, pageSize }).then(res => {
+        this.page = res
       })
     },
-    submitDelete () {
-      console.info(this.deleteObject)
-      this.$Message.error(this.deleteObject)
+    getStudent (pageNum, pageSize) {
+      this.handleGetAllStudent({ pageNum, pageSize }).then(res => {
+        // this.tb_res = res.records
+        this.page = res
+      })
     },
-    search () {
-      if (this.type === 'student') {
-        if (this.key === '') {
-          this.getStudent(1, 12)
-        } else {
-          this.searchStudent(this.key, 1, 12)
-        }
-      } else {
-        if (this.key === '') {
-          this.getTeacher(1, 12)
-        } else {
-          this.searchTeacher(this.key, 1, 12)
-        }
+    /**
+     * 搜索
+     */
+    search (pageNum = 1, pageSize = 12) {
+      switch (this.type) {
+        case 'student':
+          this.key === ''
+            ? this.getStudent(1, 12)
+            : this.searchStudent(this.key, pageNum, pageSize)
+          break
+        case 'teacher':
+          this.key === ''
+            ? this.getTeacher(1, 12)
+            : this.searchTeacher(this.key, pageNum, pageSize)
+          break
       }
+    },
+    searchStudent (key, pageNum, pageSize) {
+      this.handleSearchStudent({ key, pageNum, pageSize }).then(res => {
+        // this.tb_res = res.records
+        this.page = res
+      })
+    },
+    searchTeacher (key, pageNum, pageSize) {
+      this.handleSearchTeacher({ key, pageNum, pageSize }).then(res => {
+        // this.tb_res = res.records
+        this.page = res
+      })
+    },
+    /**
+     * 删除
+     * @param obj
+     */
+    deleteUser (obj) {
+      this.deleteObject = obj
+      this.$Modal.confirm({
+        title: '删除',
+        content: '三思啊',
+        onOk: () => {
+          this.submitDelete()
+        },
+        onCancel: () => {
+          this.cancelDelete()
+        }
+      })
+    },
+    cancelDelete () {
+      this.deleteObject = {}
+    },
+    submitDelete () {
+      this.$Message.error(this.deleteObject)
     },
     /**
      * 显示角色对话框
@@ -292,40 +325,16 @@ export default {
       } else {
         this.show2 = true
       }
-    },
-    getTeacher (pageNum, pageSize) {
-      this.handleGetAllTeacherByPage({ pageNum, pageSize }).then(res => {
-        this.tb_head = this.tb_teacher_head
-        this.tb_res = res.records
-        this.page = res
-      })
-    },
-    getStudent (pageNum, pageSize) {
-      this.handleGetAllStudent({ pageNum, pageSize }).then(res => {
-        this.tb_head = this.tb_student_head
-        this.tb_res = res.records
-        this.page = res
-      })
-    },
-    searchStudent (key, pageNum, pageSize) {
-      this.handleSearchStudent({ key, pageNum, pageSize }).then(res => {
-        this.tb_head = this.tb_student_head
-        this.tb_res = res.records
-        this.page = res
-      })
-    },
-    searchTeacher (key, pageNum, pageSize) {
-      this.handleSearchTeacher({ key, pageNum, pageSize }).then(res => {
-        this.tb_head = this.tb_teacher_head
-        this.tb_res = res.records
-        this.page = res
-      })
     }
   },
   watch: {
-    type (val) {
-      // this.$store.commit('setEditUser', val)
-      this.getUser()
+    type (newVal, oldVal) {
+      if (newVal !== oldVal) {
+        this.getUser()
+        newVal === 'student'
+          ? this.TABLE_HEAD = this.tb_student_head
+          : this.TABLE_HEAD = this.tb_teacher_head
+      }
     }
   }
 }

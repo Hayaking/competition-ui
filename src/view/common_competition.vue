@@ -3,14 +3,29 @@
     <div slot="title">
       <Input
         search
-        enter-button
-        style="width: 500px;"
+        style="width: 300px;"
         @on-change="search"
-        v-model="key"
-      />
+        v-model="key"/>
     </div>
-
-    <Table :columns="tb_head" :data="tb_res" stripe border >
+    <Table :columns="TABLE_HEAD" :data="page.records" stripe border >
+      <!--竞赛级别-->
+      <template slot-scope="{ row, index }" slot="level">
+        {{level(row.minLevelId,row.maxLevelId)}}
+      </template>
+      <!--报名状态-->
+      <template slot-scope="{ row, index }" slot="enterState">
+        <Button :type="type(row.enterState)"
+                size="small">
+          {{row.enterState}}
+        </Button>
+      </template>
+      <!--比赛开始状态-->
+      <template slot-scope="{ row, index }" slot="startState">
+        <Button :type="type(row.startState)"
+                size="small">
+          {{row.startState}}
+        </Button>
+      </template>
       <template slot-scope="{ row, index }" slot="action">
         <Button @click="enter(row.id)"
                 type="primary"
@@ -23,7 +38,7 @@
     <Page show-total
           :total="page.total"
           :current="page.current"
-          :page-size="page.page_size"
+          :page-size="page.size"
           @on-change = "pageChange"
     />
   </Card>
@@ -31,135 +46,125 @@
 
 <script>
 import { mapActions } from 'vuex'
-import api_request from '@/libs/api.request'
-import { dateFomat } from '@/libs/tools'
+import CompetitionExpand from '@/view/components/table-expand/competition-expand'
 
 export default {
   name: 'common_competition',
+  components: { CompetitionExpand },
   data () {
     return {
-      getter: this.$store.getters,
-      competition: {
-        name: '',
-        startTime: '',
-        org: '',
-        personInCharge: '',
-        type: ''
-      },
-      currentGroupId: 0,
-      url: api_request.baseUrl,
-      competitionType: [],
-      tb_head: [
+      COMPETITION_TYPE: [],
+      TABLE_HEAD: [
+        {
+          type: 'expand',
+          width: 50,
+          render: (h, params) => {
+            return h(CompetitionExpand, {
+              props: {
+                row: params.row
+              }
+            })
+          }
+        },
         {
           title: 'id',
           key: 'id',
           width: 100,
-          fixed: 'left'
-        }, {
+          sortable: true
+        },
+        {
           title: '竞赛名',
           key: 'name',
-          width: 200,
-          fixed: 'left'
-        }, {
-          title: '开始时间',
-          key: 'startTime',
-          width: 160,
-          render: (h, params) => {
-            return h('div', {}, dateFomat(params.row.startTime))
-          }
-        }, {
-          title: '结束时间',
-          key: 'endTime',
-          width: 160,
-          render: (h, params) => {
-            return h('div', {}, dateFomat(params.row.endTime))
-          }
-        }, {
-          title: '报名开始时间',
-          key: 'enterStartTime',
-          width: 160,
-          render: (h, params) => {
-            return h('div', {}, dateFomat(params.row.enterStartTime))
-          }
-        }, {
-          title: '报名结束时间',
-          key: 'enterEndTime',
-          width: 160,
-          render: (h, params) => {
-            return h('div', {}, dateFomat(params.row.enterEndTime))
-          }
-        }, {
+          align: 'center',
+          width: 200
+        },
+        {
+          title: '竞赛级别',
+          align: 'center',
+          slot: 'level'
+        },
+        {
           title: '主办方',
           key: 'org',
-          width: 100
-        }, {
-          title: '竞赛级别',
-          key: 'type',
-          width: 120,
+          align: 'center'
+        },
+        {
+          title: '协办方',
+          key: 'coOrg',
+          align: 'center'
+        },
+        {
+          title: '报名状态',
+          align: 'center',
+          slot: 'enterState',
           filters: [
             {
-              label: '院赛',
+              label: '已开始',
               value: 1
-            }, {
-              label: '校赛',
+            },
+            {
+              label: '结束',
               value: 2
-            }, {
-              label: '省赛',
+            },
+            {
+              label: '未开始',
               value: 3
-            }, {
-              label: '国赛',
-              value: 4
             }
           ],
           filterMultiple: false,
           filterMethod (value, row) {
             if (value === 1) {
-              return row.type === '院赛'
+              return row.enterState === '已开始'
             } else if (value === 2) {
-              return row.type === '校赛'
-            } else if (value === 3) {
-              return row.type === '省赛'
-            } else if (value === 4) {
-              return row.type === '国赛'
+              return row.enterState === '结束'
+            } else {
+              return row.enterState === '未开始'
             }
           }
-        }, {
-          title: '报名状态',
-          key: 'enterState',
-          width: 100,
-          render: (h, params) => {
-            return h('Tag', {
-              props: {
-                color: params.row.enterState === '已开始' ? 'success' : params.row.enterState === '结束' ? 'default' : 'primary'
-              }
-            }, params.row.enterState)
-          }
-        }, {
+        },
+        {
           title: '开始状态',
-          width: 100,
-          render: (h, params) => {
-            return h('Tag', {
-              props: {
-                color: params.row.startState === '已开始' ? 'success' : params.row.startState === '结束' ? 'default' : 'primary'
-              }
-            }, params.row.startState)
+          align: 'center',
+          slot: 'startState',
+          filters: [
+            {
+              label: '已开始',
+              value: 1
+            },
+            {
+              label: '结束',
+              value: 2
+            },
+            {
+              label: '未开始',
+              value: 3
+            }
+          ],
+          filterMultiple: false,
+          filterMethod (value, row) {
+            if (value === 1) {
+              return row.startState === '已开始'
+            } else if (value === 2) {
+              return row.startState === '结束'
+            } else {
+              return row.startState === '未开始'
+            }
           }
-        }, {
+        },
+        {
           title: '操作',
-          key: 'action',
           width: 100,
           align: 'center',
-          fixed: 'right',
           slot: 'action'
         }
       ],
-      tb_res: [],
       page: {
         current: 1,
-        page_size: 10,
+        size: 12,
         total: 0,
         records: []
-      }
+      },
+      key: ''
     }
   },
   mounted () {
@@ -181,30 +186,26 @@ export default {
     getCompetitionType () {
       this.handleGetType({ type: 'competition' }).then(res => {
         res.flag
-          ? this.competitionType = res.body
+          ? this.COMPETITION_TYPE = res.body
           : this.$Message.error('获取竞赛类型失败')
       })
     },
     pageChange (index) {
       this.page.current = index
-      this.getCompetitionPage(index, this.page.size)
+      this.key !== ''
+        ? this.search()
+        : this.getCompetitionPage(index, this.page.size)
     },
     getCompetitionPage (pageNum = 1, pageSize = 12) {
       this.handleGetAllPassCompetition({ pageNum, pageSize }).then(res => {
         this.page = res
-        this.tb_res = res.records
-        this.tb_res.map((item) => {
-          item.type = this.competitionType[item.typeId - 1].typeName
-        })
       })
     },
     enter (id) {
       this.handleGetCompetitionById({ id }).then(res => {
-        if (res) {
-          this.$router.push({ name: 'stu_join' })
-        } else {
-          this.$Message.error('失败')
-        }
+        res
+          ? this.$router.push({ name: 'stu_join' })
+          : this.$Message.error('失败')
       })
     },
     search () {
@@ -212,15 +213,32 @@ export default {
         this.getCompetitionPage()
         return
       }
-      let params = {
+      // 得到已经通过审核的竞赛
+      this.handleSearchPassCompetition({
         key: this.key,
         pageNum: this.page.current,
         pageSize: this.page.size
-      }
-      this.handleSearchPassCompetition(params).then(res => {
+      }).then(res => {
         this.page = res
-        this.tb_res = res.records
       })
+    },
+    // 返回Button的type
+    type (state) {
+      if (state === '通过' || state === '已开始') {
+        return 'success'
+      } else if (state === '申请中' || state === '未开始') {
+        return 'primary'
+      } else {
+        return 'error'
+      }
+    },
+    // 返回竞赛级别
+    level (minId, maxId) {
+      if (maxId === undefined || minId === maxId) {
+        return this.COMPETITION_TYPE[minId - 1].typeName
+      } else {
+        return this.COMPETITION_TYPE[minId - 1].typeName + '→' + this.COMPETITION_TYPE[maxId - 1].typeName
+      }
     }
   }
 }

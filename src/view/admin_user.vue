@@ -209,7 +209,7 @@ export default {
      */
     pageChange (index) {
       this.page.current = index
-      this.key === ''
+      this.key !== ''
         ? this.search(index, this.page.size)
         : this.getUser(index, this.page.size)
     },

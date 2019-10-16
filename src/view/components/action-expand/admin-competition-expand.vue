@@ -1,7 +1,16 @@
 <template>
   <div>
-      <Button @click="downloadApply">下载申请表</Button>
-      <Button>下载预算表</Button>
+      <Button @click="downloadApply"
+              style="margin-right: 5px"
+              type="primary"
+              size="small">
+        下载申请表
+      </Button>
+      <Button @click="downloadBudget"
+              type="primary"
+              size="small">
+        下载预算表
+      </Button>
   </div>
 </template>
 
@@ -25,6 +34,9 @@ export default {
           this.$Message.error('失败')
         }
       })
+    },
+    downloadBudget () {
+
     }
   }
 }

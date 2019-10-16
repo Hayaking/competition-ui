@@ -2,12 +2,47 @@
   <Card>
     <div slot="title">
       <Input search
-             enter-button
-             style="width: 500px"
+             style="width: 300px"
              @on-change="search"
-             v-model="key"/>
+             v-model="key">
+      </Input>
+      <ButtonGroup>
+        <Button  type="primary">全部通过</Button>
+        <Button type="primary">全部开始报名</Button>
+      </ButtonGroup>
     </div>
-    <Table :columns="tb_head" :data="tb_res" stripe border ></Table>
+    <Table :columns="TABLE_HEAD" :data="tb_res" stripe border >
+      <!--报名状态-->
+      <template slot-scope="{ row, index }" slot="enterState">
+        <Button :type="type(row.enterState)"
+                size="small">
+          {{row.enterState}}
+        </Button>
+      </template>
+      <!--比赛开始状态-->
+      <template slot-scope="{ row, index }" slot="startState">
+        <Button :type="type(row.startState)"
+                size="small">
+          {{row.startState}}
+        </Button>
+      </template>
+      <!--比赛审核状态-->
+      <template slot-scope="{ row, index }" slot="state">
+        <Button :type="type(row.state)"
+                size="small"
+                @click="review(row.id,row.state !== '通过')">
+          {{row.state}}
+        </Button>
+      </template>
+      <!--竞赛级别-->
+      <template slot-scope="{ row, index }" slot="level">
+        {{level(row.minLevelId,row.maxLevelId)}}
+      </template>
+      <!--下载-->
+      <template slot-scope="{ row, index }" slot="download">
+        <CompetitionAction :row="row"/>
+      </template>
+    </Table>
     <Page show-total
           :total="page.total"
           :current="page.current"
@@ -27,18 +62,8 @@ export default {
   components: { CompetitionExpand, CompetitionAction },
   data () {
     return {
-      key: '',
-      getter: this.$store.getters,
-      competition: {
-        name: '',
-        startTime: '',
-        org: '',
-        personInCharge: '',
-        type: ''
-      },
-      currentGroupId: 0,
-      competitionType: [],
-      tb_head: [
+      COMPETITION_TYPE: [],
+      TABLE_HEAD: [
         {
           type: 'expand',
           width: 50,
@@ -53,79 +78,125 @@ export default {
         {
           title: 'id',
           key: 'id',
-          width: 100
+          width: 100,
+          sortable: true
         },
         {
           title: '竞赛名',
           key: 'name',
+          align: 'center',
           width: 200
         },
         {
           title: '竞赛级别',
-          key: 'type'
+          align: 'center',
+          slot: 'level'
         },
         {
           title: '主办方',
-          key: 'org'
+          key: 'org',
+          align: 'center'
         },
         {
           title: '协办方',
-          key: 'coOrg'
+          key: 'coOrg',
+          align: 'center'
         },
         {
           title: '报名状态',
-          key: 'enterState',
-          width: 100,
-          render: (h, params) => {
-            return h('Tag', {
-              props: {
-                color: params.row.enterState === '已开始' ? 'success' : params.row.enterState === '结束' ? 'default' : 'primary'
-              }
-            }, params.row.enterState)
+          align: 'center',
+          slot: 'enterState',
+          filters: [
+            {
+              label: '已开始',
+              value: 1
+            },
+            {
+              label: '结束',
+              value: 2
+            },
+            {
+              label: '未开始',
+              value: 3
+            }
+          ],
+          filterMultiple: false,
+          filterMethod (value, row) {
+            if (value === 1) {
+              return row.enterState === '已开始'
+            } else if (value === 2) {
+              return row.enterState === '结束'
+            } else {
+              return row.enterState === '未开始'
+            }
           }
         },
         {
           title: '开始状态',
-          key: 'cpStartState',
-          width: 100,
-          render: (h, params) => {
-            return h('Tag', {
-              props: {
-                color: params.row.enterState === '已开始' ? 'success' : params.row.enterState === '结束' ? 'default' : 'primary'
-              }
-            }, params.row.enterState)
+          align: 'center',
+          slot: 'startState',
+          filters: [
+            {
+              label: '已开始',
+              value: 1
+            },
+            {
+              label: '结束',
+              value: 2
+            },
+            {
+              label: '未开始',
+              value: 3
+            }
+          ],
+          filterMultiple: false,
+          filterMethod (value, row) {
+            if (value === 1) {
+              return row.startState === '已开始'
+            } else if (value === 2) {
+              return row.startState === '结束'
+            } else {
+              return row.startState === '未开始'
+            }
           }
         },
         {
           title: '审核状态',
-          width: 80,
-          render: (h, params) => {
-            return h('Button', {
-              props: {
-                type: params.row.state === '申请中' ? 'info' : params.row.state === '通过' ? 'success' : 'error',
-                size: 'small'
-              },
-              on: {
-                click: () => {
-                  this.review(params.row.id, params.row.state !== '通过')
-                }
-              }
-            }, params.row.state)
+          align: 'center',
+          slot: 'state',
+          filters: [
+            {
+              label: '通过',
+              value: 1
+            },
+            {
+              label: '申请中',
+              value: 2
+            },
+            {
+              label: '拒绝',
+              value: 3
+            }
+          ],
+          filterMultiple: false,
+          filterMethod (value, row) {
+            if (value === 1) {
+              return row.state === '通过'
+            } else if (value === 2) {
+              return row.state === '申请中'
+            } else {
+              return row.state === '拒绝'
+            }
           }
         },
         {
-          title: '操作',
-          key: 'action',
+          title: '下载',
           align: 'center',
-          render: (h, params) => {
-            return h(CompetitionAction, {
-              props: {
-                row: params.row
-              }
-            })
-          }
+          width: 200,
+          slot: 'download'
         }
       ],
+      key: '',
       tb_res: [],
       page: {
         current: 1,
@@ -145,13 +216,13 @@ export default {
     ...mapActions([
       'handleGetType',
       'handleGetAllCompetition',
-      'handleSetState',
+      'handleSetCompetitionState',
       'handleSearchCompetition'
     ]),
     getCompetitionType () {
       this.handleGetType({ type: 'competition' }).then(res => {
         res.flag
-          ? this.competitionType = res.body
+          ? this.COMPETITION_TYPE = res.body
           : this.$Message.error('获取竞赛类型失败')
       })
     },
@@ -165,8 +236,11 @@ export default {
         this.tb_res = res.records
       })
     },
+    /**
+     * 审核competition
+     */
     review (id, flag) {
-      this.handleSetState({ id, flag }).then(res => {
+      this.handleSetCompetitionState({ id, flag }).then(res => {
         if (res) {
           this.getApplyPage()
         }
@@ -186,6 +260,24 @@ export default {
         this.page = res
         this.tb_res = res.records
       })
+    },
+    // 返回Button的type
+    type (state) {
+      if (state === '通过' || state === '已开始') {
+        return 'success'
+      } else if (state === '申请中' || state === '未开始') {
+        return 'primary'
+      } else {
+        return 'error'
+      }
+    },
+    // 返回竞赛级别
+    level (minId, maxId) {
+      if (maxId === undefined || minId === maxId) {
+        return this.COMPETITION_TYPE[minId - 1].typeName
+      } else {
+        return this.COMPETITION_TYPE[minId - 1].typeName + '→' + this.COMPETITION_TYPE[maxId - 1].typeName
+      }
     }
   }
 }

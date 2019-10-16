@@ -111,7 +111,7 @@ export default {
         })
       })
     },
-    handleSetState ({ state, commit }, { id, flag }) {
+    handleSetCompetitionState ({ state, commit }, { id, flag }) {
       return new Promise((resolve, reject) => {
         set_competition_state(id, flag).then(res => {
           if (res.data.state === 'SUCCESS') {

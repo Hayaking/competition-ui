@@ -3,8 +3,15 @@
     <JoinModal :show="show"
                @cancel="cancel"
     />
-    <Input search enter-button style="width: 500px"/>
-    <Table :columns="tb_head" :data="tb_res" border height="520" size="small" stripe>
+    <div slot="title">
+      <Input search
+             style="width: 300px"/>
+      <Button type="primary" @click="toJoin">添加参赛</Button>
+    </div>
+    <Table :columns="TABLE_HEAD"
+           :data="page.records"
+           border
+           stripe>
       <template slot-scope="{ row, index }" slot="works">
         <div>{{row.works.worksName}}</div>
       </template>
@@ -23,7 +30,7 @@
     <Page show-total
           :total="page.total"
           :current="page.current"
-          :page-size="page.page_size"
+          :page-size="page.size"
           @on-change = "pageChange"
     />
   </Card>
@@ -32,43 +39,60 @@
 <script>
 import JoinModal from '@/view/components/modal/join-edit_modal'
 import { mapActions } from 'vuex'
-
+import JoinExpand from '@/view/components/table-expand/join-expand'
 export default {
   name: 'stu_join_list',
-  components: { JoinModal },
+  components: { JoinModal, JoinExpand },
   data () {
     return {
-      tb_head: [
+      TABLE_HEAD: [
+        {
+          type: 'expand',
+          width: 50,
+          render: (h, params) => {
+            return h(JoinExpand, {
+              props: {
+                row: params.row
+              }
+            })
+          }
+        },
         {
           key: 'id',
           title: 'id'
-        }, {
+        },
+        {
           title: '作品id',
           slot: 'works'
-        }, {
+        },
+        {
           title: '比赛id',
           slot: 'competition'
-        }, {
+        },
+        {
           key: 'teacherId1',
           title: '指导老师'
-        }, {
+        },
+        {
           key: 'applyState',
           title: '指导教师申请状态'
-        }, {
+        },
+        {
           key: 'enterState',
           title: '报名状态'
-        }, {
+        },
+        {
           key: 'joinState',
           title: '参赛状态'
-        }, {
+        },
+        {
           title: '操作',
           slot: 'action'
         }
       ],
-      tb_res: [],
       page: {
         current: 1,
-        page_size: 12,
+        size: 12,
         total: 0,
         records: []
       },
@@ -95,7 +119,6 @@ export default {
     getJoin (pageNum = 1, pageSize = 12) {
       this.handleGetJoinList({ pageNum, pageSize }).then(res => {
         this.page = res
-        this.tb_res = res.records
       })
     },
     editJoin (obj) {
@@ -115,6 +138,9 @@ export default {
     },
     cancel () {
       this.show = false
+    },
+    toJoin () {
+      this.$router.push({ name: 'common_competition' })
     }
   }
 }

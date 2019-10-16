@@ -7,7 +7,6 @@
              @on-change="search"
              v-model="key"/>
     </div>
-
     <Table :columns="tb_head" :data="tb_res" stripe border ></Table>
     <Page show-total
           :total="page.total"
@@ -20,11 +19,12 @@
 
 <script>
 import { mapActions } from 'vuex'
-import api_request from '@/libs/api.request'
-import { dateFomat } from '@/libs/tools'
+import CompetitionExpand from '@/view/components/table-expand/competition-expand'
+import CompetitionAction from '@/view/components/action-expand/admin-competition-expand'
 
 export default {
-  name: 'review_apply_competition',
+  name: 'admin_competition',
+  components: { CompetitionExpand, CompetitionAction },
   data () {
     return {
       key: '',
@@ -37,57 +37,42 @@ export default {
         type: ''
       },
       currentGroupId: 0,
-      url: api_request.baseUrl,
       competitionType: [],
-      groupList: [],
       tb_head: [
+        {
+          type: 'expand',
+          width: 50,
+          render: (h, params) => {
+            return h(CompetitionExpand, {
+              props: {
+                row: params.row
+              }
+            })
+          }
+        },
         {
           title: 'id',
           key: 'id',
-          width: 100,
-          fixed: 'left'
-        }, {
+          width: 100
+        },
+        {
           title: '竞赛名',
           key: 'name',
-          width: 200,
-          fixed: 'left'
-        }, {
-          title: '开始时间',
-          key: 'startTime',
-          width: 160,
-          render: (h, params) => {
-            return h('div', {}, dateFomat(params.row.startTime))
-          }
-        }, {
-          title: '结束时间',
-          key: 'endTime',
-          width: 160,
-          render: (h, params) => {
-            return h('div', {}, dateFomat(params.row.endTime))
-          }
-        }, {
-          title: '报名开始时间',
-          key: 'enterStartTime',
-          width: 160,
-          render: (h, params) => {
-            return h('div', {}, dateFomat(params.row.enterStartTime))
-          }
-        }, {
-          title: '报名结束时间',
-          key: 'enterEndTime',
-          width: 160,
-          render: (h, params) => {
-            return h('div', {}, dateFomat(params.row.enterEndTime))
-          }
-        }, {
-          title: '主办方',
-          key: 'org',
-          width: 100
-        }, {
+          width: 200
+        },
+        {
           title: '竞赛级别',
-          key: 'type',
-          width: 100
-        }, {
+          key: 'type'
+        },
+        {
+          title: '主办方',
+          key: 'org'
+        },
+        {
+          title: '协办方',
+          key: 'coOrg'
+        },
+        {
           title: '报名状态',
           key: 'enterState',
           width: 100,
@@ -98,7 +83,8 @@ export default {
               }
             }, params.row.enterState)
           }
-        }, {
+        },
+        {
           title: '开始状态',
           key: 'cpStartState',
           width: 100,
@@ -109,9 +95,9 @@ export default {
               }
             }, params.row.enterState)
           }
-        }, {
+        },
+        {
           title: '审核状态',
-          fixed: 'right',
           width: 80,
           render: (h, params) => {
             return h('Button', {
@@ -126,26 +112,17 @@ export default {
               }
             }, params.row.state)
           }
-        }, {
+        },
+        {
           title: '操作',
           key: 'action',
-          width: 100,
           align: 'center',
-          fixed: 'right',
           render: (h, params) => {
-            return h('div', [
-              h('Button', {
-                props: {
-                  type: 'error',
-                  size: 'small'
-                },
-                on: {
-                  click: () => {
-                    this.download(params.row.id)
-                  }
-                }
-              }, '下载申请表')
-            ])
+            return h(CompetitionAction, {
+              props: {
+                row: params.row
+              }
+            })
           }
         }
       ],
@@ -161,30 +138,21 @@ export default {
   mounted () {
     this.$nextTick(() => {
       this.getCompetitionType()
-      this.getGroup()
       this.getApplyPage()
     })
   },
   methods: {
     ...mapActions([
       'handleGetType',
-      'handleGetTeacherGroup',
-      'handleGetByGroupId',
       'handleGetAllCompetition',
       'handleSetState',
-      'handleSearchCompetition',
-      'handleGetCompetitionWord'
+      'handleSearchCompetition'
     ]),
     getCompetitionType () {
       this.handleGetType({ type: 'competition' }).then(res => {
         res.flag
           ? this.competitionType = res.body
           : this.$Message.error('获取竞赛类型失败')
-      })
-    },
-    getGroup () {
-      this.handleGetTeacherGroup().then(res => {
-        this.groupList = res
       })
     },
     pageChange (index) {
@@ -203,17 +171,6 @@ export default {
           this.getApplyPage()
         }
       })
-    },
-    download (id) {
-      this.handleGetCompetitionWord({ competitionId: id }).then(res => {
-        if (res) {
-          this.$Message.success('成功')
-        } else {
-          this.$Message.error('失败')
-        }
-      })
-
-      // window.open(this.url + '/word/' + id + '.doc')
     },
     search () {
       if (this.key === '') {

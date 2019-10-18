@@ -13,3 +13,10 @@ export const set_lead_apply_state = (flag, joinId) => {
     method: 'post'
   })
 }
+
+export const search_lead = (pageNum, pageSize, key) => {
+  return axios.request({
+    url: `/lead/apply/${key}/${pageNum}/${pageSize}`,
+    method: 'get'
+  })
+}

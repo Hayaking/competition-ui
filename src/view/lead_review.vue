@@ -1,13 +1,22 @@
 <template>
   <Card>
-    <Input search
-           enter-button
-           style="width: 500px"
-           @on-change="search"
-           v-model="key"/>
-    <Table :columns="tb_head" :data="tb_res" stripe border >
+    <div slot="title">
+      <Input search
+             style="width: 300px"
+             @on-change="search"
+             v-model="key"/>
+    </div>
+    <Table :columns="TABLE_HEAD"
+           :data="page.records"
+           stripe border >
+      <template slot-scope="{ row, index }" slot="works">
+        <div>{{row.works.worksName}}</div>
+      </template>
+      <template slot-scope="{ row, index }" slot="competition">
+        <div>{{row.competition.name}}</div>
+      </template>
       <template slot-scope="{ row, index }" slot="action">
-        <Button v-if="row.applyState === '通过'" @click="review(row.id,false)">取消</Button>
+        <Button v-if="row.applyState === '通过'" @click="review(row.id,false)">拒绝</Button>
         <Button v-else type="primary" @click="review(row.id,true)">通过</Button>
       </template>
     </Table>
@@ -22,43 +31,70 @@
 
 <script>
 import { mapActions } from 'vuex'
+import JoinExpand from '@/view/components/table-expand/join-expand'
 
 export default {
   name: 'lead_review',
+  components: { JoinExpand },
   data () {
     return {
       key: '',
-      tb_head: [
+      TABLE_HEAD: [
+        {
+          type: 'expand',
+          width: 50,
+          render: (h, params) => {
+            return h(JoinExpand, {
+              props: {
+                row: params.row
+              }
+            })
+          }
+        },
         {
           key: 'id',
           title: 'id'
-        }, {
+        },
+        {
           title: '作品id',
-          key: 'works'
-        }, {
+          slot: 'works'
+        },
+        {
           title: '比赛id',
-          key: 'competition'
-        }, {
-          key: 'teacherId1',
-          title: '指导老师'
-        }, {
-          key: 'applyState',
-          title: '指导教师申请状态'
-        }, {
-          key: 'enterState',
-          title: '报名状态'
-        }, {
-          key: 'joinState',
-          title: '参赛状态'
-        }, {
+          slot: 'competition'
+        },
+        {
+          title: '指导老师1',
+          key: 'teacherId1'
+        },
+        {
+          title: '指导老师2',
+          key: 'teacherId2'
+        },
+        {
+          title: '指导教师1申请状态',
+          key: 'applyState'
+        },
+        {
+          title: '指导教师2申请状态',
+          key: 'applyState2'
+        },
+        {
+          title: '报名状态',
+          key: 'enterState'
+        },
+        {
+          title: '参赛状态',
+          key: 'joinState'
+        },
+        {
           title: '操作',
           slot: 'action'
         }
       ],
-      tb_res: [],
       page: {
         current: 1,
-        page_size: 10,
+        size: 10,
         total: 0,
         records: []
       }
@@ -72,16 +108,18 @@ export default {
   methods: {
     ...mapActions([
       'handleGetLeadApplyPage',
-      'handleSetLeadApplyState'
+      'handleSetLeadApplyState',
+      'handleSearchLead'
     ]),
     pageChange (index) {
       this.page.current = index
-      this.getApplyPage(index, this.page.size)
+      this.key !== ''
+        ? this.search()
+        : this.getApplyPage(index, this.page.size)
     },
     getApplyPage (pageNum = 1, pageSize = 12) {
       this.handleGetLeadApplyPage({ pageNum, pageSize }).then(res => {
         this.page = res
-        this.tb_res = res.records
       })
     },
     review (id, flag) {
@@ -96,14 +134,14 @@ export default {
         this.getApplyPage()
         return
       }
-      let params = {
+      this.handleSearchLead({
         key: this.key,
         pageNum: this.page.current,
         pageSize: this.page.size
-      }
-      this.handleSearchCompetition(params).then(res => {
-        this.page = res
-        this.tb_res = res.records
+      }).then(res => {
+        res.flag
+          ? this.page = res.body
+          : this.$Message.error('失败')
       })
     }
   }

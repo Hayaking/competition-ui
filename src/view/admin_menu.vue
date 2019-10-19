@@ -3,47 +3,24 @@
     <MenuEditModal :show="show"
                    @cancel="cancel"/>
 
-    <Card title="!">
-      <ButtonGroup slot="extra">
-        <Button type="primary" @click="save">提交</Button>
-      </ButtonGroup>
-      <Row>
-        <Col span="18">
-          <Table :columns="tb_head"
-                 :data="tb_res"
-                 :row-class-name="rowClassName1"
-                 @on-row-click="click1"
-                 border
-                 height="650"
-                 size="small">
-            <template slot-scope="{ row, index }" slot="meta.title">
-              {{row.meta.title}}
-            </template>
-            <template slot-scope="{ row, index }" slot="meta.icon">
-              {{row.meta.icon}}
-            </template>
-            <template slot-scope="{ row, index }" slot="meta.hideInMenu">
-              {{row.meta.hideInMenu}}
-            </template>
-            <template slot-scope="{ row, index }" slot="action">
-              <Button type="success" size="small" style="margin-right: 5px" @click="editMenu(row)">
-                编辑
-              </Button>
-              <Button type="error" size="small" @click="deleteMenu(row)">
-                删除
-              </Button>
-            </template>
-          </Table>
-        </Col>
-        <Col span="5" offset="1">
-          <Table :columns="tb_all_permission_head"
-                 :data="tb_all_permission" :row-class-name="rowClassName2"
-                 @on-row-click="click2"
-                 border height="650"
-                 size="small">
-          </Table>
-        </Col>
-      </Row>
+    <Card>
+      <div slot="title">
+        <Select v-model="roleId" style="width:200px">
+          <Option v-for="(item,index) in ROLE_LIST"
+                  :value="item.id"
+                  :key="index">
+            {{ item.roleName }}
+          </Option>
+        </Select>
+      </div>
+      <div slot="extra">
+        <Button type="primary">提交</Button>
+      </div>
+
+      <Tree :data="data"
+            show-checkbox
+            @on-check-change="checkChange"
+      ></Tree>
     </Card>
   </div>
 </template>
@@ -57,133 +34,32 @@ export default {
   data () {
     return {
       roleId: 0,
-      roleList: [],
-      tb_head: [
-        {
-          type: 'index',
-          width: 60,
-          align: 'center'
-        }, {
-          title: '名字',
-          key: 'name',
-          width: 150,
-          fixed: 'left'
-        }, {
-          title: '路径',
-          key: 'path',
-          width: 200
-        }, {
-          title: '组件名',
-          width: 200,
-          key: 'component'
-        }, {
-          title: '标题',
-          width: 100,
-          slot: 'meta.title'
-        }, {
-          title: 'icon',
-          width: 100,
-          slot: 'meta.icon'
-        }, {
-          title: 'hideInMenu',
-          width: 80,
-          slot: 'meta.hideInMenu'
-        }, {
-          title: '操作',
-          fixed: 'right',
-          width: 130,
-          slot: 'action'
-        }
-      ],
-      tb_res: [],
-      tb_all_permission_head: [
-        {
-          type: 'index',
-          width: 60,
-          align: 'center'
-        }, {
-          title: '权限名',
-          key: 'permissionName'
-        }
-      ],
-      tb_all_permission: [],
-      highlight_row1: -1,
-      highlight_row2: -1,
+      ROLE_LIST: [],
+      MENU_ALL: [],
+      menuList: [],
       show: false
     }
   },
   mounted () {
     this.$nextTick(() => {
-      this.$store.dispatch('handleGetAllPermission').then(res => {
-        this.tb_all_permission = res
+      this.roleId = 1
+      this.handleGetRoleList().then(res => {
+        this.ROLE_LIST = res
       })
-      this.$store.dispatch('handleGetAllRoute').then(res => {
-        this.tb_res = res
+      this.handleGetAllMenu().then(res => {
+        res.flag
+          ? this.MENU_ALL = res.body
+          : this.$Message.error('获取失败')
       })
     })
   },
   methods: {
     ...mapActions([
       'handleGetRoleList',
-      'handleGetId',
-      'handleSavePermissionMenu'
+      'handleGetAllMenu',
+      'handleGetMenuListByRoleId',
+      'handleSetRoleAndMenu'
     ]),
-    /**
-     * 根据菜单id获取权限id，并高亮对它们
-     * @param data
-     * @param index 索引
-     */
-    click1 (data, index) {
-      let flag = true
-      this.handleGetId({ menuId: this.tb_res[index].id }).then(res => {
-        this.tb_all_permission.forEach((item, index) => {
-          if (item.id === res) {
-            flag = false
-            this.highlight_row2 = index
-          }
-        })
-      })
-      if (flag) {
-        this.highlight_row2 = -1
-      }
-      this.highlight_row1 = index
-    },
-    click2 (data, index) {
-      this.highlight_row2 = index
-    },
-    rowClassName1 (row, index) {
-      // 高亮
-      if (index === this.highlight_row1) {
-        return 'table-row'
-      }
-      // 斑马纹
-      if (index % 2 === 1) {
-        return 'stripe-row'
-      }
-      return ''
-    },
-    rowClassName2 (row, index) {
-      // 高亮
-      if (index === this.highlight_row2) {
-        return 'table-row'
-      }
-      // 斑马纹
-      if (index % 2 === 1) {
-        return 'stripe-row'
-      }
-      return ''
-    },
-    save () {
-      let params = {
-        menuId: this.tb_res[this.highlight_row1].id,
-        permissionId: this.tb_all_permission[this.highlight_row2].id
-      }
-      this.handleSavePermissionMenu(params).then(res => {
-        if (res) {
-          this.$Message.success('成功')
-        }
-      })
-    },
     editMenu (obj) {
       this.$store.commit('setEditMenu', obj)
       this.show = true
@@ -193,6 +69,74 @@ export default {
     },
     cancel () {
       this.show = false
+    },
+    checkChange (obj, item) {
+      // 一级菜单
+      if (item.hasOwnProperty('children')) {
+        let id = this.MENU_ALL.find(f => { return this.$t(f.name) === item.title }).id
+        this.handleSetRoleAndMenu({
+          roleId: this.roleId,
+          menu1Id: id,
+          flag: item.checked,
+          tag: true
+        }).then(res => {
+          res ? this.$Message.success('成功') : this.$Message.error('失败')
+        })
+      } else {
+        let menu1Id
+        let menu2Id
+        this.MENU_ALL.find(menu1 => {
+          // 在一级菜单里找二级菜单
+          let menu2 = menu1.children.find(menu2 => { return this.$t(menu2.name) === item.title })
+          if (menu2 !== undefined) {
+            menu2Id = menu2.id
+            menu1Id = menu1.id
+          }
+          return menu2 !== undefined
+        })
+        this.handleSetRoleAndMenu({
+          roleId: this.roleId,
+          menu1Id,
+          menu2Id,
+          flag: item.checked,
+          tag: false
+        }).then(res => {
+          res ? this.$Message.success('成功') : this.$Message.error('失败')
+        })
+      }
+    }
+  },
+  computed: {
+    data () {
+      return this.MENU_ALL.map(item => {
+        let menu1
+        this.menuList.length > 0
+          ? menu1 = this.menuList.find(f => { return f.name === item.name })
+          : menu1 = undefined
+        return {
+          id: item.id,
+          title: this.$t(item.name),
+          expand: true,
+          children: item.children.map(child => {
+            return {
+              title: this.$t(child.name),
+              // menu1===true时说明有一级菜单
+              checked: menu1 !== undefined
+                ? menu1.children.find(f => { return f.name === child.name }) !== undefined
+                : false
+            }
+          })
+        }
+      })
+    }
+  },
+  watch: {
+    roleId (newVal) {
+      this.handleGetMenuListByRoleId({ roleId: newVal }).then(res => {
+        res.flag
+          ? this.menuList = res.body
+          : this.$Message.error('获取失败')
+      })
     }
   }
 }

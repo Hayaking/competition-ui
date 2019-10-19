@@ -2,7 +2,7 @@
   <Modal
     :footer-hide="true"
     @on-cancel="cancel"
-    :fullscreen="fullscreen"
+    :fullscreen="isFullScreen"
     width="800"
     v-model="modalShow">
     <div slot="header">
@@ -17,19 +17,26 @@
     </div>
     <Row>
       <Col span="11">
-        <Table :columns="tb_head1" :data="tb_res1" border height="520" size="small" stripe>
+        <Table :columns="TABLE_HEAD_LEFT"
+               :data="table_res_left"
+               height="520"
+               size="small"
+               border
+               stripe>
           <template slot-scope="{ row, index }" slot="action">
-            <Button v-if="row.state === '邀请成功'" type="error" size="small" @click="remove(row.id)">
-              删除
-            </Button>
-            <Button v-else type="success" size="small" disabled >
-              {{row.state}}
+            <Button :type="buttonType(row.state)" size="small" @click="remove(row.id)">
+              {{buttonText(row.state)}}
             </Button>
           </template>
         </Table>
       </Col>
       <Col span="11" offset="2">
-        <Table :columns="tb_head2" :data="tb_res2" border height="520" size="small" stripe>
+        <Table :columns="TABLE_HEAD_RIGHT"
+               :data="table_res_right"
+               height="520"
+               size="small"
+               stripe
+               border >
           <template slot-scope="{ row, index }" slot="action">
             <Button type="primary" size="small" @click="invite(row._index)">
               邀请
@@ -59,49 +66,59 @@ export default {
   data () {
     return {
       getter: this.$store.getters,
-      fullscreen: false,
-      tb_head1: [
+      isFullScreen: false,
+      TABLE_HEAD_LEFT: [
         {
           title: '帐号',
           key: 'account'
-        }, {
+        },
+        {
           title: '姓名',
           key: 'teacherName'
-        }, {
+        },
+        {
           title: '操作',
           slot: 'action',
           width: 150,
           align: 'center'
         }
       ],
-      tb_res1: [],
-      tb_head2: [
+      TABLE_HEAD_RIGHT: [
         {
           title: '帐号',
           key: 'account'
-        }, {
+        },
+        {
           title: '姓名',
           key: 'teacherName'
-        }, {
+        },
+        {
           title: '操作',
           slot: 'action',
           width: 150,
           align: 'center'
         }
       ],
-      tb_res2: [],
-      groupList: []
+      table_res_left: [],
+      table_res_right: []
     }
+  },
+  mounted () {
+    this.$nextTick(() => {
+      this.handleGetAllTeacher().then(res => {
+        this.table_res_right = res
+      })
+    })
   },
   methods: {
     ...mapActions([
       'handleInviteTeacherMember',
-      'handleGetTeacherGroup',
       'handleGetAllTeacher',
+      'handleGetTeacherByGroupId',
       'handleRemoveTeacherFromGroup'
     ]),
     full () {
-      this.fullscreen = !this.fullscreen
+      this.isFullScreen = !this.isFullScreen
     },
     cancel () {
       this.$emit('cancel')
@@ -110,55 +127,58 @@ export default {
      * 差集
      */
     differSet () {
-      this.tb_res2 = this.tb_res2.filter(item => {
-        return this.tb_res1.every((i) => {
+      this.table_res_right = this.table_res_right.filter(item => {
+        return this.table_res_left.every((i) => {
           return i.id !== item.id
         })
+      })
+    },
+    getTeacherByGroup (groupId) {
+      this.handleGetTeacherByGroupId({ groupId }).then(res => {
+        this.table_res_left = res
+        this.table_res_right = this.allTeacher
+        this.differSet()
       })
     },
     invite (index) {
       let params = {
         groupId: this.groupId,
-        teacherId: this.tb_res2[index].id
+        teacherId: this.table_res_right[index].id
       }
       this.handleInviteTeacherMember(params).then(res => {
         if (res) {
-          this.$store.dispatch('handleGetTeacherByGroupId', { groupId: this.groupId }).then(r => {
-            this.tb_res1 = r
-            this.tb_res2 = this.allTeacher
-            this.differSet()
-            this.$Message.info('邀请中')
-          })
+          this.$Message.success('邀请中')
+          this.getTeacherByGroup(this.groupId)
         }
       })
     },
     remove (id) {
-      console.info(id)
       this.handleRemoveTeacherFromGroup({ groupId: this.groupId, teacherId: id }).then(res => {
         if (res) {
-          this.$Message.info('!')
-          this.differSet()
+          this.$Message.success('成功')
+          this.getTeacherByGroup(this.groupId)
         } else {
-          this.$Message.info('?')
+          this.$Message.error('失败')
         }
       })
     },
-    /**
-     * 获取教师所在工作组
-     */
-    getTeacherGroup () {
-      this.handleGetTeacherGroup().then(res => {
-        this.groupList = res
-        this.groupId = res[0].id
-      })
+    buttonType (str) {
+      if (str === '邀请成功') {
+        return 'error'
+      } else if (str === '邀请中') {
+        return 'default'
+      } else {
+        return 'primary'
+      }
     },
-    /**
-     * 获取所有教师
-     */
-    getAllTeacher () {
-      this.handleGetAllTeacher().then(res => {
-        this.tb_res2 = res
-      })
+    buttonText (str) {
+      if (str === '邀请成功') {
+        return '删除'
+      } else if (str === '邀请中') {
+        return '取消'
+      } else {
+        return '失败'
+      }
     }
   },
   computed: {
@@ -176,11 +196,7 @@ export default {
   },
   watch: {
     groupId (val) {
-      this.$store.dispatch('handleGetTeacherByGroupId', { groupId: val }).then(res => {
-        this.tb_res1 = res
-        this.tb_res2 = this.allTeacher
-        this.differSet()
-      })
+      this.getTeacherByGroup(val)
     }
   }
 }

@@ -3,7 +3,7 @@
     <div slot="title">
       <Row>
         <Col span="1">
-          {{competitionId}}
+          {{competition.name}}
         </Col>
         <Col span="5">
           <Input search
@@ -16,8 +16,7 @@
         </Col>
       </Row>
     </div>
-
-    <Table :columns="tb_head" :data="tb_res" stripe border >
+    <Table :columns="TABLE_HEAD" :data="page.records" stripe border >
       <template slot-scope="{ row, index }" slot="works">
         <div>{{row.works.worksName}}</div>
       </template>
@@ -48,22 +47,26 @@
 
 <script>
 import { mapActions } from 'vuex'
-
+import JoinExpand from '@/view/components/table-expand/join-expand'
 export default {
   name: 'competition_enter_list',
+  components: { JoinExpand },
   data () {
     return {
       getter: this.$store.getters,
-      competition: {
-        name: '',
-        startTime: '',
-        org: '',
-        personInCharge: '',
-        type: ''
-      },
       competitionId: 0,
-      competitionType: [],
-      tb_head: [
+      TABLE_HEAD: [
+        {
+          type: 'expand',
+          width: 50,
+          render: (h, params) => {
+            return h(JoinExpand, {
+              props: {
+                row: params.row
+              }
+            })
+          }
+        },
         {
           key: 'id',
           title: 'id'
@@ -79,13 +82,16 @@ export default {
         {
           key: 'teacherId1',
           title: '指导老师'
-        }, {
+        },
+        {
           key: 'applyState',
           title: '指导教师申请状态'
-        }, {
+        },
+        {
           key: 'enterState',
           title: '报名状态'
-        }, {
+        },
+        {
           key: 'joinState',
           title: '参赛状态'
         }, {
@@ -93,7 +99,6 @@ export default {
           slot: 'action'
         }
       ],
-      tb_res: [],
       page: {
         current: 1,
         page_size: 12,
@@ -105,16 +110,16 @@ export default {
   mounted () {
     this.$nextTick(() => {
       this.competitionId = this.$route.params.id
+      this.$store.dispatch('handleGetCompetitionById', { id: this.competitionId })
       this.getEnterPage()
-      this.getCompetitionType()
     })
   },
   methods: {
     ...mapActions([
       'handleGetEnterListByCompetitionId',
       'handleExportEnterExcel',
-      'handleGetType',
-      'handleSetJoinEnterState'
+      'handleSetJoinEnterState',
+      'handleGetCompetitionById'
     ]),
     /**
      * 分页
@@ -131,17 +136,6 @@ export default {
       let competitionId = this.competitionId
       this.handleGetEnterListByCompetitionId({ pageNum, pageSize, competitionId }).then(res => {
         this.page = res
-        this.tb_res = res.records
-      })
-    },
-    /**
-     * 获取竞赛级别
-     */
-    getCompetitionType () {
-      this.handleGetType({ type: 'competition' }).then(res => {
-        res.flag
-          ? this.competitionType = res.body
-          : this.$Message.error('获取竞赛类型失败')
       })
     },
     /**
@@ -176,7 +170,11 @@ export default {
     check (obj) {
       return obj.apply_state === '通过' && obj.enter_state === '通过'
     }
-
+  },
+  computed: {
+    competition () {
+      return this.getter.getTempCompetition
+    }
   },
   watch: {
     competitionId () {

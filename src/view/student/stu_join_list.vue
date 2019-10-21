@@ -70,20 +70,28 @@ export default {
           slot: 'competition'
         },
         {
-          key: 'teacherId1',
-          title: '指导老师'
+          title: '指导老师1',
+          key: 'teacherId1'
         },
         {
-          key: 'applyState',
-          title: '指导教师申请状态'
+          title: '指导老师2',
+          key: 'teacherId2'
         },
         {
-          key: 'enterState',
-          title: '报名状态'
+          title: '指导教师1申请状态',
+          key: 'applyState'
         },
         {
-          key: 'joinState',
-          title: '参赛状态'
+          title: '指导教师2申请状态',
+          key: 'applyState2'
+        },
+        {
+          title: '报名状态',
+          key: 'enterState'
+        },
+        {
+          title: '参赛状态',
+          key: 'joinState'
         },
         {
           title: '操作',

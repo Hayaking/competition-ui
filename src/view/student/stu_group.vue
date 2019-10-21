@@ -1,6 +1,9 @@
 <template>
   <Card>
     <Table :data="tb_res" :columns="tb_head">
+      <template slot-scope="{ row, index }" slot="creator">
+        <div>{{row.creator.stuName}}</div>
+      </template>
     </Table>
     <Page show-total
           :total="page.total"
@@ -28,10 +31,12 @@ export default {
         {
           title: '组名',
           key: 'name'
-        }, {
-          title: 'creator',
-          key: 'creator'
-        }, {
+        },
+        {
+          title: '组长',
+          slot: 'creator'
+        },
+        {
           title: '作品名',
           key: 'worksName'
         }

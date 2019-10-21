@@ -21,6 +21,7 @@ export default {
   stu_join: '参赛',
   stu_join_list: '查看参赛列表',
   lead: '指导老师',
+  stu_group: '小组',
 
   home: '首页',
   login: '登录',

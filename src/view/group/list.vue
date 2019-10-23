@@ -8,13 +8,14 @@
                  class="tool-bar"/>
         </Col>
         <Col span="3">
-          <Button @click="showCreate" type="primary">创建工作组</Button>
+          <Button @click="showCreateGroup" type="primary">创建工作组</Button>
+          <Button @click="refresh" type="primary">刷新</Button>
         </Col>
       </Row>
     </div>
     <!--内容-->
     <div>
-      <Table :columns="tb_head" :data="tb_res" stripe>
+      <Table :columns="tb_head" :data="page.records" stripe>
         <template slot-scope="{ row, index }" slot="creator">
           <div>{{row.creator.teacherName}}</div>
         </template>
@@ -22,28 +23,44 @@
           <Button type="primary"
                   size="small"
                   style="margin-right: 5px"
-                  @click="toCompetition(row)">
+                  @click="toCompetitionList(row)">
             查看比赛立项
           </Button>
-          <Button type="primary"
+          <Button v-if="isNotGroupCreator(row.creator.teacherName)"
+                  type="primary"
                   size="small"
                   style="margin-right: 5px"
-                  :disabled="isDisabled(row.creator.teacherName)"
+                  @click="showInvite(row.id)">
+            查看成员
+          </Button>
+          <Button v-else
+                  type="primary"
+                  size="small"
+                  style="margin-right: 5px"
                   @click="showInvite(row.id)">
             邀请组员
           </Button>
           <Button type="primary"
                   size="small"
                   style="margin-right: 5px"
-                  :disabled="isDisabled(row.creator.teacherName)"
+                  :disabled="isNotGroupCreator(row.creator.teacherName)"
                   @click="toPost()">
             发表公告
           </Button>
-          <Button type="error"
+          <Button v-if="isNotGroupCreator(row.creator.teacherName)"
+                  type="error"
                   size="small"
                   style="margin-right: 5px"
-                  @click="exit(row.id)">
+                  @click="exitGroup(row.id)">
             退出
+          </Button>
+          <Button
+                  v-else
+                  type="error"
+                  size="small"
+                  style="margin-right: 5px"
+                  @click="deleteGroup(row.id)">
+            删除
           </Button>
         </template>
       </Table>
@@ -69,6 +86,7 @@
     <!--创建工作组-->
     <CreateModal
       :show="showCreateModal"
+      @callback="handleCreateGroup"
       @cancel="closeModel"
     />
   </Card>
@@ -125,7 +143,6 @@ export default {
           slot: 'action'
         }
       ],
-      tb_res: [],
       page: {
         current: 1,
         page_size: 12,
@@ -153,7 +170,8 @@ export default {
       'handleGetTeacherGroupByPage',
       'handleSetTeacherGroupState',
       'handleSearchTeacherGroup',
-      'handleExitTeacherGroup'
+      'handleExitTeacherGroup',
+      'handleDeleteTeacherGroup'
     ]),
     pageChange (index) {
       this.page.current = index
@@ -165,18 +183,39 @@ export default {
     getApply (pageNum = 1, pageSize = 12) {
       this.handleGetTeacherGroupByPage({ pageNum, pageSize }).then(res => {
         this.page = res
-        this.tb_res = res.records
       })
     },
-    exit (groupId) {
+    /**
+     * 退出工作组
+     * @param groupId
+     */
+    exitGroup (groupId) {
       this.handleExitTeacherGroup({ groupId }).then(res => {
         if (res) {
+          this.getApply()
           this.$Message.success('成功')
         } else {
           this.$Message.error('失败')
         }
       })
     },
+    /**
+     * 删除工作组
+     * @param groupId
+     */
+    deleteGroup (groupId) {
+      this.handleDeleteTeacherGroup({ groupId }).then(res => {
+        if (res) {
+          this.getApply()
+          this.$Message.success('成功')
+        } else {
+          this.$Message.error('失败')
+        }
+      })
+    },
+    /**
+     * 关闭对话框
+     */
     closeModel () {
       this.showInviteModal = false
       this.showCompetitionModal = false
@@ -186,7 +225,7 @@ export default {
       this.groupId = id
       this.showInviteModal = true
     },
-    toCompetition (group) {
+    toCompetitionList (group) {
       let id = group.id
       let creatorName = group.creator.teacherName
       this.closeTag({
@@ -200,20 +239,28 @@ export default {
           name: 'group_competition_list',
           params: {
             id: id,
-            flag: this.isDisabled(creatorName)
+            flag: this.isNotGroupCreator(creatorName)
           }
         })
         this.preGroupId = id
       })
     },
-    showCreate () {
+    showCreateGroup () {
       this.showCreateModal = true
     },
-    isDisabled (creatorName) {
+    isNotGroupCreator (creatorName) {
       return !(this.userName === creatorName)
     },
     toPost () {
       this.$router.push({ name: 'group_post' })
+    },
+    refresh () {
+      this.getApply()
+    },
+    handleCreateGroup (flag) {
+      flag
+        ? this.getApply()
+        : this.$Message.error('失败')
     }
   },
   computed: {

@@ -4,7 +4,7 @@
       <CellGroup>
         <Cell>
           <div slot="icon">工作组</div>
-          <div slot="label">{{competition.groupId}}</div>
+          <div slot="label">{{competition.teacherGroupId}}</div>
         </Cell>
         <Cell>
           <div slot="icon">比赛名称</div>
@@ -75,17 +75,6 @@ export default {
   name: 'competition-form1',
   data () {
     return {
-      getter: this.$store.getters,
-      rules: {
-        startDate: [{ required: true, message: '不为空' }],
-        enterDate: [{ required: true, message: '不为空' }],
-        groupNum: [{ required: true, message: '不为空' }],
-        stuNum: [{ required: true, message: '不为空' }],
-        personInCharge: [{ required: true, message: '不为空' }],
-        joinTypeId: [{ required: true, message: '不为空' }],
-        process: [{ required: true, message: '不为空' }],
-        intro: [{ required: true, message: '不为空' }]
-      },
       COMPETITION_TYPE: [],
       JOIN_TYPE: ['单人赛', '多人赛'],
       tb_head: [
@@ -174,6 +163,7 @@ export default {
             res
               ? this.$Message.success('保存成功')
               : this.$Message.error('保存失败')
+            this.$emit('callback', res)
           })
         } else {
           this.$Message.error('保存失败')

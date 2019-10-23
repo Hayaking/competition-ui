@@ -5,12 +5,18 @@
         :model="competition"
         :hide-required-mark="true"
         label-position="left">
-    <FormItem label="当前工作组" prop="groupId">
-      <Select v-model="competition.teacherGroupId">
-        <Option  v-for="item in groupList"  :value="item.id" :key="item.id">
-          {{item.name}}
-        </Option>
-      </Select>
+<!--    <FormItem label="当前工作组" prop="teacherGroupId">-->
+<!--      <Select v-model="competition.teacherGroupId">-->
+<!--        <Option  v-for="item in groupList"  :value="item.id" :key="item.id">-->
+<!--          {{item.name}}-->
+<!--        </Option>-->
+<!--      </Select>-->
+<!--    </FormItem>-->
+    <FormItem label="是否需要参赛作品">
+      <i-switch v-model="competition.isHaveWorks" size="large">
+        <span slot="true">是</span>
+        <span slot="false">否</span>
+      </i-switch>
     </FormItem>
     <FormItem label="比赛名称" prop = "name">
       <Input v-model="competition.name"/>
@@ -53,7 +59,8 @@ export default {
     return {
       getter: this.$store.getters,
       competition: {
-        groupId: '',
+        // groupId: '',
+        isHaveWorks: true,
         name: '',
         place: '',
         org: '',
@@ -63,7 +70,7 @@ export default {
         exRes: ''
       },
       rules: {
-        groupId: [{ required: true, message: '不为空' }],
+        // groupId: [{ required: true, message: '不为空' }],
         name: [{ required: true, message: '不为空' }],
         place: [{ required: true, message: '不为空' }],
         org: [{ required: true, message: '不为空' }],
@@ -85,10 +92,10 @@ export default {
   mounted () {
     this.$nextTick(() => {
       this.getCompetitionType()
-      this.handleGetTeacherGroup().then(res => {
-        this.groupList = res
-        this.competition.groupId = res[0].id
-      })
+      // this.handleGetTeacherGroup().then(res => {
+      //   this.groupList = res
+      //   this.competition.groupId = res[0].id
+      // })
     })
   },
   methods: {

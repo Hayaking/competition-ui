@@ -76,6 +76,9 @@
           <Button @click="toEnterList(row.id)" type="primary">
             报名列表
           </Button>
+          <Button @click="toSetProgress(row.id)" type="primary">
+            设置比赛进度
+          </Button>
           <Button :disabled="flag" @click="showProcess(row.id)" type="primary">
             提交比赛过程
           </Button>
@@ -102,12 +105,13 @@ export default {
   },
   methods: {
     toEnterList (id) {
-      this.$router.push({
-        name: 'competition_enter_list',
-        params: {
-          id: id
-        }
-      })
+      this.$emit('toEnterList',  id )
+      // this.$router.push({
+      //   name: 'competition_enter_list',
+      //   params: {
+      //     id: id
+      //   }
+      // })
     },
     showProcess (id) {
       this.$emit('showProcess', { competitionId: id })
@@ -117,6 +121,9 @@ export default {
     },
     toEdit (id) {
       this.$emit('toEdit', { competitionId: id })
+    },
+    toSetProgress (id) {
+      this.$emit('toSetProgress', { competitionId: id })
     }
   },
   computed: {

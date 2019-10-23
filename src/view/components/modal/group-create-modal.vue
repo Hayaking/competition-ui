@@ -22,10 +22,9 @@
 </template>
 
 <script>
-import { mapActions, mapMutations } from 'vuex'
 
 export default {
-  name: 'group-invite-modal',
+  name: 'group-create-modal',
   props: {
     show: {
       type: Boolean,
@@ -49,24 +48,12 @@ export default {
     cancel () {
       this.$emit('cancel')
     },
-    ...mapActions([
-      'handleCreateTeacherGroup'
-    ]),
-    ...mapMutations([
-      'closeTag'
-    ]),
     apply () {
       this.$refs['form'].validate(res => {
         if (res) {
           this.handleCreateTeacherGroup({ group: this.group }).then(res => {
-            if (res) {
-              this.$Message.success('申请中')
-              this.closeTag({ name: 'teacher_group' })
-              this.$router.push({ name: 'teacher_group_list' })
-            } else {
-              this.$Message.error('申请失败')
-              this.group = {}
-            }
+            this.$emit('callback', res)
+            this.group = {}
           })
         }
       })
@@ -75,13 +62,6 @@ export default {
   computed: {
     modalShow: {
       get () {
-        // eslint-disable-next-line vue/no-async-in-computed-properties,vue/no-side-effects-in-computed-properties
-        this.$store.dispatch('handleGetRoleList').then(res => {
-          // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-          this.right = res
-          // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-          this.left = this.userRoles
-        })
         return this.show
       },
       set (val) {

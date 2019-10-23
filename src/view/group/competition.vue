@@ -36,6 +36,7 @@
       <Row v-else-if="stepIndex===3">
         <Col span="10" offset="7" >
           <Form4 @on-success-valid="callForm3"
+                 @callback="finish"
                  :competition="competition"
                  :budgets="budgets"
                  :flag="flag4"/>
@@ -46,7 +47,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapMutations } from 'vuex'
 import FormStep from '@/view/components/form-step'
 import Form1 from '@/view/components/form/competition-form1'
 import Form2 from '@/view/components/form/competition-form2'
@@ -65,35 +66,23 @@ export default {
       flag3: false,
       flag4: false,
       competition: {},
-      budgets: []
+      budgets: [],
+      groupId: 0
     }
+  },
+  mounted () {
+    this.groupId = this.$route.params.id
   },
   methods: {
     ...mapActions([
       'saveCompetition'
     ]),
+    ...mapMutations([
+      'closeTag'
+    ]),
     /**
      * 提交比赛立项
      */
-    save () {
-      this.$refs.createForm.validate(valid => {
-        if (valid) {
-          this.competition.startTime = this.competition.startDate[0]
-          this.competition.endTime = this.competition.startDate[1]
-          this.competition.enterStartTime = this.competition.enterDate[0]
-          this.competition.enterEndTime = this.competition.enterDate[1]
-          this.saveCompetition({ competition: this.competition }).then(res => {
-            if (res) {
-              this.$Message.success('保存成功')
-            } else {
-              this.$Message.error('保存失败')
-            }
-          })
-        } else {
-          this.$Message.error('表单')
-        }
-      })
-    },
     next (flag = true) {
       if (!flag) {
         this.stepIndex--
@@ -109,7 +98,6 @@ export default {
     callForm1 (flag, competition) {
       if (flag) {
         Object.assign(this.competition, competition)
-        console.info(this.competition)
         this.stepIndex++
       } else {
         this.$Message.error('失败')
@@ -125,6 +113,7 @@ export default {
     },
     callForm3 (res = { flag, budgets }) {
       if (res.flag) {
+        this.competition.teacherGroupId = this.groupId
         this.budgets = res.budgets
         this.stepIndex++
       } else {
@@ -133,6 +122,15 @@ export default {
     },
     submit () {
       this.flag4 = true
+    },
+    finish () {
+      this.closeTag({
+        name: 'group_competition',
+        params: {
+          id: this.groupId
+        }
+      })
+      this.$router.push({ name: 'group_competition_list' })
     }
   }
 }

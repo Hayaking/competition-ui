@@ -13,7 +13,7 @@ import {
   refuse_teacher_group_invite,
   search_teacher_group,
   set_teacher_group_state,
-  get_teacher_by_group_id, remove_teacher_from_group
+  get_teacher_by_group_id, remove_teacher_from_group, delete_teacher_group
 } from '@/api/group'
 
 export default {
@@ -187,5 +187,14 @@ export default {
         })
       })
     },
+    handleDeleteTeacherGroup ({ commit }, { groupId }) {
+      return new Promise((resolve, reject) => {
+        delete_teacher_group(groupId).then(res => {
+          resolve(res.data.state === 'SUCCESS')
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    }
   }
 }

@@ -56,21 +56,30 @@
           @on-change = "pageChange"
     />
     <!--提交比赛过程-->
-    <SubmitProcess
+    <SubmitProcessModal
       @cancel="cancelModel"
       :showModal="showProcessModal"
       :competitionId="competitionId"
+    />
+    <EditCompetitionModal
+      @cancel="cancelModel"
+      :show="showEditModal"/>
+    <SetProgressModal
+      @cancel="cancelModel"
+      :show="showProgressModal"
     />
   </Card>
 </template>
 
 <script>
-import { mapActions } from 'vuex'
-import SubmitProcess from '@/view/components/modal/submit-process-modal'
+import { mapActions, mapMutations } from 'vuex'
+import SubmitProcessModal from '@/view/components/modal/submit-process-modal'
 import CompetitionExpand from '@/view/components/table-expand/group-competition-expand'
+import EditCompetitionModal from '@/view/components/modal/group-edit-competition'
+import SetProgressModal from '@/view/components/modal/group-set-competition-progress'
 export default {
   name: 'group_competition_list',
-  components: { SubmitProcess, CompetitionExpand },
+  components: { SubmitProcessModal, CompetitionExpand, EditCompetitionModal, SetProgressModal },
   data () {
     return {
       COMPETITION_TYPE: [],
@@ -93,6 +102,12 @@ export default {
                 },
                 toEdit: (competitionId) => {
                   this.editCompetition(competitionId)
+                },
+                toSetProgress: (competitionId) => {
+                  this.setProgress(competitionId)
+                },
+                toEnterList: (competitionId) => {
+                  this.toEnterList(competitionId)
                 }
               }
             })
@@ -221,9 +236,12 @@ export default {
         records: []
       },
       showProcessModal: false,
+      showEditModal: false,
+      showProgressModal: false,
       competitionId: 0,
       flag: false,
-      groupId: 0
+      groupId: 0,
+      tabs: []
     }
   },
   mounted () {
@@ -241,6 +259,13 @@ export default {
       })
     })
   },
+  beforeDestroy () {
+    console.info('closing')
+    this.tabs.forEach(item => {
+      console.info(item)
+      this.closeTab(item)
+    })
+  },
   methods: {
     ...mapActions([
       'handleGetByGroupId',
@@ -248,6 +273,9 @@ export default {
       'handleGetTeacherGroup',
       'handleGetType',
       'handleDeleteCompetition'
+    ]),
+    ...mapMutations([
+      'closeTag'
     ]),
     /**
      * 分页
@@ -298,10 +326,19 @@ export default {
       })
     },
     editCompetition (id) {
-
+      console.info('----------edit---------------')
+      this.showEditModal = true
     },
+    /**
+     * 创建比赛立项
+     */
     addCompetition () {
-      this.$router.push({ name: 'group_competition' })
+      this.$router.push({
+        name: 'group_competition',
+        params: {
+          id: this.groupId
+        }
+      })
     },
     showProcess (id) {
       this.showProcessModal = true
@@ -327,6 +364,23 @@ export default {
     },
     cancelModel () {
       this.showProcessModal = false
+      this.showEditModal = false
+    },
+    setProgress () {
+      this.showProgressModal = true
+    },
+    toEnterList (competitionId) {
+      let tab = {
+        name: 'competition_enter_list',
+        params: {
+          id: competitionId
+        }
+      }
+      this.tabs.push(tab)
+      this.$router.push(tab)
+    },
+    closeTab (item) {
+      this.closeTag(item)
     }
   },
   watch: {

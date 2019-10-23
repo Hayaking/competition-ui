@@ -1,11 +1,15 @@
 <template>
   <Card>
-    <Input enter-button
-           search
-           style="width: 500px"
-           @on-change="search"
-           v-model="key"/>
-    <Table :columns="tb_head" :data="tb_res" stripe>
+    <div slot="title">
+      <Input search
+             style="width: 300px"
+             @on-change="search"
+             v-model="key"/>
+      <ButtonGroup>
+        <Button @click="refresh" type="primary">刷新</Button>
+      </ButtonGroup>
+    </div>
+    <Table :columns="tb_head" :data="page.records" stripe>
       <template slot-scope="{ row, index }" slot="creator">
         <div>{{row.creator.teacherName}}</div>
       </template>
@@ -64,7 +68,6 @@ export default {
           }
         }
       ],
-      tb_res: [],
       page: {
         current: 1,
         page_size: 12,
@@ -94,7 +97,6 @@ export default {
     getApply (pageNum = 1, pageSize = 12) {
       this.handleGetAllTeacherGroup({ pageNum, pageSize }).then(res => {
         this.page = res
-        this.tb_res = res.records
       })
     },
     review (id, flag) {
@@ -116,8 +118,10 @@ export default {
       }
       this.handleSearchTeacherGroup(params).then(res => {
         this.page = res
-        this.tb_res = res.records
       })
+    },
+    refresh () {
+      this.getApply()
     }
   }
 

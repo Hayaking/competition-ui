@@ -5,8 +5,9 @@
       <Col span="4">{{row.works.id}}</Col>
       <Col span="4">{{row.works.worksName}}</Col>
     </Row>
-    小组：
-    <Row>
+
+    <Row v-if="row.joinTypeId ===1">
+      小组：
       <Col span="4">{{row.works.studentGroup.id}}</Col>
       <Col span="4">{{row.works.studentGroup.name}}</Col>
       <Col span="4">{{row.works.studentGroup.creator}}</Col>

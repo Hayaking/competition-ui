@@ -95,6 +95,12 @@ export const search_teacher_group = (key, pageNum, pageSize) => {
 
 export const exit_teacher_group = (groupId) => {
   return axios.request({
+    url: `/teacherGroup/exit/${groupId}`,
+    method: 'delete'
+  })
+}
+export const delete_teacher_group = (groupId) => {
+  return axios.request({
     url: `/teacherGroup/${groupId}`,
     method: 'delete'
   })

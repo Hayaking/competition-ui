@@ -35,13 +35,13 @@
         <div v-else>
           <Form ref="form" :model="process" :rule="rules">
             <FormItem prop="description" label="描述">
-              <Input v-model="process.description" />
+              <Input type="textarea" v-model="process.description" />
             </FormItem>
             <FormItem prop="time" label="时间">
               <DatePicker v-model="process.time" />
             </FormItem>
             <FormItem prop="persons" label="参赛人员">
-              <Input type="textarea" v-model="process.persons"/>
+              <Input v-model="process.persons"/>
             </FormItem>
           </Form>
           <div style="float: left;margin-top: 20px">

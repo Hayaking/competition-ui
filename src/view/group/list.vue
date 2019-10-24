@@ -77,12 +77,6 @@
       :group-id="groupId"
       @cancel="closeModel"
     />
-    <!--工作组拥有的竞赛-->
-    <CompetitionModal
-      :show="showCompetitionModal"
-      :current-group-id="groupId"
-      @cancel="closeModel"
-    />
     <!--创建工作组-->
     <CreateModal
       :show="showCreateModal"
@@ -94,14 +88,13 @@
 
 <script>
 import { mapActions, mapMutations } from 'vuex'
-import InviteModal from '@/view/components/modal/group-invite-modal'
-import CompetitionModal from '@/view/components/modal/group-competition-modal'
-import CreateModal from '@/view/components/modal/group-create-modal'
+import InviteModal from '@/view/components/modal/group/invite-modal'
+import CreateModal from '@/view/components/modal/group/create-modal'
 import { sleep } from '@/libs/util'
 
 export default {
-  name: 'test',
-  components: { InviteModal, CompetitionModal, CreateModal },
+  name: 'list',
+  components: { InviteModal, CreateModal },
   data () {
     return {
       getter: this.$store.getters,
@@ -150,7 +143,6 @@ export default {
         records: []
       },
       showInviteModal: false,
-      showCompetitionModal: false,
       showCreateModal: false,
       showProcessModal: false,
       groupId: 0,
@@ -218,7 +210,6 @@ export default {
      */
     closeModel () {
       this.showInviteModal = false
-      this.showCompetitionModal = false
       this.showCreateModal = false
     },
     showInvite (id) {

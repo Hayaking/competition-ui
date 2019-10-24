@@ -68,18 +68,23 @@
       @cancel="cancelModel"
       :show="showProgressModal"
     />
+    <SubmitResultModal
+      @cancel="cancelModel"
+      :show="showResultModal"
+    />
   </Card>
 </template>
 
 <script>
 import { mapActions, mapMutations } from 'vuex'
-import SubmitProcessModal from '@/view/components/modal/submit-process-modal'
+import SubmitProcessModal from '@/view/components/modal/group/submit-process-modal'
 import CompetitionExpand from '@/view/components/table-expand/group-competition-expand'
-import EditCompetitionModal from '@/view/components/modal/group-edit-competition'
-import SetProgressModal from '@/view/components/modal/group-set-competition-progress'
+import EditCompetitionModal from '@/view/components/modal/group/edit-modal'
+import SetProgressModal from '@/view/components/modal/group/submit-progress-modal'
+import SubmitResultModal from '@/view/components/modal/group/submit-result-modal'
 export default {
   name: 'group_competition_list',
-  components: { SubmitProcessModal, CompetitionExpand, EditCompetitionModal, SetProgressModal },
+  components: { SubmitProcessModal, CompetitionExpand, EditCompetitionModal, SetProgressModal, SubmitResultModal },
   data () {
     return {
       COMPETITION_TYPE: [],
@@ -96,6 +101,9 @@ export default {
               on: {
                 showProcess: (competitionId) => {
                   this.showProcess(competitionId)
+                },
+                showResult: (competitionId) => {
+                  this.showResult(competitionId)
                 },
                 toDelete: (competitionId) => {
                   this.deleteCompetition(competitionId)
@@ -238,6 +246,7 @@ export default {
       showProcessModal: false,
       showEditModal: false,
       showProgressModal: false,
+      showResultModal: false,
       competitionId: 0,
       flag: false,
       groupId: 0,
@@ -342,6 +351,10 @@ export default {
     },
     showProcess (id) {
       this.showProcessModal = true
+      this.competitionId = id
+    },
+    showResult (id) {
+      this.showResultModal = true
       this.competitionId = id
     },
     // 返回Button的type

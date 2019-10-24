@@ -82,6 +82,9 @@
           <Button :disabled="flag" @click="showProcess(row.id)" type="primary">
             提交比赛过程
           </Button>
+          <Button :disabled="flag" @click="showResult(row.id)" type="primary">
+            提交比赛结果
+          </Button>
           <Button @click="toEdit(row.id, true)" type="success">
             编辑
           </Button>
@@ -105,7 +108,7 @@ export default {
   },
   methods: {
     toEnterList (id) {
-      this.$emit('toEnterList',  id )
+      this.$emit('toEnterList', id)
       // this.$router.push({
       //   name: 'competition_enter_list',
       //   params: {
@@ -115,6 +118,9 @@ export default {
     },
     showProcess (id) {
       this.$emit('showProcess', { competitionId: id })
+    },
+    showResult (id) {
+      this.$emit('showResult', { competitionId: id })
     },
     toDelete (id) {
       this.$emit('toDelete', { competitionId: id })

@@ -1,9 +1,8 @@
 <template>
   <Modal
     @on-cancel="cancel"
-    :footer-hide="true"
     :fullscreen="fullscreen"
-    width="800"
+    width="500"
     v-model="modalShow">
     <div slot="header">
       <Row>
@@ -15,13 +14,45 @@
         </Button>
       </Row>
     </div>
-
+    <Row>
+      <Col span="2">&nbsp;</Col>
+      <Col span="20">
+        <Form ref="form" >
+          <FormItem label="报名状态">
+            <Select>
+              <Option>未开始</Option>
+              <Option>已开始</Option>
+              <Option>已结束</Option>
+            </Select>
+          </FormItem>
+          <FormItem label="比赛状态">
+            <Select>
+              <Option>未开始</Option>
+              <Option>已开始</Option>
+              <Option>已结束</Option>
+            </Select>
+          </FormItem>
+          <FormItem label="比赛进度">
+            <Select>
+              <Option>院赛</Option>
+              <Option>省赛</Option>
+              <Option>国赛</Option>
+            </Select>
+          </FormItem>
+        </Form>
+      </Col>
+      <Col span="2"></Col>
+    </Row>
+    <div slot="footer">
+      <Button type="default">取消</Button>
+      <Button type="primary">提交</Button>
+    </div>
   </Modal>
 </template>
 
 <script>
 export default {
-  name: 'group-edit-competition',
+  name: 'submit-progress-modal',
   props: {
     show: {
       type: Boolean,

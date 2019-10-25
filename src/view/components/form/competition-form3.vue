@@ -1,29 +1,65 @@
 <template>
   <div>
-    <div v-for="(item,index) in typeList" :key="index">
+    <div :key="index" v-for="(item,index) in formList">
       <Form :label-width="70"
-            ref="form"
+            :model="item"
             :rules="rules"
-            :model="budgets[index]"
-            label-position="left">
-        <h2>{{item.typeName}}</h2>
-        <FormItem label="报名费" prop="enter">
-          <Input v-model="budgets[index].enter"/>
-        </FormItem>
-        <FormItem label="差旅费" prop="travel">
-          <Input v-model="budgets[index].travel"/>
-        </FormItem>
-        <FormItem label="材料费" prop="thing">
-          <Input v-model="budgets[index].thing"/>
-        </FormItem>
-        <FormItem label="其他费用" prop="other">
-          <Input v-model="budgets[index].other"/>
-        </FormItem>
-        <FormItem label="计算依据及理由" prop="reason">
-          <Input v-model="budgets[index].reason"/>
-        </FormItem>
+            label-position="left"
+            ref="form">
+        <h2>{{COMPETITION_TYPE[item.typeId-1].typeName}}</h2>
+        <Row>
+          <Col span="11">
+            <FormItem label="报名时间" prop="enterDate">
+              <DatePicker type="daterange" v-model="item.enterDate"></DatePicker>
+            </FormItem>
+          </Col>
+          <Col offset="2" span="11">
+            <FormItem label="比赛时间" prop="startDate">
+              <DatePicker type="daterange" v-model="item.startDate"></DatePicker>
+            </FormItem>
+          </Col>
+        </Row>
+        <Row>
+          <Col span="11">
+            <FormItem label="报名费" prop="enter">
+              <Input v-model="item.enter"/>
+            </FormItem>
+          </Col>
+          <Col offset="2" span="11">
+            <FormItem label="差旅费" prop="travel">
+              <Input v-model="item.travel"/>
+            </FormItem>
+          </Col>
+        </Row>
+        <Row>
+          <Col span="11">
+            <FormItem label="材料费：" prop="thing">
+              <Input v-model="item.thing"/>
+            </FormItem>
+          </Col>
+          <Col offset="2" span="11">
+            <FormItem label="其他费用：" prop="other">
+              <Input v-model="item.other"/>
+            </FormItem>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <FormItem label="计算依据及理由：" prop="reason">
+              <Input type="textarea" v-model="item.reason"/>
+            </FormItem>
+          </Col>
+        </Row>
       </Form>
     </div>
+    <Select v-model="typeId">
+      <Option :key="index"
+              :value="item.id"
+              v-for="(item,index) in COMPETITION_TYPE">
+        {{item.typeName}}
+      </Option>
+    </Select>
+    <Button @click="handleAdd" icon="md-add" long type="dashed">Add item</Button>
   </div>
 </template>
 
@@ -47,7 +83,9 @@ export default {
       },
       COMPETITION_TYPE: [],
       JOIN_TYPE: ['单人赛', '多人赛'],
-      budgets: []
+      budgets: [],
+      formList: [],
+      typeId: 0
     }
   },
   props: {
@@ -66,7 +104,11 @@ export default {
   },
   mounted () {
     this.$nextTick(() => {
-      this.getCompetitionType()
+      this.handleGetType({ type: 'competition' }).then(res => {
+        res.flag
+          ? this.COMPETITION_TYPE = res.body
+          : this.$Message.error('获取竞赛类型失败')
+      })
     })
   },
   methods: {
@@ -74,18 +116,21 @@ export default {
       'handleGetType'
     ]),
     submit () {
-      // budgets数组直接穿过去会undefined
-      let res = { flag: true, budgets: this.budgets }
+      let res = { flag: true, formList: this.formList }
       this.$emit('on-success-valid', res)
     },
-    /**
-     * 获取竞赛级别
-     */
-    getCompetitionType () {
-      this.handleGetType({ type: 'competition' }).then(res => {
-        res.flag
-          ? this.COMPETITION_TYPE = res.body
-          : this.$Message.error('获取竞赛类型失败')
+    handleAdd () {
+      this.formList.push({
+        // 比赛进程
+        enterDate: [],
+        startDate: [],
+        typeId: this.typeId,
+        // 预算
+        enter: '',
+        travel: '',
+        thing: '',
+        other: '',
+        reason: ''
       })
     }
   },

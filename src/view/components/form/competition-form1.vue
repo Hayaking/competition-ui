@@ -30,20 +30,20 @@
     <FormItem label="协办方" prop="coOrg">
       <Input v-model="competition.coOrg"/>
     </FormItem>
-    <FormItem label="最低级别" prop="minLevelId">
-      <Select v-model="competition.minLevelId">
-        <Option v-for="item in competitionType"  :value="item.id" :key="item.id">
-          {{item.typeName}}
-        </Option>
-      </Select>
-    </FormItem>
-    <FormItem label="最高级别" prop="maxLevelId">
-      <Select v-model="competition.maxLevelId">
-        <Option v-for="item in competitionType"  :value="item.id" :key="item.id">
-          {{item.typeName}}
-        </Option>
-      </Select>
-    </FormItem>
+<!--    <FormItem label="最低级别" prop="minLevelId">-->
+<!--      <Select v-model="competition.minLevelId">-->
+<!--        <Option v-for="item in competitionType"  :value="item.id" :key="item.id">-->
+<!--          {{item.typeName}}-->
+<!--        </Option>-->
+<!--      </Select>-->
+<!--    </FormItem>-->
+<!--    <FormItem label="最高级别" prop="maxLevelId">-->
+<!--      <Select v-model="competition.maxLevelId">-->
+<!--        <Option v-for="item in competitionType"  :value="item.id" :key="item.id">-->
+<!--          {{item.typeName}}-->
+<!--        </Option>-->
+<!--      </Select>-->
+<!--    </FormItem>-->
     <FormItem label="预期结果" prop="exRes">
       <Input :rows="4" placeholder="预期结果" type="textarea" v-model="competition.exRes"/>
     </FormItem>

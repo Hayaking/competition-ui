@@ -4,73 +4,73 @@
       <Row>
         <Col span="3">
           <Select v-model="groupId">
-            <Option  v-for="item in groupList"  :value="item.id" :key="item.id">
+            <Option :key="item.id" :value="item.id" v-for="item in groupList">
               {{item.name}}
             </Option>
           </Select>
         </Col>
         <Col span="5">
-          <Input search
-                 class="tool-bar"/>
+          <Input class="tool-bar"
+                 search/>
         </Col>
         <Col span="5">
-          <Button type="primary" @click="addCompetition">增加</Button>
+          <Button @click="addCompetition" type="primary">增加</Button>
         </Col>
       </Row>
     </div>
     <Table :columns="TABLE_HEAD"
            :data="page.records"
-           stripe
-           border >
+           border
+           stripe>
       <!--报名状态-->
-      <template slot-scope="{ row, index }" slot="enterState">
+      <template slot="enterState" slot-scope="{ row, index }">
         <Button :type="type(row.enterState)"
                 size="small">
           {{row.enterState}}
         </Button>
       </template>
       <!--比赛开始状态-->
-      <template slot-scope="{ row, index }" slot="startState">
+      <template slot="startState" slot-scope="{ row, index }">
         <Button :type="type(row.startState)"
                 size="small">
           {{row.startState}}
         </Button>
       </template>
       <!--比赛审核状态-->
-      <template slot-scope="{ row, index }" slot="state">
+      <template slot="state" slot-scope="{ row, index }">
         <Button :type="type(row.state)"
-                size="small"
-                @click="review(row.id,row.state !== '通过')">
+                @click="review(row.id,row.state !== '通过')"
+                size="small">
           {{row.state}}
         </Button>
       </template>
       <!--竞赛级别-->
-      <template slot-scope="{ row, index }" slot="level">
+      <template slot="level" slot-scope="{ row, index }">
         {{level(row.minLevelId,row.maxLevelId)}}
       </template>
     </Table>
-    <Page show-total
-          :total="page.total"
-          :current="page.current"
+    <Page :current="page.current"
           :page-size="page.page_size"
-          @on-change = "pageChange"
+          :total="page.total"
+          @on-change="pageChange"
+          show-total
     />
     <!--提交比赛过程-->
     <SubmitProcessModal
-      @cancel="cancelModel"
-      :showModal="showProcessModal"
       :competitionId="competitionId"
+      :showModal="showProcessModal"
+      @cancel="cancelModel"
     />
     <EditCompetitionModal
-      @cancel="cancelModel"
-      :show="showEditModal"/>
+      :show="showEditModal"
+      @cancel="cancelModel"/>
     <SetProgressModal
-      @cancel="cancelModel"
       :show="showProgressModal"
+      @cancel="cancelModel"
     />
     <SubmitResultModal
-      @cancel="cancelModel"
       :show="showResultModal"
+      @cancel="cancelModel"
     />
   </Card>
 </template>
@@ -82,6 +82,7 @@ import CompetitionExpand from '@/view/components/table-expand/group-competition-
 import EditCompetitionModal from '@/view/components/modal/group/edit-modal'
 import SetProgressModal from '@/view/components/modal/group/submit-progress-modal'
 import SubmitResultModal from '@/view/components/modal/group/submit-result-modal'
+
 export default {
   name: 'group_competition_list',
   components: { SubmitProcessModal, CompetitionExpand, EditCompetitionModal, SetProgressModal, SubmitResultModal },
@@ -287,26 +288,26 @@ export default {
       'closeTag'
     ]),
     /**
-     * 分页
-     * @param index
-     */
+       * 分页
+       * @param index
+       */
     pageChange (index) {
       this.page.current = index
       this.getApply(index, this.page.size)
     },
     /**
-     * 获取竞赛
-     */
+       * 获取竞赛
+       */
     getApply (pageNum = 1, pageSize = 12) {
       this.handleGetByGroupId({ pageNum, pageSize, groupId: this.groupId }).then(res => {
         this.page = res
       })
     },
     /**
-     * 设置报名状态
-     * @param id
-     * @param flag
-     */
+       * 设置报名状态
+       * @param id
+       * @param flag
+       */
     setEnterState (id, flag) {
       this.handleSetEnterState({ id, flag }).then(res => {
         if (res) {
@@ -315,8 +316,8 @@ export default {
       })
     },
     /**
-     * 获取竞赛级别
-     */
+       * 获取竞赛级别
+       */
     getCompetitionType () {
       this.handleGetType({ type: 'competition' }).then(res => {
         res.flag
@@ -339,8 +340,8 @@ export default {
       this.showEditModal = true
     },
     /**
-     * 创建比赛立项
-     */
+       * 创建比赛立项
+       */
     addCompetition () {
       this.$router.push({
         name: 'group_competition',
@@ -378,6 +379,9 @@ export default {
     cancelModel () {
       this.showProcessModal = false
       this.showEditModal = false
+
+      this.showProgressModal = false
+      this.showResultModal = false
     },
     setProgress () {
       this.showProgressModal = true

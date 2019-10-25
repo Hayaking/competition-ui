@@ -39,6 +39,7 @@
                  @callback="finish"
                  :competition="competition"
                  :budgets="budgets"
+                 :progresses="progresses"
                  :flag="flag4"/>
         </Col>
       </Row>
@@ -47,7 +48,7 @@
 </template>
 
 <script>
-import { mapActions, mapMutations } from 'vuex'
+import { mapMutations } from 'vuex'
 import FormStep from '@/view/components/form-step'
 import Form1 from '@/view/components/form/competition-form1'
 import Form2 from '@/view/components/form/competition-form2'
@@ -67,16 +68,14 @@ export default {
       flag4: false,
       competition: {},
       budgets: [],
-      groupId: 0
+      groupId: 0,
+      progresses: []
     }
   },
   mounted () {
     this.groupId = this.$route.params.id
   },
   methods: {
-    ...mapActions([
-      'saveCompetition'
-    ]),
     ...mapMutations([
       'closeTag'
     ]),
@@ -111,10 +110,29 @@ export default {
         this.$Message.error('失败')
       }
     },
-    callForm3 (res = { flag, budgets }) {
+    callForm3 (res = { flag, formList }) {
       if (res.flag) {
         this.competition.teacherGroupId = this.groupId
-        this.budgets = res.budgets
+        this.budgets = res.formList.map(item => {
+          return {
+            typeId: item.typeId,
+            enter: item.enter,
+            travel: item.travel,
+            thing: item.thing,
+            other: item.other,
+            reason: item.reason
+          }
+        })
+        this.progresses = res.formList.map(item => {
+          return {
+            typeId: item.typeId,
+            competitionId: 0,
+            startTime: item.startDate[0],
+            endTime: item.startDate[1],
+            enterStartTime: item.enterDate[0],
+            enterEndTime: item.enterDate[1]
+          }
+        })
         this.stepIndex++
       } else {
         this.$Message.error('失败')

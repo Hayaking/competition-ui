@@ -9,7 +9,7 @@ import {
   search_competition,
   get_competition_pass_all,
   search_pass_competition,
-  get_competition_by_id, get_competition_word
+  get_competition_by_id, get_competition_word, save_competition_holder
 } from '@/api/competition'
 
 export default {
@@ -46,9 +46,21 @@ export default {
         })
       })
     },
-    handleSaveCompetition ({ commit }, { competition }) {
+    // handleSaveCompetition ({ commit }, { competition }) {
+    //   return new Promise((resolve, reject) => {
+    //     save_competition(competition).then(res => {
+    //       resolve({
+    //         flag: res.data.state === 'SUCCESS',
+    //         body: res.data.body
+    //       })
+    //     }).catch(err => {
+    //       reject(err)
+    //     })
+    //   })
+    // },
+    handleSaveCompetitionHolder ({ commit }, { competitionHolder }) {
       return new Promise((resolve, reject) => {
-        save_competition(competition).then(res => {
+        save_competition_holder(competitionHolder).then(res => {
           resolve({
             flag: res.data.state === 'SUCCESS',
             body: res.data.body

@@ -4,12 +4,12 @@
         :rules="rules"
         :model="competition"
         label-position="left">
-    <FormItem label="比赛时间" prop="startDate">
-      <DatePicker type="daterange" v-model="competition.startDate"></DatePicker>
-    </FormItem>
-    <FormItem label="报名时间" prop="enterDate">
-      <DatePicker type="daterange" v-model="competition.enterDate"></DatePicker>
-    </FormItem>
+<!--    <FormItem label="比赛时间" prop="startDate">-->
+<!--      <DatePicker type="daterange" v-model="competition.startDate"></DatePicker>-->
+<!--    </FormItem>-->
+<!--    <FormItem label="报名时间" prop="enterDate">-->
+<!--      <DatePicker type="daterange" v-model="competition.enterDate"></DatePicker>-->
+<!--    </FormItem>-->
     <FormItem label="预期参赛队数" prop="groupNum">
       <Input v-model="competition.groupNum"/>
     </FormItem>

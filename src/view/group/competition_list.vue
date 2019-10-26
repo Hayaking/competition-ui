@@ -44,10 +44,6 @@
           {{row.state}}
         </Button>
       </template>
-      <!--竞赛级别-->
-      <template slot="level" slot-scope="{ row, index }">
-        {{level(row.minLevelId,row.maxLevelId)}}
-      </template>
     </Table>
     <Page :current="page.current"
           :page-size="page.page_size"
@@ -135,11 +131,6 @@ export default {
           width: 200
         },
         {
-          title: '竞赛级别',
-          align: 'center',
-          slot: 'level'
-        },
-        {
           title: '主办方',
           key: 'org',
           align: 'center'
@@ -148,64 +139,6 @@ export default {
           title: '协办方',
           key: 'coOrg',
           align: 'center'
-        },
-        {
-          title: '报名状态',
-          align: 'center',
-          slot: 'enterState',
-          filters: [
-            {
-              label: '已开始',
-              value: 1
-            },
-            {
-              label: '结束',
-              value: 2
-            },
-            {
-              label: '未开始',
-              value: 3
-            }
-          ],
-          filterMultiple: false,
-          filterMethod (value, row) {
-            if (value === 1) {
-              return row.enterState === '已开始'
-            } else if (value === 2) {
-              return row.enterState === '结束'
-            } else {
-              return row.enterState === '未开始'
-            }
-          }
-        },
-        {
-          title: '开始状态',
-          align: 'center',
-          slot: 'startState',
-          filters: [
-            {
-              label: '已开始',
-              value: 1
-            },
-            {
-              label: '结束',
-              value: 2
-            },
-            {
-              label: '未开始',
-              value: 3
-            }
-          ],
-          filterMultiple: false,
-          filterMethod (value, row) {
-            if (value === 1) {
-              return row.startState === '已开始'
-            } else if (value === 2) {
-              return row.startState === '结束'
-            } else {
-              return row.startState === '未开始'
-            }
-          }
         },
         {
           title: '审核状态',

@@ -14,20 +14,19 @@
     </Row>
     <Row>
       <Col span="11">
-        <Card title="国赛" padding="0">
+        <Card title="国赛" >
           <a href="#" slot="extra" @click="more">
             <Icon type="ios-loop-strong"></Icon>更多
           </a>
-          <Table :columns="tb_head" :data="tb_res_gs"></Table>
+          <CompetitionList />
         </Card>
       </Col>
-      <Col span="2">&nbsp; </Col>
-      <Col span="11">
-        <Card title="省赛" padding="0">
+      <Col span="11" offset="2">
+        <Card title="省赛">
           <a href="#" slot="extra" @click="more">
             <Icon type="ios-loop-strong"></Icon>更多
           </a>
-          <Table :columns="tb_head" :data="tb_res_ss"></Table>
+          <CompetitionList />
         </Card>
       </Col>
     </Row>
@@ -45,8 +44,10 @@
 
 <script>
 import { dateFomat } from '@/libs/tools'
+import CompetitionList from '@/view/components/list/competition-list'
 export default{
   name: 'home',
+  components: { CompetitionList },
   data () {
     return {
       tb_head: [

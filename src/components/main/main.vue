@@ -1,30 +1,41 @@
 <template>
   <Layout class="main" style="height: 100%">
-    <Sider :collapsed-width="64" :style="{overflow: 'hidden'}" :width="256" class="left-sider" collapsible hide-trigger
+    <Sider :collapsed-width="64"
+           :style="{overflow: 'hidden'}"
+           :width="256"
+           class="left-sider"
+           collapsible
+           hide-trigger
            v-model="collapsed">
-      <side-menu :active-name="$route.name" :collapsed="collapsed" :menu-list="menuList" @on-select="turnToPage" accordion
+      <side-menu :active-name="$route.name"
+                 :collapsed="collapsed"
+                 :menu-list="menuList"
+                 @on-select="turnToPage"
+                 accordion
                  ref="sideMenu">
-        <!-- 需要放在菜单上面的内容，如Logo，写在side-menu标签内部，如下 -->
-        <div class="logo-con">
-          <img :src="maxLogo" key="max-logo" v-show="!collapsed"/>
-          <img :src="minLogo" key="min-logo" v-show="collapsed"/>
-        </div>
       </side-menu>
     </Sider>
     <Layout>
       <Header class="header-con">
         <header-bar :collapsed="collapsed" @on-coll-change="handleCollapsedChange">
           <user :message-unread-count="unreadCount" :user-avatar="userAvatar"/>
-          <language :lang="local" @on-lang-change="setLocal" style="margin-right: 10px;" v-if="$config.useI18n"/>
-          <error-store :count="errorCount"
-                       :has-read="hasReadErrorPage" v-if="$config.plugin['error-store'] && $config.plugin['error-store'].showInHeader"></error-store>
+<!--          <language :lang="local"-->
+<!--                    @on-lang-change="setLocal"-->
+<!--                    style="margin-right: 10px;"-->
+<!--                    v-if="$config.useI18n"/>-->
+<!--          <error-store :count="errorCount"-->
+<!--                       :has-read="hasReadErrorPage"-->
+<!--                       v-if="$config.plugin['error-store'] && $config.plugin['error-store'].showInHeader"/>-->
           <fullscreen style="margin-right: 10px;" v-model="isFullscreen"/>
         </header-bar>
       </Header>
       <Content class="main-content-con">
         <Layout class="main-layout-con">
           <div class="tag-nav-wrapper">
-            <tags-nav :list="tagNavList" :value="$route" @input="handleClick" @on-close="handleCloseTag"/>
+            <tags-nav :list="tagNavList"
+                      :value="$route"
+                      @input="handleClick"
+                      @on-close="handleCloseTag"/>
           </div>
           <Content class="content-wrapper">
             <keep-alive :include="cacheList">
@@ -48,8 +59,6 @@ import Language from './components/language'
 import ErrorStore from './components/error-store'
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 import { getNewTagList, routeEqual } from '@/libs/util'
-import minLogo from '@/assets/images/logo-min.jpg'
-import maxLogo from '@/assets/images/logo.jpg'
 import './main.less'
 import Api_Request from '@/libs/api.request'
 
@@ -69,8 +78,6 @@ export default {
     return {
       url: Api_Request.baseUrl,
       collapsed: false,
-      minLogo,
-      maxLogo,
       isFullscreen: false
     }
   },

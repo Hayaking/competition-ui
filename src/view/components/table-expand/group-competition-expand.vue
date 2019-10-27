@@ -60,7 +60,7 @@
             <div slot="label">
               <Table size="small" :columns="PROGRESS_HEAD" :data="row.progressList">
                 <template slot-scope="{ row, index }" slot="typeId">
-                  {{COMPETITION_TYPE[row.typeId].typeName}}
+                  {{COMPETITION_TYPE[row.typeId-1].typeName}}
                 </template>
                 <template slot-scope="{ row, index }" slot="enterStartTime">
                   {{formatDate(row.enterStartTime)}}
@@ -108,7 +108,6 @@
         </Col>
       </Row>
     </CellGroup>
-
   </div>
 </template>
 

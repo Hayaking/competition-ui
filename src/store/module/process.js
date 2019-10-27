@@ -20,9 +20,10 @@ export default {
     handleGetProcessListByCompetitionId ({ commit }, { pageNum, pageSize, competitionId }) {
       return new Promise((resolve, reject) => {
         get_process_list_by_join_id(pageNum, pageSize, competitionId).then(res => {
-          if (res.data.state === 'SUCCESS') {
-            resolve(res.data.body)
-          }
+          resolve({
+            flag: res.data.state === 'SUCCESS',
+            body: res.data.body
+          })
         }).catch(err => {
           reject(err)
         })

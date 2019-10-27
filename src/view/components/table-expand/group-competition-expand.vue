@@ -60,7 +60,9 @@
             <div slot="label">
               <Table size="small" :columns="PROGRESS_HEAD" :data="row.progressList">
                 <template slot-scope="{ row, index }" slot="typeId">
-                  {{COMPETITION_TYPE[row.typeId-1].typeName}}
+                  <div v-if="COMPETITION_TYPE[row.typeId-1] !== undefined">
+                    {{COMPETITION_TYPE[row.typeId-1].typeName}}
+                  </div>
                 </template>
                 <template slot-scope="{ row, index }" slot="enterStartTime">
                   {{formatDate(row.enterStartTime)}}
@@ -173,12 +175,6 @@ export default {
     ]),
     toEnterList (id) {
       this.$emit('toEnterList', id)
-      // this.$router.push({
-      //   name: 'competition_enter_list',
-      //   params: {
-      //     id: id
-      //   }
-      // })
     },
     showProcess (id) {
       this.$emit('showProcess', { competitionId: id })
@@ -192,8 +188,12 @@ export default {
     toEdit (id) {
       this.$emit('toEdit', { competitionId: id })
     },
+    /**
+     * 设置比赛进度
+     * @param id
+     */
     toSetProgress (id) {
-      this.$emit('toSetProgress', { competitionId: id })
+      this.$emit('toSetProgress', id)
     },
     formatDate (time) {
       return dateFomat(time)

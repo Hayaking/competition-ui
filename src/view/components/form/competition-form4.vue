@@ -139,8 +139,7 @@ export default {
       'handleGetType',
       'handleSaveCompetition',
       'handleSaveCompetitionHolder',
-      'handleSaveBudgets',
-      'handleSubmitProcessList'
+      'handleSaveBudgets'
     ]),
     save () {
       let competitionHolder = {

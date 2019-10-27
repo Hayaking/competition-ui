@@ -7,7 +7,7 @@
           <Input search
                  class="tool-bar"/>
         </Col>
-        <Col span="3">
+        <Col span="4">
           <Button @click="showCreateGroup" type="primary">创建工作组</Button>
           <Button @click="refresh" type="primary">刷新</Button>
         </Col>

@@ -62,6 +62,8 @@
       @cancel="cancelModel"/>
     <SetProgressModal
       :show="showProgressModal"
+      :progressHolder="progressHolder"
+      :competitionType="COMPETITION_TYPE"
       @cancel="cancelModel"
     />
     <SubmitResultModal
@@ -184,7 +186,10 @@ export default {
       competitionId: 0,
       flag: false,
       groupId: 0,
-      tabs: []
+      tabs: [],
+      progressHolder: {
+        competitionId: 0
+      }
     }
   },
   mounted () {
@@ -203,9 +208,7 @@ export default {
     })
   },
   beforeDestroy () {
-    console.info('closing')
     this.tabs.forEach(item => {
-      console.info(item)
       this.closeTab(item)
     })
   },
@@ -316,8 +319,13 @@ export default {
       this.showProgressModal = false
       this.showResultModal = false
     },
-    setProgress () {
+    /**
+     * 设置比赛进度
+     * @param competitionId
+     */
+    setProgress (competitionId) {
       this.showProgressModal = true
+      this.progressHolder.competitionId = competitionId
     },
     toEnterList (competitionId) {
       let tab = {

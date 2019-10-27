@@ -19,24 +19,26 @@
       <Col span="20">
         <Form ref="form" >
           <FormItem label="报名状态">
-            <Select>
-              <Option>未开始</Option>
-              <Option>已开始</Option>
-              <Option>已结束</Option>
+            <Select v-model="progress.enterState">
+              <Option value="未开始">未开始</Option>
+              <Option value="已开始">已开始</Option>
+              <Option value="已结束">已结束</Option>
             </Select>
           </FormItem>
           <FormItem label="比赛状态">
-            <Select>
-              <Option>未开始</Option>
-              <Option>已开始</Option>
-              <Option>已结束</Option>
+            <Select v-model="progress.startState">
+              <Option value="未开始">未开始</Option>
+              <Option value="已开始">已开始</Option>
+              <Option value="已结束">已结束</Option>
             </Select>
           </FormItem>
           <FormItem label="比赛进度">
-            <Select>
-              <Option>院赛</Option>
-              <Option>省赛</Option>
-              <Option>国赛</Option>
+            <Select v-model="progress.id">
+              <Option v-for="(item,index) in list"
+                      :value="item.id"
+                      :key="index">
+                {{competitionType[item.typeId-1].typeName}}
+              </Option>
             </Select>
           </FormItem>
         </Form>
@@ -44,32 +46,58 @@
       <Col span="2"></Col>
     </Row>
     <div slot="footer">
-      <Button type="default">取消</Button>
-      <Button type="primary">提交</Button>
+      <Button type="default" @click="cancel">取消</Button>
+      <Button type="primary" @click="submit">提交</Button>
     </div>
   </Modal>
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 export default {
   name: 'submit-progress-modal',
   props: {
     show: {
       type: Boolean,
       default: false
-    }
+    },
+    progressHolder: {
+      Object
+    },
+    competitionType: { Array }
   },
   data () {
     return {
-      fullscreen: false
+      fullscreen: false,
+      progress: {
+        enterState: 0,
+        startState: 0,
+        id: 0
+      },
+      list: []
     }
   },
   methods: {
+    ...mapActions([
+      'handleGetProgressListByCompetitionId',
+      'handleSaveProgress'
+    ]),
     full () {
       this.fullscreen = !this.fullscreen
     },
     cancel () {
       this.$emit('cancel')
+    },
+    getProgressList (id) {
+      this.handleGetProgressListByCompetitionId({ competitionId: id }).then(res => {
+        this.list = res.body
+      })
+    },
+    submit () {
+      this.handleSaveProgress({ progress: this.progress }).then(res => {
+        res ? this.$Message.success('成功') : this.$Message.error('失败')
+      })
     }
   },
   computed: {
@@ -87,6 +115,15 @@ export default {
       set (val) {
         console.info(val)
       }
+    }
+  },
+  watch: {
+    progressHolder: {
+      handler (newVal) {
+        this.getProgressList(newVal.competitionId)
+      },
+      deep: true,
+      immediate: true
     }
   }
 }

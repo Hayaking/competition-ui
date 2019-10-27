@@ -90,7 +90,7 @@ export default {
         })
       })
     },
-    handleGet5ByTypeId ({ state, commit }, { typeId }) {
+    handleGet5CompetitionByTypeId ({ state, commit }, { typeId }) {
       return new Promise((resolve, reject) => {
         get_competition5_by_type_id(typeId).then(res => {
           if (res.data.state === 'SUCCESS') {

@@ -2,7 +2,7 @@
   <div>
     <Row>
       <Col span="24">
-        <Card title="公告" padding="0">
+        <Card title="公告" :padding="0">
           <a href="#" slot="extra" @click="more">
             <Icon type="ios-loop-strong"></Icon>更多
           </a>
@@ -18,7 +18,7 @@
           <a href="#" slot="extra" @click="more">
             <Icon type="ios-loop-strong"></Icon>更多
           </a>
-          <CompetitionList />
+          <CompetitionList :competition-list="res_gs"/>
         </Card>
       </Col>
       <Col span="11" offset="2">
@@ -26,13 +26,13 @@
           <a href="#" slot="extra" @click="more">
             <Icon type="ios-loop-strong"></Icon>更多
           </a>
-          <CompetitionList />
+          <CompetitionList :competition-list="res_ss"/>
         </Card>
       </Col>
     </Row>
     <Row>
       <Col span="24">
-        <Card title="最近获奖状况" padding="0">
+        <Card title="最近获奖状况" :padding="0">
           <a href="#" slot="extra">
             <Icon type="ios-loop-strong"></Icon>更多
           </a>
@@ -43,57 +43,35 @@
 </template>
 
 <script>
-import { dateFomat } from '@/libs/tools'
 import CompetitionList from '@/view/components/list/competition-list'
 export default{
   name: 'home',
   components: { CompetitionList },
   data () {
     return {
-      tb_head: [
-        {
-          title: '比赛名称',
-          key: 'name'
-        },
-        {
-          title: '开始时间',
-          key: 'startTime',
-          render: (h, params) => {
-            return h('div', {}, dateFomat(params.row.startTime))
-          }
-        },
-        {
-          title: '操作',
-          width: 100,
-          render: (h, params) => {
-            return h('Button', {
-              props: {
-                type: 'info',
-                size: 'small',
-                disabled: params.row.enterState === '已开始'
-              },
-              on: {
-                click: () => {
-                  this.showRoleModal(params.row)
-                }
-              }
-            }, '参赛')
-          }
-        }
-      ],
-      tb_res_gs: [],
-      tb_res_ss: []
+      res_gs: [],
+      res_ss: []
     }
   },
   mounted () {
     this.$nextTick(() => {
       // 国赛
-      this.$store.dispatch('handleGet5ByTypeId', { typeId: 4 }).then(res => {
-        this.tb_res_gs = res
+      this.$store.dispatch('handleGet5CompetitionByTypeId', { typeId: 4 }).then(res => {
+        this.res_gs = res.map(item => {
+          return {
+            title: item.name,
+            description: '简介：' + item.intro + ', 主办方：' + item.org
+          }
+        })
       })
       // 省赛
-      this.$store.dispatch('handleGet5ByTypeId', { typeId: 3 }).then(res => {
-        this.tb_res_ss = res
+      this.$store.dispatch('handleGet5CompetitionByTypeId', { typeId: 3 }).then(res => {
+        this.res_ss = res.map(item => {
+          return {
+            title: item.name,
+            description: '简介：' + item.intro + ', 主办方：' + item.org
+          }
+        })
       })
     })
   },

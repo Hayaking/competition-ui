@@ -1,25 +1,28 @@
 <template>
   <List>
-    <ListItem>
-      <ListItemMeta
-        avatar="https://dev-file.iviewui.com/userinfoPDvn9gKWYihR24SpgC319vXY8qniCqj4/avatar"
-        title="This is title"
-        description="This is description, this is description." />
-      <template slot="action">
-        <li>
-          <a href="">参赛</a>
-        </li>
-        <li>
-          <a href="">查看</a>
-        </li>
-      </template>
-    </ListItem>
+    <div v-for="(item,index) in competitionList" :key="index">
+      <ListItem>
+        <ListItemMeta :title="item.title"
+                      :description="item.description" />
+        <template slot="action">
+          <li>
+            <a href="">参赛</a>
+          </li>
+          <li>
+            <a href="">查看</a>
+          </li>
+        </template>
+      </ListItem>
+    </div>
   </List>
 </template>
 
 <script>
 export default {
-  name: 'competition-list'
+  name: 'competition-list',
+  props: {
+    competitionList: Array
+  }
 }
 </script>
 

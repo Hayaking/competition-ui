@@ -1,7 +1,6 @@
 import {
   get_type
 } from '@/api/type'
-import FunnelSeries from 'echarts/src/chart/funnel/FunnelSeries'
 
 export default {
   state: {

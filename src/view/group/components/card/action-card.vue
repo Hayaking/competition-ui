@@ -4,19 +4,19 @@
       <Col span="7" offset="3">
         <a @click="toCompetition">
           <Icon type="logo-steam" size="40" color="rgb(82, 196, 26)"/>
-          <br/>参赛
+          <br/>创建工作组
         </a>
       </Col>
       <Col span="7">
-        <a @click="toConfig">
+        <a @click="toInvite">
           <Icon type="ios-settings" size="40" color="rgb(19, 194, 194)"/>
-          <br/>设置
+          <br/>邀请组员
         </a>
       </Col>
       <Col span="7">
-        <a @click="">
+        <a @click="toPost">
           <Icon type="ios-people" size="40" color="rgb(24, 144, 255)"/>
-          <br/>指导老师
+          <br/>发表公告
         </a>
       </Col>
     </Row>
@@ -46,10 +46,13 @@ export default {
   },
   methods: {
     toCompetition () {
-      this.$router.push({ name: 'common_competition' })
+      this.$emit('callCreateCompetition')
     },
-    toConfig () {
-      this.$router.push({ name: 'common_edit_self' })
+    toInvite () {
+      this.$emit('callInvite', this.group.id)
+    },
+    toPost () {
+      this.$router.push({ name: 'group_post' })
     },
     selectChanged (id) {
       this.$emit('selectChanged', id)

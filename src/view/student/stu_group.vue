@@ -3,12 +3,14 @@
     <PageHeader/>
     <Row>
       <Col span="15">
-        <JoinCard />
+        <JoinCard :group="currentGroup"/>
         <WorksCard />
         <InfoCard />
       </Col>
       <Col span="8" offset="1">
-        <ActionCard :groupList="page.records"/>
+        <ActionCard :groupList="page.records"
+                    :group="currentGroup"
+                    @selectChanged="selectChanged"/>
         <GroupMemberCard />
       </Col>
     </Row>
@@ -47,7 +49,8 @@ export default {
           title: '作品名',
           key: 'worksName'
         }
-      ]
+      ],
+      currentGroup: {}
     }
   },
   mounted () {
@@ -60,11 +63,17 @@ export default {
     getGroupPage (pageNum = 1, pageSize = 12) {
       this.handleGetStudentGroup({ pageNum, pageSize }).then(res => {
         this.page = res
+        this.currentGroup = res.records[0]
       })
     },
     pageChange (index) {
       this.page.current = index
       this.getGroupPage(index, this.page.size)
+    },
+    selectChanged (id) {
+      this.currentGroup = this.page.records.find(item => {
+        return item.id === id
+      })
     }
   },
   computed: {

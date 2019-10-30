@@ -9,7 +9,7 @@ import {
   search_competition,
   get_competition_pass_all,
   search_pass_competition,
-  get_competition_by_id, get_competition_word, save_competition_holder
+  get_competition_by_id, get_competition_word, save_competition_holder, get_simple_competition_list_by_group_id
 } from '@/api/competition'
 
 export default {
@@ -185,6 +185,18 @@ export default {
           elink.click()
           URL.revokeObjectURL(elink.href)
           document.body.removeChild(elink)
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
+    handleGetSimpleCompetitionListByGroupId ({ commit }, { groupId }) {
+      return new Promise((resolve, reject) => {
+        get_simple_competition_list_by_group_id(groupId).then(res => {
+          resolve({
+            flag: res.data.state === 'SUCCESS',
+            body: res.data.body
+          })
         }).catch(err => {
           reject(err)
         })

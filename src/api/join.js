@@ -22,6 +22,13 @@ export const get_join_list = (pageNum, pageSize) => {
   })
 }
 
+export const get_simple_join_list_by_group_id = (groupId) => {
+  return axios.request({
+    url: `/join/group/${groupId}`,
+    method: 'get'
+  })
+}
+
 export const set_enter_state = (joinId, flag) => {
   return axios.request({
     url: `/enter/${joinId}/${flag}`,

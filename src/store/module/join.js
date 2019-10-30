@@ -1,4 +1,4 @@
-import { create_join, delete_join, get_join_list, set_enter_state } from '@/api/join'
+import { create_join, delete_join, get_join_list, get_simple_join_list_by_group_id, set_enter_state } from '@/api/join'
 
 export default {
   state: {
@@ -35,6 +35,18 @@ export default {
       return new Promise((resolve, reject) => {
         get_join_list(pageNum, pageSize).then(res => {
           resolve(res.data.body)
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
+    handleGetSimpleJoinList ({ commit }, { groupId }) {
+      return new Promise((resolve, reject) => {
+        get_simple_join_list_by_group_id(groupId).then(res => {
+          resolve({
+            flag: res.data.state === 'SUCCESS',
+            body: res.data.body
+          })
         }).catch(err => {
           reject(err)
         })

@@ -1,12 +1,5 @@
 import axios from '@/libs/api.request'
 
-// export const save_competition = competition => {
-//   return axios.request({
-//     url: 'competition',
-//     data: competition,
-//     method: 'post'
-//   })
-// }
 export const save_competition_holder = holder => {
   return axios.request({
     url: 'competition',
@@ -18,6 +11,13 @@ export const save_competition_holder = holder => {
 export const get_competition_by_id = (id) => {
   return axios.request({
     url: `/competition/${id}`,
+    method: 'get'
+  })
+}
+
+export const get_simple_competition_list_by_group_id = (groupId) => {
+  return axios.request({
+    url: `/competition/group/${groupId}`,
     method: 'get'
   })
 }

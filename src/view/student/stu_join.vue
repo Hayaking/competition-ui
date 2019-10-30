@@ -15,7 +15,7 @@
       </Row>
       <Row v-else-if="index ===1">
         <Col span="24" style="text-align: center">
-          <GroupForm @on-success-valid="callForm2"
+          <GroupForm @call-back="callForm2"
                      :flag="flag2"/>
         </Col>
       </Row>
@@ -45,10 +45,10 @@
 
 <script>
 import { mapActions, mapMutations } from 'vuex'
-import CompetitionInfo from '@/view/components/form/join-form1'
-import GroupForm from '@/view/components/form/join-form2'
-import WorksForm from '@/view/components/form/join-form3'
-import LeadForm from '@/view/components/form/join-form4'
+import CompetitionInfo from '@/view/student/components/form/join-form1'
+import GroupForm from '@/view/student/components/form/join-form2'
+import WorksForm from '@/view/student/components/form/join-form3'
+import LeadForm from '@/view/student/components/form/join-form4'
 import Lead_review from '@/view/lead/lead_review'
 export default {
   name: 'stu_join',
@@ -108,7 +108,7 @@ export default {
         this.list = list
         this.index++
       } else {
-        this.$Message.error('失败')
+        this.flag2 = false
       }
     },
     callForm3 (flag, works) {

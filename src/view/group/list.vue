@@ -88,8 +88,8 @@
 
 <script>
 import { mapActions, mapMutations } from 'vuex'
-import InviteModal from '@/view/components/modal/group/invite-modal'
-import CreateModal from '@/view/components/modal/group/create-modal'
+import InviteModal from '@/view/group/components/modal/group/invite-modal'
+import CreateModal from '@/view/group/components/modal/group/create-modal'
 import { sleep } from '@/libs/util'
 
 export default {

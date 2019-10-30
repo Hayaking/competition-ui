@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Form ref="formDynamic" :model="groupMember"  :label-width="80" style="width: 300px">
+    <Form ref="form" :model="groupMember"  :label-width="80" style="width: 300px">
       <FormItem label="组名">
         <Row>
           <Col span="18">
@@ -36,6 +36,8 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 export default {
   name: 'join-form2',
   props: {
@@ -60,25 +62,24 @@ export default {
     }
   },
   methods: {
+    ...mapActions([
+      'handleStudentIsExist'
+    ]),
     submit () {
-      this.$refs['formDynamic'].validate((valid) => {
+      this.$refs['form'].validate((valid) => {
         if (valid) {
-          let memberList = this.groupMember.items.map(item => {
-            return item.value
-          })
+          let memberList = this.groupMember.items.map(item => {return item.value})
           this.handleStudentIsExist({ list: memberList }).then(res => {
             if (res.length === 0) {
-              // this.index++
               this.$Message.success('SUCCESS!')
-              this.$emit('on-success-valid', true, memberList)
+              this.$emit('call-back', true, memberList)
             } else {
-              res.map(item => {
-                this.$Message.error(item)
-              })
-              this.$emit('on-success-valid', false)
+              res.map(item => { this.$Message.error(item + '不存在') })
+              this.$emit('call-back', false, [])
             }
           })
         } else {
+          this.$Message.error('失败')
           this.flag = false
         }
       })

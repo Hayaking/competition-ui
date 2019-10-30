@@ -58,7 +58,9 @@
           <Cell>
             <div slot="icon">比赛进度:</div>
             <div slot="label">
-              <Table size="small" :columns="PROGRESS_HEAD" :data="row.progressList">
+              <Table size="small"
+                     :columns="PROGRESS_HEAD"
+                     :data="row.progressList">
                 <template slot-scope="{ row, index }" slot="typeId">
                   <div v-if="COMPETITION_TYPE[row.typeId-1] !== undefined">
                     {{COMPETITION_TYPE[row.typeId-1].typeName}}
@@ -88,7 +90,7 @@
         </Col>
         <Col span="2">
           <ButtonGroup vertical>
-                <Button @click="toEnterList(row.id)" type="primary">
+                <Button @click="showEnterList(row.id)" type="primary">
                   报名列表
                 </Button>
                 <Button @click="toSetProgress(row.id)" type="primary">
@@ -100,7 +102,7 @@
                 <Button :disabled="flag" @click="showResult(row.id)" type="primary">
                   提交比赛结果
                 </Button>
-                <Button @click="toEdit(row.id, true)" type="success">
+                <Button @click="showEdit(row.id, true)" type="success">
                   编辑
                 </Button>
                 <Button @click="toDelete(row.id)" type="error">
@@ -173,20 +175,20 @@ export default {
     ...mapActions([
       'handleGetType'
     ]),
-    toEnterList (id) {
-      this.$emit('toEnterList', id)
+    showEnterList (id) {
+      this.$emit('showEnterList', id)
     },
     showProcess (id) {
-      this.$emit('showProcess', { competitionId: id })
+      this.$emit('showProcess', id)
     },
     showResult (id) {
-      this.$emit('showResult', { competitionId: id })
+      this.$emit('showResult', id)
     },
     toDelete (id) {
-      this.$emit('toDelete', { competitionId: id })
+      this.$emit('toDelete', id)
     },
-    toEdit (id) {
-      this.$emit('toEdit', { competitionId: id })
+    showEdit (id) {
+      this.$emit('toEdit', id)
     },
     /**
      * 设置比赛进度
@@ -195,6 +197,10 @@ export default {
     toSetProgress (id) {
       this.$emit('toSetProgress', id)
     },
+    /**
+     * 格式化时间
+     * @param time
+     */
     formatDate (time) {
       return dateFomat(time)
     }

@@ -1,24 +1,31 @@
 <template>
-  <Card>
-    <Table :data="tb_res" :columns="tb_head">
-      <template slot-scope="{ row, index }" slot="creator">
-        <div>{{row.creator.stuName}}</div>
-      </template>
-    </Table>
-    <Page show-total
-          :total="page.total"
-          :current="page.current"
-          :page-size="page.size"
-          @on-change = "pageChange"
-    />
-  </Card>
+  <div>
+    <PageHeader/>
+    <Row>
+      <Col span="15">
+        <JoinCard />
+        <WorksCard />
+        <InfoCard />
+      </Col>
+      <Col span="8" offset="1">
+        <ActionCard :groupList="page.records"/>
+        <GroupMemberCard />
+      </Col>
+    </Row>
+  </div>
 </template>
 
 <script>
 import { mapActions } from 'vuex'
-
+import PageHeader from '@/view/student/components/header/PageHeader'
+import JoinCard from '@/view/student/components/card/join-card'
+import InfoCard from '@/view/student/components/card/info-card'
+import WorksCard from '@/view/student/components/card/works-card'
+import GroupMemberCard from '@/view/student/components/card/group-member-card'
+import ActionCard from '@/view/student/components/card/action-card'
 export default {
   name: 'stu_group',
+  components: { PageHeader, JoinCard, InfoCard, WorksCard, GroupMemberCard, ActionCard },
   data () {
     return {
       page: {
@@ -27,7 +34,7 @@ export default {
         total: 0,
         records: []
       },
-      tb_head: [
+      TABLE_HEAD: [
         {
           title: '组名',
           key: 'name'
@@ -40,8 +47,7 @@ export default {
           title: '作品名',
           key: 'worksName'
         }
-      ],
-      tb_res: []
+      ]
     }
   },
   mounted () {
@@ -54,7 +60,6 @@ export default {
     getGroupPage (pageNum = 1, pageSize = 12) {
       this.handleGetStudentGroup({ pageNum, pageSize }).then(res => {
         this.page = res
-        this.tb_res = res.records
       })
     },
     pageChange (index) {

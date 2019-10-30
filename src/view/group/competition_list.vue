@@ -53,8 +53,9 @@
     />
     <!--提交比赛过程-->
     <SubmitProcessModal
-      :competitionId="competitionId"
+      :processHolder="processHolder"
       :showModal="showProcessModal"
+      :competitionType="COMPETITION_TYPE"
       @cancel="cancelModel"
     />
     <EditCompetitionModal
@@ -75,11 +76,11 @@
 
 <script>
 import { mapActions, mapMutations } from 'vuex'
-import SubmitProcessModal from '@/view/components/modal/group/submit-process-modal'
+import SubmitProcessModal from '@/view/group/components/modal/group/submit-process-modal'
 import CompetitionExpand from '@/view/components/table-expand/group-competition-expand'
-import EditCompetitionModal from '@/view/components/modal/group/edit-modal'
-import SetProgressModal from '@/view/components/modal/group/submit-progress-modal'
-import SubmitResultModal from '@/view/components/modal/group/submit-result-modal'
+import EditCompetitionModal from '@/view/group/components/modal/group/edit-modal'
+import SetProgressModal from '@/view/group/components/modal/group/submit-progress-modal'
+import SubmitResultModal from '@/view/group/components/modal/group/submit-result-modal'
 
 export default {
   name: 'group_competition_list',
@@ -104,17 +105,17 @@ export default {
                 showResult: (competitionId) => {
                   this.showResult(competitionId)
                 },
+                showEdit: (competitionId) => {
+                  this.showEditCompetition(competitionId)
+                },
+                showEnterList: (competitionId) => {
+                  this.showEnterList(competitionId)
+                },
                 toDelete: (competitionId) => {
                   this.deleteCompetition(competitionId)
                 },
-                toEdit: (competitionId) => {
-                  this.editCompetition(competitionId)
-                },
                 toSetProgress: (competitionId) => {
                   this.setProgress(competitionId)
-                },
-                toEnterList: (competitionId) => {
-                  this.toEnterList(competitionId)
                 }
               }
             })
@@ -189,6 +190,9 @@ export default {
       tabs: [],
       progressHolder: {
         competitionId: 0
+      },
+      processHolder: {
+        competitionId: 0
       }
     }
   },
@@ -244,13 +248,13 @@ export default {
        * @param id
        * @param flag
        */
-    setEnterState (id, flag) {
-      this.handleSetEnterState({ id, flag }).then(res => {
-        if (res) {
-          this.getApply()
-        }
-      })
-    },
+    // setEnterState (id, flag) {
+    //   this.handleSetEnterState({ id, flag }).then(res => {
+    //     if (res) {
+    //       this.getApply()
+    //     }
+    //   })
+    // },
     /**
        * 获取竞赛级别
        */
@@ -271,13 +275,9 @@ export default {
         }
       })
     },
-    editCompetition (id) {
-      console.info('----------edit---------------')
-      this.showEditModal = true
-    },
     /**
-       * 创建比赛立项
-       */
+     * 创建比赛立项
+     */
     addCompetition () {
       this.$router.push({
         name: 'group_competition',
@@ -286,38 +286,27 @@ export default {
         }
       })
     },
+    showEditCompetition (id) {
+      this.showEditModal = true
+    },
     showProcess (id) {
       this.showProcessModal = true
-      this.competitionId = id
+      this.processHolder.competitionId = id
     },
     showResult (id) {
       this.showResultModal = true
       this.competitionId = id
     },
-    // 返回Button的type
-    type (state) {
-      if (state === '通过' || state === '已开始') {
-        return 'success'
-      } else if (state === '申请中' || state === '未开始') {
-        return 'primary'
-      } else {
-        return 'error'
+    showEnterList (competitionId) {
+      console.info(competitionId)
+      let tab = {
+        name: 'competition_enter_list',
+        params: {
+          id: competitionId
+        }
       }
-    },
-    // 返回竞赛级别
-    level (minId, maxId) {
-      if (maxId === undefined || minId === maxId) {
-        return this.COMPETITION_TYPE[minId - 1].typeName
-      } else {
-        return this.COMPETITION_TYPE[minId - 1].typeName + '→' + this.COMPETITION_TYPE[maxId - 1].typeName
-      }
-    },
-    cancelModel () {
-      this.showProcessModal = false
-      this.showEditModal = false
-
-      this.showProgressModal = false
-      this.showResultModal = false
+      this.tabs.push(tab)
+      this.$router.push(tab)
     },
     /**
      * 设置比赛进度
@@ -327,15 +316,39 @@ export default {
       this.showProgressModal = true
       this.progressHolder.competitionId = competitionId
     },
-    toEnterList (competitionId) {
-      let tab = {
-        name: 'competition_enter_list',
-        params: {
-          id: competitionId
-        }
+    /**
+     * 返回Button的type
+     * @param state
+     * @returns {string}
+     */
+    type (state) {
+      if (state === '通过' || state === '已开始') {
+        return 'success'
+      } else if (state === '申请中' || state === '未开始') {
+        return 'primary'
+      } else {
+        return 'error'
       }
-      this.tabs.push(tab)
-      this.$router.push(tab)
+    },
+    /**
+     * 返回竞赛级别
+     * @param minId
+     * @param maxId
+     * @returns {string|*}
+     */
+    // level (minId, maxId) {
+    //   if (maxId === undefined || minId === maxId) {
+    //     return this.COMPETITION_TYPE[minId - 1].typeName
+    //   } else {
+    //     return this.COMPETITION_TYPE[minId - 1].typeName + '→' + this.COMPETITION_TYPE[maxId - 1].typeName
+    //   }
+    // },
+    cancelModel () {
+      this.showProcessModal = false
+      this.showEditModal = false
+
+      this.showProgressModal = false
+      this.showResultModal = false
     },
     closeTab (item) {
       this.closeTag(item)

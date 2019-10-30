@@ -20,7 +20,7 @@
           <Button @click="toggle">添加</Button>
           <Table :border="true"
                  :columns="tb_head"
-                 :data="tb_res"
+                 :data="page.records"
           />
           <Page :current.sync="page.current"
                 :page-size="page.page_size"
@@ -34,6 +34,15 @@
         <!--表单-->
         <div v-else>
           <Form ref="form" :model="process" :rule="rules">
+            <FormItem prop="progressId" label="级别">
+              <Select v-model="process.progressId">
+                <Option v-for="(item,index) in list"
+                        :value="item.id"
+                        :key="index">
+                  {{competitionType[item.typeId-1].typeName}}
+                </Option>
+              </Select>
+            </FormItem>
             <FormItem prop="description" label="描述">
               <Input type="textarea" v-model="process.description" />
             </FormItem>
@@ -68,12 +77,12 @@
         </div>
       <!--尾部-->
       <div v-if="PAGE_INDEX" slot="footer">
-        <Button :disabled="loading" @click="cancel(false)" type="default">取消</Button>
-        <Button :loading="loading" @click="cancel(true)" type="primary">确定</Button>
+        <Button  @click="cancel(false)" type="default">取消</Button>
+        <Button  @click="cancel(true)" type="primary">确定</Button>
       </div>
       <div v-else slot="footer">
-        <Button :loading="loading" @click="save" type="primary">开始上传</Button>
-        <Button :disabled="loading" @click="toggle()" type="default">返回</Button>
+        <Button  @click="save" type="primary">开始上传</Button>
+        <Button  @click="toggle()" type="default">返回</Button>
       </div>
     </Modal>
 
@@ -144,10 +153,9 @@ export default {
           }
         }
       ],
-      tb_res: [],
       page: {
         current: 1,
-        page_size: 10,
+        size: 12,
         total: 0,
         records: []
       },
@@ -158,13 +166,14 @@ export default {
         description: '',
         time: new Date(),
         persons: '',
-        competitionId: ''
+        progressId: 0
       },
       rules: {
         description: [{ required: true, message: '不为空' }],
         time: [{ required: true, message: '不为空' }],
         persons: [{ required: true, message: '不为空' }]
-      }
+      },
+      list: []
     }
   },
   props: {
@@ -172,15 +181,16 @@ export default {
       type: Boolean,
       default: false
     },
-    competitionId: {
-      type: Number,
-      default: 0
-    }
+    processHolder: {
+      type: Object
+    },
+    competitionType: { Array }
   },
   methods: {
     ...mapActions([
       'handleCreateProcess',
       'handleGetProcessListByCompetitionId',
+      'handleGetProgressListByCompetitionId',
       'handleUploadPic'
     ]),
     full () {
@@ -201,14 +211,17 @@ export default {
       Object.assign(this.$data, this.$options.data)
       this.$emit('cancel', up)
     },
+    /**
+     * 分页获取比赛过程
+     * @param id
+     */
     getProcessPage (id) {
       this.handleGetProcessListByCompetitionId({
         pageNum: this.page.current,
-        pageSize: this.page.page_size,
+        pageSize: this.page.size,
         competitionId: id
       }).then(res => {
-        this.page = res
-        this.tb_res = res.records
+        this.page = res.body
       })
     },
     /**
@@ -220,7 +233,10 @@ export default {
       //   this.watchImage = true
       // })
     },
-    // 取消选择的图片
+    /**
+     * 取消选择的图片
+     * @param file
+     */
     cancelImage (file) {
       // let index = this.files.indexOf(file)
       // this.files.splice(index, 1)
@@ -249,10 +265,16 @@ export default {
         // this.getOperationData()
       }
     },
+    /**
+     * 用于切换页面
+     */
     toggle () {
       this.PAGE_INDEX = !this.PAGE_INDEX
       this.PAGE_INDEX ? this.width = 1000 : this.width = 500
     },
+    /**
+     * 提交结果
+     */
     save () {
       this.$refs.form.validate(valid => {
         if (valid) {
@@ -262,7 +284,7 @@ export default {
             this.MESSAGE_BOX(res !== -1).then(() => {
               this.$Message.success('成功')
               this.process.picId = res
-              this.process.competitionId = this.competitionId
+              this.process.competitionId = this.processHolder.competitionId
               this.handleCreateProcess({ process: this.process }).then(res => {
                 this.MESSAGE_BOX(res)
               })
@@ -280,6 +302,11 @@ export default {
         }
         resolve(flag)
       })
+    },
+    getProgressList (id) {
+      this.handleGetProgressListByCompetitionId({ competitionId: id }).then(res => {
+        this.list = res.body
+      })
     }
   },
   computed: {
@@ -293,8 +320,13 @@ export default {
     }
   },
   watch: {
-    competitionId (val) {
-      this.getProcessPage(val)
+    processHolder: {
+      handler (newVal) {
+        this.getProgressList(newVal.competitionId)
+        this.getProcessPage(newVal.competitionId)
+      },
+      deep: true,
+      immediate: true
     }
   }
 }

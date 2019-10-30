@@ -18,6 +18,9 @@
       <template slot-scope="{ row, index }" slot="competition">
         <div>{{row.competition.name}}</div>
       </template>
+      <template slot-scope="{ row, index }" slot="type">
+        <div>{{row.competition.joinTypeId}}</div>
+      </template>
       <template slot-scope="{ row, index }" slot="action">
         <Button type="success" size="small" style="margin-right: 5px" @click="editJoin(row)">
           编辑
@@ -62,11 +65,11 @@ export default {
           title: 'id'
         },
         {
-          title: '作品id',
+          title: '作品名',
           slot: 'works'
         },
         {
-          title: '比赛id',
+          title: '比赛名',
           slot: 'competition'
         },
         {
@@ -92,6 +95,10 @@ export default {
         {
           title: '参赛状态',
           key: 'joinState'
+        },
+        {
+          title: '参赛类型',
+          slot: 'type'
         },
         {
           title: '操作',

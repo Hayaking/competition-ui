@@ -17,28 +17,46 @@
     <Row>
       <Col span="2">&nbsp;</Col>
       <Col span="20">
-        <Form ref="form" >
+        <Form ref="form" label-position="left">
+          <FormItem label="比赛进度">
+            <Select  @on-change="selectChanged">
+              <Option v-for="(item,index) in list"
+                      :value="item.id"
+                      :key="index">
+                {{competitionType[item.typeId-1].typeName}}
+              </Option>
+            </Select>
+          </FormItem>
+          <Row>
+            <Col span="12">
+              <FormItem label="扫描开始：">
+                <i-switch :value="progress.isScanStartState" size="large">
+                  <span slot="true">自动开启</span>
+                  <span slot="false">手动开启</span>
+                </i-switch>
+              </FormItem>
+            </Col>
+            <Col span="12">
+              <FormItem label="扫描报名：">
+                <i-switch v-model="progress.isScanEnterState" size="large">
+                  <span slot="true">自动开启</span>
+                  <span slot="false">手动开启</span>
+                </i-switch>
+              </FormItem>
+            </Col>
+          </Row>
           <FormItem label="报名状态">
-            <Select v-model="progress.enterState">
+            <Select v-model="progress.enterState" :disabled ="progress.isScanEnterState">
               <Option value="未开始">未开始</Option>
               <Option value="已开始">已开始</Option>
               <Option value="已结束">已结束</Option>
             </Select>
           </FormItem>
           <FormItem label="比赛状态">
-            <Select v-model="progress.startState">
+            <Select v-model="progress.startState" :disabled ="progress.isScanStartState">
               <Option value="未开始">未开始</Option>
               <Option value="已开始">已开始</Option>
               <Option value="已结束">已结束</Option>
-            </Select>
-          </FormItem>
-          <FormItem label="比赛进度">
-            <Select v-model="progress.id">
-              <Option v-for="(item,index) in list"
-                      :value="item.id"
-                      :key="index">
-                {{competitionType[item.typeId-1].typeName}}
-              </Option>
             </Select>
           </FormItem>
         </Form>
@@ -71,6 +89,8 @@ export default {
     return {
       fullscreen: false,
       progress: {
+        isScanStartState: true,
+        isScanEnterState: true,
         enterState: 0,
         startState: 0,
         id: 0
@@ -98,6 +118,12 @@ export default {
       this.handleSaveProgress({ progress: this.progress }).then(res => {
         res ? this.$Message.success('成功') : this.$Message.error('失败')
       })
+    },
+    selectChanged (id) {
+      this.progress = this.list.filter(item => {
+        return item.id === id
+      })[0]
+      console.info(this.progress)
     }
   },
   computed: {

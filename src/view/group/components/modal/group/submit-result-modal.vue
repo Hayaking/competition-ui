@@ -7,7 +7,7 @@
     v-model="modalShow">
     <div slot="header">
       <Row>
-        <Col span="3"><h2>编辑比赛</h2></Col>
+        <Col span="4"><h2>提交比赛结果</h2></Col>
         <Button @click="full"
                 icon="md-qr-scanner"
                 size="small"
@@ -15,6 +15,17 @@
         </Button>
       </Row>
     </div>
+    <Form ref="form" label-position="left">
+      <FormItem label="比赛进度">
+        <Select>
+          <Option v-for="(item,index) in list"
+                  :value="item.id"
+                  :key="index">
+            {{competitionType[item.typeId-1].typeName}}
+          </Option>
+        </Select>
+      </FormItem>
+    </Form>
   </Modal>
 </template>
 

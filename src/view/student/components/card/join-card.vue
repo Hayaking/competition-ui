@@ -7,7 +7,17 @@
     <div slot="extra">
       <a @click="more">更多</a>
     </div>
-    {{joinList}}
+    <List>
+      <ListItem v-for="(item,index) in joinList" :key="index">
+        <ListItemMeta avatar="https://dev-file.iviewui.com/userinfoPDvn9gKWYihR24SpgC319vXY8qniCqj4/avatar"
+                      :title="item.competition.name"
+                      :description='"简介："+item.competition.intro'/>
+        <template slot="action">
+          <tag color="success">报名通过</tag>
+        </template>
+      </ListItem>
+    </List>
+<!--    {{joinList}}-->
   </Card>
 </template>
 

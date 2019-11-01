@@ -56,7 +56,7 @@ export default {
           name: 'group_competition_list',
           params: {
             id: this.group.id,
-            flag: true
+            flag: false
           }
         })
         this.preGroupId = this.group.id

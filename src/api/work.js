@@ -7,3 +7,10 @@ export const create_works = (works) => {
     method: 'post'
   })
 }
+
+export const get_works_list_by_group_id = (groupId) => {
+  return axios.request({
+    url: `/works/group/${groupId}`,
+    method: 'get'
+  })
+}

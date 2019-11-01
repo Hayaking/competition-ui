@@ -4,14 +4,14 @@
     <Row>
       <Col span="15">
         <JoinCard :group="currentGroup"/>
-        <WorksCard />
+        <WorksCard :group="currentGroup"/>
         <InfoCard />
       </Col>
       <Col span="8" offset="1">
         <ActionCard :groupList="page.records"
                     :group="currentGroup"
                     @selectChanged="selectChanged"/>
-        <GroupMemberCard />
+        <GroupMemberCard :group="currentGroup"/>
       </Col>
     </Row>
   </div>

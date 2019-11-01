@@ -129,13 +129,6 @@ export default {
   computed: {
     modalShow: {
       get () {
-        // eslint-disable-next-line vue/no-async-in-computed-properties,vue/no-side-effects-in-computed-properties
-        this.$store.dispatch('handleGetRoleList').then(res => {
-          // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-          this.right = res
-          // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-          this.left = this.userRoles
-        })
         return this.show
       },
       set (val) {

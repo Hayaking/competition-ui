@@ -42,14 +42,21 @@ export default {
     },
     handleGetSimpleJoinList ({ commit }, { groupId }) {
       return new Promise((resolve, reject) => {
-        get_simple_join_list_by_group_id(groupId).then(res => {
+        if (groupId === undefined) {
           resolve({
-            flag: res.data.state === 'SUCCESS',
-            body: res.data.body
+            flag: false,
+            body: '系统异常'
           })
-        }).catch(err => {
-          reject(err)
-        })
+        } else {
+          get_simple_join_list_by_group_id(groupId).then(res => {
+            resolve({
+              flag: res.data.state === 'SUCCESS',
+              body: res.data.body
+            })
+          }).catch(err => {
+            reject(err)
+          })
+        }
       })
     },
     handleSetJoinEnterState ({ commit }, { joinId, flag }) {

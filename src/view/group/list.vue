@@ -34,8 +34,8 @@
 
 <script>
 import { mapActions, mapMutations } from 'vuex'
-import InviteModal from '@/view/group/components/modal/group/invite-modal'
-import CreateModal from '@/view/group/components/modal/group/create-modal'
+import InviteModal from '@/view/group/components/modal/invite-modal'
+import CreateModal from '@/view/group/components/modal/create-modal'
 import PageHeader from '@/view/group/components/header/PageHeader'
 import ActionCard from '@/view/group/components/card/action-card'
 import GroupCard from '@/view/group/components/card/group-card'
@@ -114,7 +114,7 @@ export default {
       'handleSetTeacherGroupState',
       'handleSearchTeacherGroup',
       'handleExitTeacherGroup',
-      'handleDeleteTeacherGroup',
+      'handleDeleteTeacherGroup'
     ]),
     pageChange (index) {
       this.page.current = index

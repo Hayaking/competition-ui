@@ -13,7 +13,7 @@ import {
   refuse_teacher_group_invite,
   search_teacher_group,
   set_teacher_group_state,
-  get_teacher_by_group_id, remove_teacher_from_group, delete_teacher_group
+  get_teacher_by_group_id, remove_teacher_from_group, delete_teacher_group, get_student_group_member_list
 } from '@/api/group'
 
 export default {
@@ -194,6 +194,25 @@ export default {
         }).catch(err => {
           reject(err)
         })
+      })
+    },
+    handleGetStudentGroupMemberList ({ commit }, { groupId }) {
+      return new Promise((resolve, reject) => {
+        if (groupId === undefined) {
+          resolve({
+            flag: false,
+            body: '系统异常'
+          })
+        } else {
+          get_student_group_member_list(groupId).then(res => {
+            resolve({
+              flag: res.data.state === 'SUCCESS',
+              body: res.data.body
+            })
+          }).catch(err => {
+            reject(err)
+          })
+        }
       })
     }
   }

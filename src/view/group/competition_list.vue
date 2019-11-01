@@ -58,9 +58,11 @@
       :competitionType="COMPETITION_TYPE"
       @cancel="cancelModel"
     />
+    <!--編輯信息-->
     <EditCompetitionModal
       :show="showEditModal"
       @cancel="cancelModel"/>
+    <!--设置比赛进程-->
     <SetProgressModal
       :show="showProgressModal"
       :progressHolder="progressHolder"
@@ -69,6 +71,7 @@
     />
     <SubmitResultModal
       :show="showResultModal"
+      :resultHolder="resultHolder"
       @cancel="cancelModel"
     />
   </Card>
@@ -76,11 +79,11 @@
 
 <script>
 import { mapActions, mapMutations } from 'vuex'
-import SubmitProcessModal from '@/view/group/components/modal/group/submit-process-modal'
+import SubmitProcessModal from '@/view/group/components/modal/submit-process-modal'
 import CompetitionExpand from '@/view/components/table-expand/group-competition-expand'
-import EditCompetitionModal from '@/view/group/components/modal/group/edit-modal'
-import SetProgressModal from '@/view/group/components/modal/group/submit-progress-modal'
-import SubmitResultModal from '@/view/group/components/modal/group/submit-result-modal'
+import EditCompetitionModal from '@/view/group/components/modal/edit-modal'
+import SetProgressModal from '@/view/group/components/modal/submit-progress-modal'
+import SubmitResultModal from '@/view/group/components/modal/submit-result-modal'
 
 export default {
   name: 'group_competition_list',
@@ -193,6 +196,9 @@ export default {
       },
       processHolder: {
         competitionId: 0
+      },
+      resultHolder: {
+        competitionId: 0
       }
     }
   },
@@ -243,18 +249,6 @@ export default {
         this.page = res
       })
     },
-    /**
-       * 设置报名状态
-       * @param id
-       * @param flag
-       */
-    // setEnterState (id, flag) {
-    //   this.handleSetEnterState({ id, flag }).then(res => {
-    //     if (res) {
-    //       this.getApply()
-    //     }
-    //   })
-    // },
     /**
        * 获取竞赛级别
        */
@@ -330,23 +324,9 @@ export default {
         return 'error'
       }
     },
-    /**
-     * 返回竞赛级别
-     * @param minId
-     * @param maxId
-     * @returns {string|*}
-     */
-    // level (minId, maxId) {
-    //   if (maxId === undefined || minId === maxId) {
-    //     return this.COMPETITION_TYPE[minId - 1].typeName
-    //   } else {
-    //     return this.COMPETITION_TYPE[minId - 1].typeName + '→' + this.COMPETITION_TYPE[maxId - 1].typeName
-    //   }
-    // },
     cancelModel () {
       this.showProcessModal = false
       this.showEditModal = false
-
       this.showProgressModal = false
       this.showResultModal = false
     },

@@ -1,4 +1,4 @@
-import { create_works } from '@/api/work'
+import { create_works, get_works_list_by_group_id } from '@/api/work'
 
 export default {
   state: {
@@ -19,6 +19,25 @@ export default {
         }).catch(err => {
           reject(err)
         })
+      })
+    },
+    handleGetWorksList ({ commit }, { groupId }) {
+      return new Promise((resolve, reject) => {
+        if (groupId === undefined) {
+          resolve({
+            flag: false,
+            body: '系统异常'
+          })
+        } else {
+          get_works_list_by_group_id(groupId).then(res => {
+            resolve({
+              flag: res.data.state === 'SUCCESS',
+              body: res.data.body
+            })
+          }).catch(err => {
+            reject(err)
+          })
+        }
       })
     }
   }

@@ -192,14 +192,18 @@ export default {
     },
     handleGetSimpleCompetitionListByGroupId ({ commit }, { groupId }) {
       return new Promise((resolve, reject) => {
-        get_simple_competition_list_by_group_id(groupId).then(res => {
+        if (groupId === undefined) {
           resolve({
-            flag: res.data.state === 'SUCCESS',
-            body: res.data.body
+            flag: false
           })
-        }).catch(err => {
-          reject(err)
-        })
+        } else {
+          get_simple_competition_list_by_group_id(groupId).then(res => {
+            resolve({
+              flag: res.data.state === 'SUCCESS',
+              body: res.data.body
+            })
+          })
+        }
       })
     }
   }

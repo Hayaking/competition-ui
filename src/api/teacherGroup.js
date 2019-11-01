@@ -35,14 +35,6 @@ export const invite_teacher_member = (groupId, teacherId) => {
   })
 }
 
-export const invite_student_member = (groupId, list) => {
-  return axios.request({
-    url: `studentGroup/addMembers/${groupId}`,
-    data: list,
-    method: 'post'
-  })
-}
-
 export const agree_teacher_group_invite = (groupId) => {
   return axios.request({
     url: `teacherGroup/agree/${groupId}`,
@@ -65,24 +57,10 @@ export const create_teacher_group = (group) => {
   })
 }
 
-export const create_student_group = (groupName) => {
-  return axios.request({
-    url: `studentGroup/create/${groupName}`,
-    method: 'post'
-  })
-}
-
 export const set_teacher_group_state = (id, flag) => {
   return axios.request({
     url: `teacherGroup/state/${id}/${flag}`,
     method: 'post'
-  })
-}
-
-export const get_student_group = (pageNum, pageSize) => {
-  return axios.request({
-    url: `studentGroup/${pageNum}/${pageSize}`,
-    method: 'get'
   })
 }
 
@@ -117,12 +95,5 @@ export const remove_teacher_from_group = (groupId, teacherId) => {
   return axios.request({
     url: `/teacherGroup/${groupId}/${teacherId}`,
     method: 'delete'
-  })
-}
-
-export const get_student_group_member_list = (groupId) => {
-  return axios.request({
-    url: `/studentGroup/${groupId}/members`,
-    method: 'get'
   })
 }

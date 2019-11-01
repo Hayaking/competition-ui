@@ -4,7 +4,7 @@
     @on-cancel="cancel"
     :fullscreen="isFullScreen"
     width="800"
-    v-model="modalShow">
+    v-model="this.modalShow">
     <div slot="header">
       <Row>
         <Col span="3"><h2>邀请组员</h2></Col>
@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'group-invite-modal',
@@ -135,9 +135,11 @@ export default {
     },
     getTeacherByGroup (groupId) {
       this.handleGetTeacherByGroupId({ groupId }).then(res => {
-        this.table_res_left = res
-        this.table_res_right = this.allTeacher
-        this.differSet()
+        if (res.flag) {
+          this.table_res_left = res.body
+          this.table_res_right = this.allTeacher
+          this.differSet()
+        }
       })
     },
     invite (index) {
@@ -182,21 +184,27 @@ export default {
     }
   },
   computed: {
+    ...mapGetters([
+      'getTeacherGroup',
+      'getAllTeacher'
+    ]),
     modalShow: {
       get () {
         return this.show
       },
-      set (val) {
-        console.info(val)
-      }
+      set () {}
     },
     allTeacher () {
-      return this.getter.getAllTeacher
+      return this.getAllTeacher
     }
   },
   watch: {
-    groupId (val) {
-      this.getTeacherByGroup(val)
+    getTeacherGroup: {
+      handler (newVal) {
+        this.getTeacherByGroup(newVal.id)
+      },
+      deep: true,
+      immediate: true
     }
   }
 }

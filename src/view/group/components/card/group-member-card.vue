@@ -14,15 +14,10 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'group-member-card',
-  props: {
-    group: {
-      Object
-    }
-  },
   data () {
     return {
       teacherList: []
@@ -34,12 +29,19 @@ export default {
     ]),
     getTeacherList (id) {
       this.handleGetTeacherByGroupId({ groupId: id }).then(res => {
-        this.teacherList = res
+        res.flag
+          ? this.teacherList = res.body
+          : console.info('失败')
       })
     }
   },
+  computed: {
+    ...mapGetters([
+      'getTeacherGroup'
+    ])
+  },
   watch: {
-    group: {
+    getTeacherGroup: {
       handler (newVal) {
         this.getTeacherList(newVal.id)
       },

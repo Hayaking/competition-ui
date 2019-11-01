@@ -110,7 +110,7 @@ export default {
   mounted () {
     this.$nextTick(() => {
       this.competitionId = this.$route.params.id
-      this.$store.dispatch('handleGetCompetitionById', { id: this.competitionId })
+      this.handleGetCompetitionById({ id: this.competitionId })
       this.getEnterPage()
     })
   },

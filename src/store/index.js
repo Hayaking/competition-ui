@@ -6,7 +6,8 @@ import user_edit from './module/user_edit'
 import app from './module/app'
 import competition from './module/competition'
 import type from './module/type'
-import group from './module/group'
+import studentGroup from './module/studentGroup'
+import teacherGroup from './module/teacherGroup'
 import role from './module/role'
 import permission from './module/persmission'
 import teacher from './module/teacher'
@@ -40,7 +41,8 @@ export default new Vuex.Store({
     app,
     competition,
     type,
-    group,
+    studentGroup,
+    teacherGroup,
     role,
     permission,
     teacher,

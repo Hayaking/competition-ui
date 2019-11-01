@@ -8,7 +8,7 @@
       <a @click="more">更多</a>
     </div>
     <List>
-      <ListItem v-for="(item,index) in competitionList" :key="index">
+      <ListItem v-for="(item,index) in this.competitionList" :key="index">
         <ListItemMeta avatar="https://dev-file.iviewui.com/userinfoPDvn9gKWYihR24SpgC319vXY8qniCqj4/avatar"
                       :title="item.name"
                       :description='"主办方："+item.org + "，协办方："+item.coOrg '/>
@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { mapActions, mapMutations } from 'vuex'
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import { sleep } from '@/libs/util'
 
 export default {
@@ -31,45 +31,38 @@ export default {
   },
   data () {
     return {
+      getter: this.$store.getters,
       preGroupId: 0,
       competitionList: []
     }
   },
   methods: {
     ...mapMutations([
-      'closeTag'
+      'closeTag',
+      'setTeacherGroupForCompetitionList'
     ]),
     ...mapActions([
       'handleGetSimpleCompetitionListByGroupId'
     ]),
     more () {
-      this.closeTag({
-        name: 'group_competition_list',
-        params: {
-          id: this.preGroupId,
-          flag: true
-        }
-      })
-      // }
-      sleep(10).then(() => {
-        this.$router.push({
-          name: 'group_competition_list',
-          params: {
-            id: this.group.id,
-            flag: false
-          }
-        })
-        this.preGroupId = this.group.id
-      })
+      this.setTeacherGroupForCompetitionList(this.getTeacherGroup)
+      this.$router.push({ name: 'group_competition_list' })
     },
     getCompetitionList (id) {
       this.handleGetSimpleCompetitionListByGroupId({ groupId: id }).then(res => {
-        this.competitionList = res.body
+        res.flag
+          ? this.competitionList = res.body
+          : console.info('失败')
       })
     }
   },
+  computed: {
+    ...mapGetters([
+      'getTeacherGroup'
+    ])
+  },
   watch: {
-    group: {
+    getTeacherGroup: {
       handler (newVal) {
         this.getCompetitionList(newVal.id)
       },

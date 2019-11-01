@@ -1,29 +1,36 @@
 import {
   agree_teacher_group_invite,
-  create_student_group,
   create_teacher_group,
+  delete_teacher_group,
   exit_teacher_group,
-  get_student_group,
+  get_teacher_by_group_id,
   get_teacher_group,
   get_teacher_group_all,
   get_teacher_group_by_page,
   get_teacher_group_inviting,
-  invite_student_member,
   invite_teacher_member,
   refuse_teacher_group_invite,
+  remove_teacher_from_group,
   search_teacher_group,
-  set_teacher_group_state,
-  get_teacher_by_group_id, remove_teacher_from_group, delete_teacher_group, get_student_group_member_list
-} from '@/api/group'
+  set_teacher_group_state
+} from '@/api/teacherGroup'
 
 export default {
   state: {
+    group_for_cards: {},
+    group_for_competition_list: {}
   },
   mutations: {
-
+    setTeacherGroup (state, obj) {
+      state.group_for_cards = obj
+    },
+    setTeacherGroupForCompetitionList (state, obj) {
+      state.group_for_competition_list = obj
+    }
   },
   getters: {
-
+    getTeacherGroup: state => state.group_for_cards,
+    getTeacherGroupForCompetitionList: state => state.group_for_competition_list
   },
   actions: {
     /**
@@ -76,32 +83,10 @@ export default {
         })
       })
     },
-    handleInviteStudentMember ({ commit }, { groupId, list }) {
-      return new Promise((resolve, reject) => {
-        invite_student_member(groupId, list).then(res => {
-          if (res.data.state === 'SUCCESS') {
-            resolve(true)
-          }
-        }).catch(err => {
-          reject(err)
-        })
-      })
-    },
     handleCreateTeacherGroup ({ commit }, { group }) {
       return new Promise((resolve, reject) => {
         create_teacher_group(group).then(res => {
           resolve(res.data.state === 'SUCCESS')
-        }).catch(err => {
-          reject(err)
-        })
-      })
-    },
-    handleCreateStudentGroup ({ commit }, { groupName }) {
-      return new Promise((resolve, reject) => {
-        create_student_group(groupName).then(res => {
-          if (res.data.state === 'SUCCESS') {
-            resolve(res.data.body)
-          }
         }).catch(err => {
           reject(err)
         })
@@ -142,15 +127,6 @@ export default {
         })
       })
     },
-    handleGetStudentGroup ({ commit }, { pageNum, pageSize }) {
-      return new Promise((resolve, reject) => {
-        get_student_group(pageNum, pageSize).then(res => {
-          resolve(res.data.body)
-        }).catch(err => {
-          reject(err)
-        })
-      })
-    },
     handleSearchTeacherGroup ({ commit }, { key, pageNum, pageSize }) {
       return new Promise((resolve, reject) => {
         search_teacher_group(key, pageNum, pageSize).then(res => {
@@ -171,11 +147,18 @@ export default {
     },
     handleGetTeacherByGroupId ({ commit }, { groupId }) {
       return new Promise((resolve, reject) => {
-        get_teacher_by_group_id(groupId).then(res => {
-          resolve(res.data.body)
-        }).catch(err => {
-          reject(err)
-        })
+        if (groupId !== undefined) {
+          get_teacher_by_group_id(groupId).then(res => {
+            resolve({
+              flag: res.data.state === 'SUCCESS',
+              body: res.data.body
+            })
+          }).catch(err => {
+            reject(err)
+          })
+        } else {
+          resolve({ flag: false })
+        }
       })
     },
     handleRemoveTeacherFromGroup ({ commit }, { groupId, teacherId }) {
@@ -194,25 +177,6 @@ export default {
         }).catch(err => {
           reject(err)
         })
-      })
-    },
-    handleGetStudentGroupMemberList ({ commit }, { groupId }) {
-      return new Promise((resolve, reject) => {
-        if (groupId === undefined) {
-          resolve({
-            flag: false,
-            body: '系统异常'
-          })
-        } else {
-          get_student_group_member_list(groupId).then(res => {
-            resolve({
-              flag: res.data.state === 'SUCCESS',
-              body: res.data.body
-            })
-          }).catch(err => {
-            reject(err)
-          })
-        }
       })
     }
   }

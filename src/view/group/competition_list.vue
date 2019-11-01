@@ -3,7 +3,7 @@
     <div slot="title">
       <Row>
         <Col span="3">
-          <Select v-model="groupId">
+          <Select v-model="groupId" @on-change="selectChanged">
             <Option :key="item.id" :value="item.id" v-for="item in groupList">
               {{item.name}}
             </Option>
@@ -78,7 +78,7 @@
 </template>
 
 <script>
-import { mapActions, mapMutations } from 'vuex'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
 import SubmitProcessModal from '@/view/group/components/modal/submit-process-modal'
 import CompetitionExpand from '@/view/components/table-expand/group-competition-expand'
 import EditCompetitionModal from '@/view/group/components/modal/edit-modal'
@@ -204,8 +204,6 @@ export default {
   },
   mounted () {
     this.$nextTick(() => {
-      this.groupId = this.$route.params.id
-      this.flag = this.$route.params.flag
       this.getApply()
       this.getCompetitionType()
       // 获取该老师属于的工作组
@@ -332,11 +330,28 @@ export default {
     },
     closeTab (item) {
       this.closeTag(item)
+    },
+    selectChanged (id) {
+      this.getApply()
     }
   },
+  computed: {
+    ...mapGetters([
+      'getTeacherGroupForCompetitionList'
+    ])
+  },
   watch: {
-    groupId () {
-      this.getApply()
+    getTeacherGroupForCompetitionList: {
+      handler (val) {
+        if (val !== undefined) {
+          this.groupId = val.id
+          this.getApply()
+        } else {
+          this.groupId = 0
+        }
+      },
+      deep: true,
+      immediate: true
     }
   }
 }

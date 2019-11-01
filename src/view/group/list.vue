@@ -3,8 +3,8 @@
     <PageHeader />
     <Row>
       <Col span="15">
-        <GroupCard :group="currentGroup" />
-        <CompetitionCard :group="currentGroup"/>
+        <GroupCard />
+        <CompetitionCard />
         <Card title="动态"></Card>
       </Col>
       <Col span="8" offset="1">
@@ -12,9 +12,8 @@
                     :group="currentGroup"
                     @callInvite="showInvite"
                     @callCreateCompetition="showCreateGroup"
-                    @selectChanged="selectChanged"
         />
-        <GroupMemberCard :group="currentGroup" />
+        <GroupMemberCard />
       </Col>
     </Row>
     <!--邀请组员-->
@@ -94,16 +93,10 @@ export default {
       showInviteModal: false,
       showCreateModal: false,
       showProcessModal: false,
-      groupId: 0,
       preGroupId: 0,
       currentGroup: {},
       competitionList: []
     }
-  },
-  mounted () {
-    this.$nextTick(() => {
-      this.getApply()
-    })
   },
   methods: {
     ...mapMutations([
@@ -116,16 +109,6 @@ export default {
       'handleExitTeacherGroup',
       'handleDeleteTeacherGroup'
     ]),
-    pageChange (index) {
-      this.page.current = index
-      this.getApply(index, this.page.size)
-    },
-    getApply (pageNum = 1, pageSize = 12) {
-      this.handleGetTeacherGroupByPage({ pageNum, pageSize }).then(res => {
-        this.page = res
-        this.currentGroup = res.records[0]
-      })
-    },
     /**
      * 退出工作组
      * @param groupId
@@ -162,7 +145,6 @@ export default {
       this.showCreateModal = false
     },
     showInvite (id) {
-      this.groupId = id
       this.showInviteModal = true
     },
     showCreateGroup () {
@@ -175,18 +157,14 @@ export default {
       flag
         ? this.getApply()
         : this.$Message.error('失败')
-    },
-    selectChanged (id) {
-      this.currentGroup = this.page.records.find(item => {
-        return item.id === id
-      })
     }
   },
   computed: {
     userName: {
       get () {
         return this.getter.getUserInfo.teacherName
-      }
+      },
+      set () {}
     }
   }
 }

@@ -13,11 +13,12 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'join-form1',
   data () {
     return {
-      getter: this.$store.getters
     }
   },
   props: {
@@ -28,12 +29,15 @@ export default {
   },
   methods: {
     submit () {
-      this.$emit('on-success-valid', true, this.competition)
+      this.$emit('on-success-valid', true)
     }
   },
   computed: {
+    ...mapGetters([
+      'getEnterCompetition'
+    ]),
     competition () {
-      return this.getter.getTempCompetition
+      return this.getEnterCompetition
     }
   },
   watch: {

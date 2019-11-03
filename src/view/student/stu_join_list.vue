@@ -1,8 +1,9 @@
 <template>
   <Card>
-    <JoinModal :show="show"
-               @cancel="cancel"
-    />
+    <ResultModal :show="isShowResultModal"
+                @cancel="cancel"/>
+    <EditJoinModal :show="isShowJoinModal"
+               @cancel="cancel"/>
     <div slot="title">
       <Input search
              style="width: 300px"/>
@@ -12,17 +13,39 @@
            :data="page.records"
            border
            stripe>
+      <template slot-scope="{ row, index }" slot="competition">
+        <div>{{row.competition.name}}</div>
+      </template>
       <template slot-scope="{ row, index }" slot="works">
         <div>{{row.works.worksName}}</div>
       </template>
-      <template slot-scope="{ row, index }" slot="competition">
-        <div>{{row.competition.name}}</div>
+      <template slot-scope="{ row, index }" slot="teacher1">
+        <div v-if="row.teacher1 === null">无</div>
+        <Row v-else>
+          <Col span="12">
+            {{row.teacher1.teacherName}}
+          </Col>
+          <Col span="12">
+            <Tag color="primary">{{row.applyState}}</Tag>
+          </Col>
+        </Row>
+      </template>
+      <template slot-scope="{ row, index }" slot="teacher2">
+        <div v-if="row.teacher2 === null">无</div>
+        <Row v-else>
+          <Col span="12">
+            {{row.teacher2.teacherName}}
+          </Col>
+          <Col span="12">
+            <Tag color="primary">{{row.applyState}}</Tag>
+          </Col>
+        </Row>
       </template>
       <template slot-scope="{ row, index }" slot="type">
         <div>{{row.competition.joinTypeId}}</div>
       </template>
       <template slot-scope="{ row, index }" slot="action">
-        <Button type="success" size="small" style="margin-right: 5px" @click="editJoin(row)">
+        <Button type="success" size="small" style="margin-right: 5px" @click="showEditJoinModal(row)">
           编辑
         </Button>
         <Button type="error" size="small" @click="deleteJoin(row)">
@@ -40,12 +63,13 @@
 </template>
 
 <script>
-import JoinModal from '@/view/components/modal/join-edit_modal'
+import EditJoinModal from '@/view/components/modal/join-edit_modal'
+import ResultModal from '@/view/student/components/modal/submit-result-modal'
 import { mapActions } from 'vuex'
-import JoinExpand from '@/view/components/table-expand/join-expand'
+import JoinExpand from '@/view/student/components/table-expand/join-expand'
 export default {
   name: 'stu_join_list',
-  components: { JoinModal, JoinExpand },
+  components: { EditJoinModal, JoinExpand, ResultModal },
   data () {
     return {
       TABLE_HEAD: [
@@ -56,37 +80,30 @@ export default {
             return h(JoinExpand, {
               props: {
                 row: params.row
+              },
+              on: {
+                showResult: () => {
+                  this.showResultModal()
+                }
               }
             })
           }
-        },
-        {
-          key: 'id',
-          title: 'id'
-        },
-        {
-          title: '作品名',
-          slot: 'works'
         },
         {
           title: '比赛名',
           slot: 'competition'
         },
         {
+          title: '作品名',
+          slot: 'works'
+        },
+        {
           title: '指导老师1',
-          key: 'teacherId1'
+          slot: 'teacher1'
         },
         {
           title: '指导老师2',
-          key: 'teacherId2'
-        },
-        {
-          title: '指导教师1申请状态',
-          key: 'applyState'
-        },
-        {
-          title: '指导教师2申请状态',
-          key: 'applyState2'
+          slot: 'teacher2'
         },
         {
           title: '报名状态',
@@ -111,7 +128,8 @@ export default {
         total: 0,
         records: []
       },
-      show: false
+      isShowJoinModal: false,
+      isShowResultModal: false
     }
   },
   mounted () {
@@ -136,8 +154,8 @@ export default {
         this.page = res
       })
     },
-    editJoin (obj) {
-      this.show = true
+    showEditJoinModal (obj) {
+      this.isShowJoinModal = true
       this.$store.commit('setEditJoin', obj)
     },
     deleteJoin (obj) {
@@ -151,8 +169,12 @@ export default {
         }
       })
     },
+    showResultModal () {
+      this.isShowResultModal = true
+    },
     cancel () {
-      this.show = false
+      this.isShowJoinModal = false
+      this.isShowResultModal = false
     },
     toJoin () {
       this.$router.push({ name: 'common_competition' })

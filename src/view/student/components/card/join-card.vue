@@ -8,7 +8,9 @@
       <a @click="more">更多</a>
     </div>
     <List>
-      <ListItem v-for="(item,index) in joinList" :key="index">
+      <ListItem v-for="(item,index) in joinList"
+                :key="index"
+                v-if="item.competition !== undefined">
         <ListItemMeta avatar="https://dev-file.iviewui.com/userinfoPDvn9gKWYihR24SpgC319vXY8qniCqj4/avatar"
                       :title="item.competition.name"
                       :description='"简介："+item.competition.intro'/>
@@ -22,31 +24,42 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'join-card',
-  props: {
-    group: { Object }
-  },
-  data () {
-    return {
-      joinList: []
-    }
-  },
   methods: {
     ...mapActions([
       'handleGetSimpleJoinList'
     ]),
     more () {
-      this.$router.push({
-        name: 'stu_join_list'
-      })
+      this.$router.push({ name: 'stu_join_list' })
     },
     getJoinList (id) {
       this.handleGetSimpleJoinList({ groupId: id }).then(res => {
-        this.joinList = res.body
+        if (res) {
+          console.info('成功')
+        } else {
+          this.$Message.error('失败')
+        }
       })
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'getStudentGroup',
+      'getSimpleJoinList'
+    ]),
+    group: {
+      get () {
+        return this.getStudentGroup
+      },
+      set (val) {
+        this.setStudentGroup(val)
+      }
+    },
+    joinList () {
+      return this.getSimpleJoinList
     }
   },
   watch: {

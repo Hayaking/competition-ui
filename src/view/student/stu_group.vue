@@ -3,82 +3,29 @@
     <PageHeader/>
     <Row>
       <Col span="15">
-        <JoinCard :group="currentGroup"/>
-        <WorksCard :group="currentGroup"/>
-        <InfoCard />
+        <JoinCard/>
+        <WorksCard/>
+        <InfoCard/>
       </Col>
-      <Col span="8" offset="1">
-        <ActionCard :groupList="page.records"
-                    :group="currentGroup"
-                    @selectChanged="selectChanged"/>
-        <GroupMemberCard :group="currentGroup"/>
+      <Col offset="1" span="8">
+        <ActionCard/>
+        <GroupMemberCard/>
       </Col>
     </Row>
   </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex'
 import PageHeader from '@/view/student/components/header/PageHeader'
 import JoinCard from '@/view/student/components/card/join-card'
 import InfoCard from '@/view/student/components/card/info-card'
 import WorksCard from '@/view/student/components/card/works-card'
 import GroupMemberCard from '@/view/student/components/card/group-member-card'
 import ActionCard from '@/view/student/components/card/action-card'
+
 export default {
   name: 'stu_group',
-  components: { PageHeader, JoinCard, InfoCard, WorksCard, GroupMemberCard, ActionCard },
-  data () {
-    return {
-      page: {
-        current: 1,
-        size: 12,
-        total: 0,
-        records: []
-      },
-      TABLE_HEAD: [
-        {
-          title: '组名',
-          key: 'name'
-        },
-        {
-          title: '组长',
-          slot: 'creator'
-        },
-        {
-          title: '作品名',
-          key: 'worksName'
-        }
-      ],
-      currentGroup: {}
-    }
-  },
-  mounted () {
-    this.getGroupPage()
-  },
-  methods: {
-    ...mapActions([
-      'handleGetStudentGroup'
-    ]),
-    getGroupPage (pageNum = 1, pageSize = 12) {
-      this.handleGetStudentGroup({ pageNum, pageSize }).then(res => {
-        this.page = res
-        this.currentGroup = res.records[0]
-      })
-    },
-    pageChange (index) {
-      this.page.current = index
-      this.getGroupPage(index, this.page.size)
-    },
-    selectChanged (id) {
-      this.currentGroup = this.page.records.find(item => {
-        return item.id === id
-      })
-    }
-  },
-  computed: {
-
-  }
+  components: { PageHeader, JoinCard, InfoCard, WorksCard, GroupMemberCard, ActionCard }
 }
 </script>
 

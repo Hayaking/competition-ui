@@ -1,27 +1,23 @@
-import { create_join, delete_join, get_join_list, get_simple_join_list_by_group_id, set_enter_state } from '@/api/join'
+import { delete_join, get_join_list, get_simple_join_list_by_group_id, set_enter_state } from '@/api/join'
 
 export default {
   state: {
-    edit_join: {}
+    join_for_edit: {},
+    simple_join_list: []
   },
   mutations: {
     setEditJoin (state, join) {
-      state.edit_join = join
+      state.join_for_edit = join
+    },
+    setSimpleJoinList (state, list) {
+      state.simple_join_list = list
     }
   },
   getters: {
-    getEditJoin: state => state.edit_join
+    getEditJoin: state => state.join_for_edit,
+    getSimpleJoinList: state => state.simple_join_list
   },
   actions: {
-    handleCreateJoin ({ commit }, { group, list, works, join }) {
-      return new Promise((resolve, reject) => {
-        create_join(group, list, works, join).then(res => {
-          resolve(res.data.state === 'SUCCESS')
-        }).catch(err => {
-          reject(err)
-        })
-      })
-    },
     handleDeleteJoin ({ commit }, { id }) {
       return new Promise((resolve, reject) => {
         delete_join(id).then(res => {
@@ -49,10 +45,8 @@ export default {
           })
         } else {
           get_simple_join_list_by_group_id(groupId).then(res => {
-            resolve({
-              flag: res.data.state === 'SUCCESS',
-              body: res.data.body
-            })
+            commit('setSimpleJoinList', res.data.body)
+            resolve(res.data.state === 'SUCCESS')
           }).catch(err => {
             reject(err)
           })

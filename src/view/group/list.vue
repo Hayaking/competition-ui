@@ -19,7 +19,6 @@
     <!--邀请组员-->
     <InviteModal
       :show="showInviteModal"
-      :group-id="currentGroup.id"
       @cancel="closeModel"
     />
     <!--创建工作组-->

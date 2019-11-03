@@ -26,6 +26,8 @@
 </template>
 
 <script>
+import { mapGetters, mapMutations } from 'vuex'
+
 export default {
   name: 'join-modal',
   props: {
@@ -40,11 +42,17 @@ export default {
     }
   },
   methods: {
+    ...mapMutations([
+      'setEditJoin'
+    ]),
     cancel () {
       this.$emit('cancel')
     }
   },
   computed: {
+    ...mapGetters([
+      'getEditJoin'
+    ]),
     modalShow: {
       get () {
         // eslint-disable-next-line vue/no-async-in-computed-properties,vue/no-side-effects-in-computed-properties
@@ -62,10 +70,10 @@ export default {
     },
     join: {
       get () {
-        return this.getter.getEditJoin
+        return this.getEditJoin
       },
       set (val) {
-        this.$store.dispatch('setEditJoin', val)
+        this.setEditJoin(val)
       }
     }
   }

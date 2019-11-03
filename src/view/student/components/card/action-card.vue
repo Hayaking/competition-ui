@@ -24,7 +24,7 @@
       <Col offset="3" span="18">
         小组列表：
         <Select size="small"
-                v-model="this.groupId"
+                v-model="group.id"
                 @on-change="selectChanged">
           <Option v-for="(item,index) in this.groupList"
                   :value="item.id"
@@ -38,13 +38,30 @@
 </template>
 
 <script>
+import { mapActions, mapGetters, mapMutations } from 'vuex'
+
 export default {
   name: 'action-card',
-  props: {
-    groupList: { Array },
-    group: { Object }
+  mounted () {
+    this.getGroupPage()
   },
   methods: {
+    ...mapMutations([
+      'setStudentGroup',
+      'setStudentGroupList'
+    ]),
+    ...mapActions([
+      'handleGetStudentGroupList'
+    ]),
+    getGroupPage () {
+      this.handleGetStudentGroupList().then(res => {
+        if (res) {
+          console.info('成功')
+        } else {
+          this.$Message.error('失败')
+        }
+      })
+    },
     toCompetition () {
       this.$router.push({ name: 'common_competition' })
     },
@@ -52,16 +69,30 @@ export default {
       this.$router.push({ name: 'common_edit_self' })
     },
     selectChanged (id) {
-      this.$emit('selectChanged', id)
+      this.group = this.groupList.find(item => {
+        return item.id === id
+      })
     }
   },
   computed: {
-    groupId: {
+    ...mapGetters([
+      'getStudentGroup',
+      'getStudentGroupList'
+    ]),
+    group: {
       get () {
-        return this.group.id
+        return this.getStudentGroup
       },
-      set () {
-
+      set (val) {
+        this.setStudentGroup(val)
+      }
+    },
+    groupList: {
+      get () {
+        return this.getStudentGroupList
+      },
+      set (val) {
+        this.setStudentGroupList(val)
       }
     }
   }

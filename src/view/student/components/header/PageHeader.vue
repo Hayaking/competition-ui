@@ -15,11 +15,17 @@
       </Col>
       <Col span="4">
         <Row>
-          <Col span="12">
-            <h3>小组数：</h3>10
+          <Col span="8">
+            <h3>小组数：</h3>
+            <h3>{{groupSize}}</h3>
           </Col>
-          <Col span="12">
-            <h3>竞赛数：</h3>5
+          <Col span="8">
+            <h3>参赛数：</h3>
+            <h3>{{joinSize}}</h3>
+          </Col>
+          <Col span="8">
+            <h3>成员数：</h3>
+            <h3>{{joinSize}}</h3>
           </Col>
         </Row>
       </Col>
@@ -28,9 +34,23 @@
 </template>
 
 <script>
-  export default {
-    name: 'PageHeadwe'
+import { mapGetters } from 'vuex'
+
+export default {
+  name: 'PageHeader',
+  computed: {
+    ...mapGetters([
+      'getStudentGroupList',
+      'getSimpleJoinList'
+    ]),
+    groupSize () {
+      return this.getStudentGroupList.length
+    },
+    joinSize () {
+      return this.getSimpleJoinList.length
+    }
   }
+}
 </script>
 
 <style scoped>

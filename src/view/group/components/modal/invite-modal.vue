@@ -4,7 +4,7 @@
     @on-cancel="cancel"
     :fullscreen="isFullScreen"
     width="800"
-    v-model="this.modalShow">
+    v-model="modalShow">
     <div slot="header">
       <Row>
         <Col span="3"><h2>邀请组员</h2></Col>
@@ -57,10 +57,6 @@ export default {
     show: {
       type: Boolean,
       default: false
-    },
-    groupId: {
-      type: Number,
-      default: 0
     }
   },
   data () {
@@ -143,22 +139,21 @@ export default {
       })
     },
     invite (index) {
-      let params = {
-        groupId: this.groupId,
+      this.handleInviteTeacherMember({
+        groupId: this.getTeacherGroup.id,
         teacherId: this.table_res_right[index].id
-      }
-      this.handleInviteTeacherMember(params).then(res => {
+      }).then(res => {
         if (res) {
           this.$Message.success('邀请中')
-          this.getTeacherByGroup(this.groupId)
+          this.getTeacherByGroup(this.getTeacherGroup.id)
         }
       })
     },
     remove (id) {
-      this.handleRemoveTeacherFromGroup({ groupId: this.groupId, teacherId: id }).then(res => {
+      this.handleRemoveTeacherFromGroup({ groupId: this.getTeacherGroup.id, teacherId: id }).then(res => {
         if (res) {
           this.$Message.success('成功')
-          this.getTeacherByGroup(this.groupId)
+          this.getTeacherByGroup(this.getTeacherGroup.id)
         } else {
           this.$Message.error('失败')
         }

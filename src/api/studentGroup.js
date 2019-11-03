@@ -15,9 +15,9 @@ export const create_student_group = (groupName) => {
   })
 }
 
-export const get_student_group = (pageNum, pageSize) => {
+export const get_student_group_list = () => {
   return axios.request({
-    url: `studentGroup/${pageNum}/${pageSize}`,
+    url: `studentGroup`,
     method: 'get'
   })
 }

@@ -1,16 +1,17 @@
 <template>
-  <Form ref="formDynamic"  :model="works" :label-width="80" style="width: 300px">
+  <Form :model="works"  style="width: 300px">
     <FormItem label="作品名">
-      <Row>
-        <Col span="18">
-          <Input type="text" v-model="works.worksName" placeholder="输入作品名"></Input>
-        </Col>
-      </Row>
+        <Input type="text" v-model="works.worksName" placeholder="输入作品名"/>
+    </FormItem>
+    <FormItem label="作品介绍：">
+      <Input type="textarea"  v-model="works.des" placeholder="作品介绍"/>
     </FormItem>
   </Form>
 </template>
 
 <script>
+import { mapGetters, mapMutations } from 'vuex'
+
 export default {
   name: 'join-form3',
   props: {
@@ -19,14 +20,25 @@ export default {
       default: false
     }
   },
-  data () {
-    return {
-      works: {}
+  methods: {
+    ...mapMutations([
+      'setEnterHolderWorks'
+    ]),
+    submit () {
+      this.$emit('on-success-valid', true)
     }
   },
-  methods: {
-    submit () {
-      this.$emit('on-success-valid', true, this.works)
+  computed: {
+    ...mapGetters([
+      'getEnterHolder'
+    ]),
+    works: {
+      get () {
+        return this.getEnterHolder.works
+      },
+      set (val) {
+        this.setEnterHolderWorks(val)
+      }
     }
   },
   watch: {

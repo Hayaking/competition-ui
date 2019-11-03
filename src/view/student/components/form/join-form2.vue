@@ -1,23 +1,17 @@
 <template>
   <div>
-    <Form ref="form" :model="groupMember"  :label-width="80" style="width: 300px">
-      <FormItem label="组名">
-        <Row>
-          <Col span="18">
-            <Input type="text" v-model="groupName" placeholder="输入组名"></Input>
-          </Col>
-        </Row>
+    <Form ref="form" :label-width="80" :model="groupMember" >
+      <FormItem label="组名" :prop="groupName" >
+          <Input type="text" v-model="groupName" placeholder="输入组名"/>
       </FormItem>
-      <FormItem
-        v-for="(item, index) in groupMember.items"
-        v-if="item.status"
+      <FormItem v-for="(item, index) in groupMember.items"
         :key="index"
         :label="'组员 ' + item.index"
         :prop="'items.' + index + '.value'"
         :rules="{required: true, message: '不能为空', trigger: 'blur'}">
         <Row>
           <Col span="18">
-            <Input type="text" v-model="item.value" placeholder="输入账号"></Input>
+            <Input type="text" v-model="item.value" placeholder="输入账号"/>
           </Col>
           <Col span="4" offset="1">
             <Button @click="handleRemove(index)">删除</Button>
@@ -25,18 +19,14 @@
         </Row>
       </FormItem>
       <FormItem>
-        <Row>
-          <Col span="12">
-            <Button type="dashed" long @click="handleAdd" icon="md-add">Add item</Button>
-          </Col>
-        </Row>
+          <Button  @click="handleAdd" icon="md-add">添加组员</Button>
       </FormItem>
     </Form>
   </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
 
 export default {
   name: 'join-form2',
@@ -46,36 +36,25 @@ export default {
       default: false
     }
   },
-  data () {
-    return {
-      groupMember: {
-        memberNum: 1,
-        items: [
-          {
-            value: '',
-            index: 1,
-            status: 1
-          }
-        ]
-      },
-      groupName: ''
-    }
-  },
   methods: {
     ...mapActions([
       'handleStudentIsExist'
     ]),
+    ...mapMutations([
+      'setEnterGroupName',
+      'setEnterGroupMember',
+      'setEnterHolderList'
+    ]),
     submit () {
       this.$refs['form'].validate((valid) => {
         if (valid) {
-          let memberList = this.groupMember.items.map(item => {return item.value})
-          this.handleStudentIsExist({ list: memberList }).then(res => {
+          this.list = this.groupMember.items.map(item => { return item.value })
+          this.handleStudentIsExist({ list: this.list }).then(res => {
             if (res.length === 0) {
-              this.$Message.success('SUCCESS!')
-              this.$emit('call-back', true, memberList)
+              this.$emit('call-back', true)
             } else {
               res.map(item => { this.$Message.error(item + '不存在') })
-              this.$emit('call-back', false, [])
+              this.$emit('call-back', false)
             }
           })
         } else {
@@ -88,13 +67,43 @@ export default {
       this.groupMember.memberNum++
       this.groupMember.items.push({
         value: '',
-        index: this.groupMember.memberNum,
-        status: 1
+        index: this.groupMember.memberNum
       })
     },
     handleRemove (index) {
       this.groupMember.memberNum--
       this.groupMember.items.splice(index, index)
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'getEnterGroupName',
+      'getEnterGroupMember',
+      'getEnterHolder'
+    ]),
+    groupName: {
+      get () {
+        return this.getEnterGroupName
+      },
+      set (val) {
+        this.setEnterGroupName(val)
+      }
+    },
+    groupMember: {
+      get () {
+        return this.getEnterGroupMember
+      },
+      set (val) {
+        this.setEnterGroupName(val)
+      }
+    },
+    list: {
+      get () {
+        return this.getEnterHolder.list
+      },
+      set (val) {
+        this.setEnterHolderList(val)
+      }
     }
   },
   watch: {

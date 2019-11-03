@@ -21,18 +21,12 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
-import { sleep } from '@/libs/util'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
 
 export default {
   name: 'competition-card',
-  props: {
-    group: { Object }
-  },
   data () {
     return {
-      getter: this.$store.getters,
-      preGroupId: 0,
       competitionList: []
     }
   },
@@ -45,7 +39,7 @@ export default {
       'handleGetSimpleCompetitionListByGroupId'
     ]),
     more () {
-      this.setTeacherGroupForCompetitionList(this.getTeacherGroup)
+      this.groupForEnterList = this.group
       this.$router.push({ name: 'group_competition_list' })
     },
     getCompetitionList (id) {
@@ -58,13 +52,25 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'getTeacherGroup'
-    ])
+      'getTeacherGroup',
+      'getTeacherGroupForCompetitionList'
+    ]),
+    group () {
+      return this.getTeacherGroup
+    },
+    groupForEnterList: {
+      get () {
+        return this.getTeacherGroupForCompetitionList
+      },
+      set (val) {
+        this.setTeacherGroupForCompetitionList(val)
+      }
+    }
   },
   watch: {
-    getTeacherGroup: {
-      handler (newVal) {
-        this.getCompetitionList(newVal.id)
+    group: {
+      handler (val) {
+        this.getCompetitionList(val.id)
       },
       deep: true,
       immediate: true

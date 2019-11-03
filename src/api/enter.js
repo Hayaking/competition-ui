@@ -14,3 +14,10 @@ export const export_enter_excel = (competitionId) => {
     responseType: 'blob'
   })
 }
+
+export const get_enter_list = (pageNum, pageSize, competitionId, progressId) => {
+  return axios.request({
+    url: `/enter/${competitionId}/${progressId}/${pageNum}/${pageSize}`,
+    method: 'get'
+  })
+}

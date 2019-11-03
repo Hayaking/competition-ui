@@ -14,29 +14,29 @@
         </Col>
       </Row>
       <Row v-else-if="index ===1">
-        <Col span="24" style="text-align: center">
+        <Col span="8" offset="8">
           <GroupForm @call-back="callForm2"
                      :flag="flag2"/>
         </Col>
       </Row>
       <Row v-else-if="index ===2">
-        <Col span="24" style="text-align: center">
+        <Col span="8" offset="8">
           <WorksForm @on-success-valid="callForm3"
                      :flag="flag3"/>
         </Col>
       </Row>
       <Row v-else-if="index ===3">
-        <Col span="24" style="text-align: center">
+        <Col span=16 offset="4">
           <LeadForm @on-success-valid="callForm4"
                     :flag="flag4"/>
         </Col>
       </Row>
       <Row v-else-if="index ===4">
         <Col span="24" style="text-align: center">
-          小组名: <div> {{groupName}}</div>
-          小组成员: <div>{{groupMember}}</div>
+          小组: <div> {{group}}</div>
+          小组成员: <div>{{list}}</div>
           作品：<div>{{works}}</div>
-          指导老师： <div>{{join.teacherId1}}</div>
+          指导老师： <div>{{join}}</div>
         </Col>
       </Row>
     </Card>
@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import { mapActions, mapMutations } from 'vuex'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
 import CompetitionInfo from '@/view/student/components/form/join-form1'
 import GroupForm from '@/view/student/components/form/join-form2'
 import WorksForm from '@/view/student/components/form/join-form3'
@@ -56,17 +56,6 @@ export default {
   data () {
     return {
       index: 0,
-      competition: {},
-      works: {
-        worksName: ''
-      },
-      join: {
-        competitionId: 0,
-        teacherId1: 0,
-        teacherId2: 0
-      },
-      groupName: '',
-      list: [],
       flag1: false,
       flag2: false,
       flag3: false,
@@ -75,21 +64,23 @@ export default {
   },
   methods: {
     ...mapMutations([
-      'closeTag'
+      'closeTag',
+      'setEnterHolderJoin',
+      'setEnterHolderGroup',
+      'setEnterHolderWorks',
+      'setEnterHolderList'
     ]),
     ...mapActions([
-      'handleCreateJoin'
+      'handleEnter'
     ]),
     submit () {
-      this.join.competitionId = this.competition.id
-      this.join.joinTypeId = this.competition.joinTypeId
       let params = {
-        group: { name: this.groupName },
+        group: this.group,
         list: this.list,
         works: this.works,
         join: this.join
       }
-      this.handleCreateJoin(params).then(res => {
+      this.handleEnter(params).then(res => {
         if (res) {
           this.$Message.success('成功')
           this.closeTag({ name: 'stu_join' })
@@ -99,25 +90,34 @@ export default {
         }
       })
     },
-    callForm1 (flag, competition) {
-      this.competition = competition
-      this.index += competition.joinTypeId
+    callForm1 (flag) {
+      this.index += this.competition.joinTypeId
     },
-    callForm2 (flag, list) {
+    callForm2 (flag) {
       if (flag) {
-        this.list = list
         this.index++
       } else {
         this.flag2 = false
       }
     },
-    callForm3 (flag, works) {
-      this.works = works
-      flag ? this.index++ : this.$Message.error('失败')
+    callForm3 (flag) {
+      if (flag) {
+        this.join.competitionId = this.competition.id
+        this.join.joinTypeId = this.competition.joinTypeId
+        this.group.name = this.groupName
+        this.index++
+      } else {
+        this.flag3 = false
+        this.$Message.error('失败')
+      }
     },
-    callForm4 (flag, join) {
-      this.join = join
-      flag ? this.index++ : this.$Message.error('失败')
+    callForm4 (flag) {
+      if (flag) {
+        this.index++
+      } else {
+        this.flag4 = false
+        this.$Message.error('失败')
+      }
     },
     next (flag = true) {
       if (!flag) {
@@ -135,6 +135,51 @@ export default {
         this.flag3 = flag
       } else if (this.index === 3) {
         this.flag4 = flag
+      }
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'getEnterCompetition',
+      'getEnterHolder',
+      'getEnterGroupName'
+    ]),
+    competition () {
+      return this.getEnterCompetition
+    },
+    groupName () {
+      return this.getEnterGroupName
+    },
+    join: {
+      get () {
+        return this.getEnterHolder.join
+      },
+      set (val) {
+        this.setEnterHolderJoin(val)
+      }
+    },
+    group: {
+      get () {
+        return this.getEnterHolder.group
+      },
+      set (val) {
+        this.setEnterHolderGroup(val)
+      }
+    },
+    list: {
+      get () {
+        return this.getEnterHolder.list
+      },
+      set (val) {
+        this.setEnterHolderList(val)
+      }
+    },
+    works: {
+      get () {
+        return this.getEnterHolder.works
+      },
+      set (val) {
+        this.setEnterHolderWorks(val)
       }
     }
   }

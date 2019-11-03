@@ -17,13 +17,10 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'group-member-card',
-  props: {
-    group: { Object }
-  },
   data () {
     return {
       memberList: []
@@ -42,6 +39,19 @@ export default {
       this.handleGetStudentGroupMemberList({ groupId: id }).then(res => {
         this.memberList = res.body
       })
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'getStudentGroup'
+    ]),
+    group: {
+      get () {
+        return this.getStudentGroup
+      },
+      set (val) {
+        this.setStudentGroup(val)
+      }
     }
   },
   watch: {

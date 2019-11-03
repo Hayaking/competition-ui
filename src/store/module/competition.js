@@ -14,22 +14,28 @@ import {
 
 export default {
   state: {
-    temp_competition: {}
+    competition_for_enter: {},
+    /* 工作组查看报名列表时 使用 */
+    competition_for_enter_list: {}
   },
   mutations: {
-    setTempCompetition (state, competition) {
-      state.temp_competition = competition
+    setEnterCompetition (state, competition) {
+      state.competition_for_enter = competition
+    },
+    setEnterListCompetition (state, competition) {
+      state.competition_for_enter_list = competition
     }
   },
   getters: {
-    getTempCompetition: state => state.temp_competition
+    getEnterCompetition: state => state.competition_for_enter,
+    getEnterListCompetition: state => state.competition_for_enter_list
   },
   actions: {
     handleGetCompetitionById ({ commit }, { id }) {
       return new Promise((resolve, reject) => {
         get_competition_by_id(id).then(res => {
           if (res.data.state === 'SUCCESS') {
-            commit('setTempCompetition', res.data.body)
+            commit('setEnterCompetition', res.data.body)
           }
           resolve(res.data.state === 'SUCCESS')
         }).catch(err => {
@@ -79,7 +85,7 @@ export default {
         })
       })
     },
-    handleGetByGroupId ({ state, commit }, { pageNum, pageSize, groupId }) {
+    handleGetCompetitionPageByGroupId ({ state, commit }, { pageNum, pageSize, groupId }) {
       return new Promise((resolve, reject) => {
         get_competition_by_group_id(pageNum, pageSize, groupId).then(res => {
           if (res.data.state === 'SUCCESS') {

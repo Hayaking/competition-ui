@@ -3,8 +3,10 @@
     <div slot="title">
       <Row>
         <Col span="3">
-          <Select v-model="groupId" @on-change="selectChanged">
-            <Option :key="item.id" :value="item.id" v-for="item in groupList">
+          <Select v-model="groupId">
+            <Option  v-for="(item,index) in groupList"
+                     :key="index"
+                     :value="item.id">
               {{item.name}}
             </Option>
           </Select>
@@ -190,7 +192,6 @@ export default {
       competitionId: 0,
       flag: false,
       groupId: 0,
-      tabs: [],
       progressHolder: {
         competitionId: 0
       },
@@ -204,32 +205,33 @@ export default {
   },
   mounted () {
     this.$nextTick(() => {
-      this.getApply()
       this.getCompetitionType()
       // 获取该老师属于的工作组
       this.handleGetTeacherGroup().then(res => {
         this.groupList = res
-        if (this.groupId === 0) {
+        if (Object.keys(this.group).length === 0) {
+          this.group = res[0]
           this.groupId = res[0].id
+        } else {
+          this.groupId = this.group.id
         }
+      }).then(() => {
+        this.getCompetitionList()
       })
-    })
-  },
-  beforeDestroy () {
-    this.tabs.forEach(item => {
-      this.closeTab(item)
     })
   },
   methods: {
     ...mapActions([
-      'handleGetByGroupId',
+      'handleGetCompetitionPageByGroupId',
       'handleSetEnterState',
       'handleGetTeacherGroup',
       'handleGetType',
       'handleDeleteCompetition'
     ]),
     ...mapMutations([
-      'closeTag'
+      'closeTag',
+      'setTeacherGroupForCompetitionList',
+      'setEnterListCompetition'
     ]),
     /**
        * 分页
@@ -237,13 +239,13 @@ export default {
        */
     pageChange (index) {
       this.page.current = index
-      this.getApply(index, this.page.size)
+      this.getCompetitionList(index, this.page.size)
     },
     /**
        * 获取竞赛
        */
-    getApply (pageNum = 1, pageSize = 12) {
-      this.handleGetByGroupId({ pageNum, pageSize, groupId: this.groupId }).then(res => {
+    getCompetitionList (pageNum = 1, pageSize = 12) {
+      this.handleGetCompetitionPageByGroupId({ pageNum, pageSize, groupId: this.groupId }).then(res => {
         this.page = res
       })
     },
@@ -260,7 +262,7 @@ export default {
     deleteCompetition (id) {
       this.handleDeleteCompetition({ id: id }).then(res => {
         if (res) {
-          this.getApply()
+          this.getCompetitionList()
           this.$Message.success('删除成功')
         } else {
           this.$Message.error('失败')
@@ -290,15 +292,10 @@ export default {
       this.competitionId = id
     },
     showEnterList (competitionId) {
-      console.info(competitionId)
-      let tab = {
-        name: 'competition_enter_list',
-        params: {
-          id: competitionId
-        }
-      }
-      this.tabs.push(tab)
-      this.$router.push(tab)
+      this.setEnterListCompetition(this.page.records.find(item => {
+        return item.id === competitionId
+      }))
+      this.$router.push({ name: 'competition_enter_list' })
     },
     /**
      * 设置比赛进度
@@ -327,28 +324,28 @@ export default {
       this.showEditModal = false
       this.showProgressModal = false
       this.showResultModal = false
-    },
-    closeTab (item) {
-      this.closeTag(item)
-    },
-    selectChanged (id) {
-      this.getApply()
     }
   },
   computed: {
     ...mapGetters([
       'getTeacherGroupForCompetitionList'
-    ])
+    ]),
+    group: {
+      set (val) {
+        this.setTeacherGroupForCompetitionList(val)
+      },
+      get () {
+        return this.getTeacherGroupForCompetitionList
+      }
+    }
   },
   watch: {
-    getTeacherGroupForCompetitionList: {
-      handler (val) {
-        if (val !== undefined) {
-          this.groupId = val.id
-          this.getApply()
-        } else {
-          this.groupId = 0
-        }
+    groupId: {
+      handler (newVal) {
+        // this.group = this.groupList.find(item => {
+        //   return item.id === newVal
+        // })
+        this.getCompetitionList()
       },
       deep: true,
       immediate: true

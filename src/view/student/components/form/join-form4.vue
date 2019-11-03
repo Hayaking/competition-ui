@@ -1,12 +1,12 @@
 <template>
     <div>
       <Input search enter-button="搜索" />
-      <Table :columns="tb_head" :data="tb_res" />
+      <Table :columns="TABLE_HEAD" :data="tb_res" />
     </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
 
 export default {
   name: 'join-form4',
@@ -30,14 +30,28 @@ export default {
   data () {
     return {
       tb_res: [],
-      tb_head: [
+      TABLE_HEAD: [
         {
-          title: '帐号',
-          key: 'account'
-        }, {
           title: '姓名',
           key: 'teacherName'
-        }, {
+        },
+        {
+          title: '性别',
+          key: 'teacherSex'
+        },
+        {
+          title: '电话',
+          key: 'teacherPhone'
+        },
+        {
+          title: '擅长领域',
+          key: 'teacherMaster'
+        },
+        {
+          title: '职称',
+          key: 'teacherLevel'
+        },
+        {
           title: '操作',
           key: 'action',
           width: 150,
@@ -69,27 +83,45 @@ export default {
           }
         }
       ],
-      join: {
-        competitionId: 0,
-        teacherId1: 0,
-        teacherId2: 0
-      }
+      counter: 0
     }
   },
   methods: {
     ...mapActions([
       'handleGetLeadTeacherList'
     ]),
+    ...mapMutations([
+      'setEnterHolderJoin'
+    ]),
     submit () {
-      this.$emit('on-success-valid', true,this.join)
+      this.$emit('on-success-valid', true)
     },
     inviteLead (_index) {
       this.tb_res[_index].state = false
-      this.join.teacherId1 = this.tb_res[_index].account
+      this.counter++
+      this.counter === 1
+        ? this.join.teacherId1 = this.tb_res[_index].account
+        : this.join.teacherId2 = this.tb_res[_index].account
     },
     cancelInviteLead (_index) {
       this.tb_res[_index].state = true
-      this.join.teacherId1 = 0
+      this.counter--
+      this.counter === 1
+        ? this.join.teacherId1 = this.tb_res[_index].account
+        : this.join.teacherId2 = this.tb_res[_index].account
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'getEnterHolder'
+    ]),
+    join: {
+      get () {
+        return this.getEnterHolder.join
+      },
+      set (val) {
+        this.setEnterHolderJoin(val)
+      }
     }
   },
   watch: {

@@ -27,15 +27,12 @@ export default {
     getCompetitionType: state => state.type_competition
   },
   actions: {
-    handleGetType ({ commit }, { type }) {
+    handleGetType ({ commit, state }, { type }) {
       return new Promise((resolve, reject) => {
+        let obj
         get_type(type).then(res => {
-          resolve({
-            flag: res.data.state === 'SUCCESS',
-            body: res.data.body
-          })
-        }).catch(err => {
-          reject(err)
+          obj = { flag: res.data.state === 'SUCCESS', body: res.data.body }
+          resolve(obj)
         })
       })
     }

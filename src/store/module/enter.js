@@ -1,4 +1,4 @@
-import { export_enter_excel, get_enter_list, get_enter_list_by_competition_id } from '@/api/enter'
+import { export_enter_excel, get_enter_list, get_enter_list_by_competition_id, promotion } from '@/api/enter'
 import { create_join } from '@/api/join'
 
 export default {
@@ -87,6 +87,15 @@ export default {
           document.body.removeChild(elink)
         }).catch(err => {
           reject(err)
+        })
+      })
+    },
+    handlePromotion ({ commit }, { joinInProgressId, flag }) {
+      return new Promise((resolve) => {
+        promotion(joinInProgressId, flag).then(res => {
+          resolve({
+            flag: res.data.state === 'SUCCESS'
+          })
         })
       })
     }

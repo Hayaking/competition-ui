@@ -21,3 +21,10 @@ export const get_enter_list = (pageNum, pageSize, competitionId, progressId) => 
     method: 'get'
   })
 }
+
+export const promotion = (joinInProgressId, flag) => {
+  return axios.request({
+    url: `/enter/promotion/${joinInProgressId}/${flag}`,
+    method: 'post'
+  })
+}

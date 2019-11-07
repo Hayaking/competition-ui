@@ -1,5 +1,5 @@
 <template>
-  <div>
+<!--  <div>-->
     <CellGroup>
       <Row>
         <Col span="22">
@@ -56,9 +56,9 @@
             </Col>
           </Row>
           <Cell>
-            <div slot="icon">比赛进度:</div>
             <div slot="label">
               <Table size="small"
+                     :row-class-name="rowClassName"
                      :columns="PROGRESS_HEAD"
                      :data="row.progressList">
                 <template slot-scope="{ row, index }" slot="typeId">
@@ -66,18 +66,17 @@
                     {{COMPETITION_TYPE[row.typeId-1].typeName}}
                   </div>
                 </template>
-                <template slot-scope="{ row, index }" slot="enterStartTime">
+                <template slot-scope="{ row, index }" slot="enterStartDate">
                   {{formatDate(row.enterStartTime)}}
-                </template>
-                <template slot-scope="{ row, index }" slot="enterEndTime">
+                  →
                   {{formatDate(row.enterEndTime)}}
                 </template>
-                <template slot-scope="{ row, index }" slot="startTime">
+                <template slot-scope="{ row, index }" slot="startDate">
                   {{formatDate(row.startTime)}}
-                </template>
-                <template slot-scope="{ row, index }" slot="endTime">
+                  →
                   {{formatDate(row.endTime)}}
                 </template>
+
                 <template slot-scope="{ row, index }" slot="startState">
                   {{formatDate(row.startState)}}
                 </template>
@@ -112,7 +111,7 @@
         </Col>
       </Row>
     </CellGroup>
-  </div>
+<!--  </div>-->
 </template>
 
 <script>
@@ -142,23 +141,15 @@ export default {
         },
         {
           title: '报名开始时间',
-          slot: 'enterStartTime',
-          width: 180
-        },
-        {
-          title: '报名结束时间',
-          slot: 'enterEndTime',
-          width: 180
+          slot: 'enterStartDate',
+          align: 'center',
+          width: 300
         },
         {
           title: '开始时间',
-          slot: 'startTime',
-          width: 180
-        },
-        {
-          title: '结束时间',
-          slot: 'endTime',
-          width: 180
+          slot: 'startDate',
+          align: 'center',
+          width: 300
         },
         {
           title: '开始状态',
@@ -203,11 +194,30 @@ export default {
      */
     formatDate (time) {
       return dateFomat(time)
+    },
+    rowClassName (row, index) {
+      if (row.startState === '已开始') {
+        return 'table-info-primary'
+      } else if (row.startState === '结算中') {
+        return 'table-info-warning'
+      }
+      return ''
     }
   }
 }
 </script>
 
-<style scoped>
-
+<style>
+  .ivu-table .table-info-primary td{
+    background-color: #2db7f5 !important;
+    color: #fff;
+  }
+  .ivu-table .table-info-warning td{
+    background-color: #ffe70c !important;
+    color: #14161d;
+  }
+  .ivu-table .table-info-success td {
+    background-color: #187 !important;
+    color: #fff;
+  }
 </style>

@@ -86,7 +86,7 @@
                 <template slot-scope="{ row, index }" slot="action">
                   <Button size="small"
                           type="primary"
-                          @click="showResult"
+                          @click="showResult(row.id)"
                           :disabled="row.startState !== '结算中'">
                     提交结果
                   </Button>
@@ -172,8 +172,8 @@ export default {
     formatDate (time) {
       return dateFomat(time)
     },
-    showResult () {
-      this.$emit('showResult')
+    showResult (id) {
+      this.$emit('showResult', id)
     }
   },
   computed: {

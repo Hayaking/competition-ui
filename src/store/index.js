@@ -22,6 +22,7 @@ import process from './module/process'
 import pic from './module/pic'
 import budget from './module/budget'
 import progress from './module/progress'
+import price from './module/price'
 
 Vue.use(Vuex)
 
@@ -56,6 +57,7 @@ export default new Vuex.Store({
     process,
     pic,
     budget,
-    progress
+    progress,
+    price
   }
 })

@@ -1,6 +1,7 @@
 <template>
   <Card>
     <ResultModal :show="isShowResultModal"
+                 :id = "joinInProcessId"
                 @cancel="cancel"/>
     <EditJoinModal :show="isShowJoinModal"
                @cancel="cancel"/>
@@ -82,8 +83,9 @@ export default {
                 row: params.row
               },
               on: {
-                showResult: () => {
-                  this.showResultModal()
+                showResult: (id) => {
+                  console.info(id)
+                  this.showResultModal(id)
                 }
               }
             })
@@ -129,7 +131,8 @@ export default {
         records: []
       },
       isShowJoinModal: false,
-      isShowResultModal: false
+      isShowResultModal: false,
+      joinInProcessId: 0
     }
   },
   mounted () {
@@ -169,7 +172,8 @@ export default {
         }
       })
     },
-    showResultModal () {
+    showResultModal (id) {
+      this.joinInProcessId = id
       this.isShowResultModal = true
     },
     cancel () {

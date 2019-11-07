@@ -281,9 +281,9 @@ export default {
           let formData = new FormData()
           formData.append('file', this.file)
           this.handleUploadPic({ formData }).then(res => {
-            this.MESSAGE_BOX(res !== -1).then(() => {
+            this.MESSAGE_BOX(res.flag).then(() => {
               this.$Message.success('成功')
-              this.process.picId = res
+              this.process.picId = res.body
               this.process.competitionId = this.processHolder.competitionId
               this.handleCreateProcess({ process: this.process }).then(res => {
                 this.MESSAGE_BOX(res)

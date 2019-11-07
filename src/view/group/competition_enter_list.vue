@@ -25,7 +25,10 @@
         </Col>
       </Row>
     </div>
-    <Table :columns="TABLE_HEAD" :data="page.records" stripe border >
+    <Table :columns="TABLE_HEAD"
+           :data="page.records"
+           stripe
+           border >
       <template slot-scope="{ row, index }" slot="competition">
         <div>{{row.competition.name}}</div>
       </template>
@@ -54,8 +57,11 @@
           </Col>
         </Row>
       </template>
-      <template slot-scope="{ row, index }" slot="type">
-        <div>{{row.competition.joinTypeId}}</div>
+      <template slot-scope="{ row, index }" slot="enterState">
+        <Tag>{{row.enterState}}</Tag>
+      </template>
+      <template slot-scope="{ row, index }" slot="joinState">
+        <Tag>{{row.inProgress.state}}</Tag>
       </template>
       <template slot-scope="{ row, index }" slot="group">
         <div>
@@ -70,6 +76,12 @@
         </Button>
         <Button type="error" size="small" @click="review(row,false)">
           拒绝
+        </Button>
+        <Button type="primary" size="small" @click="promotion(row,true)">
+          晋级
+        </Button>
+        <Button type="primary" size="small" @click="promotion(row,false)">
+          淘汰
         </Button>
       </template>
     </Table>
@@ -92,17 +104,6 @@ export default {
     return {
       TABLE_HEAD: [
         {
-          type: 'expand',
-          width: 50,
-          render: (h, params) => {
-            return h(JoinExpand, {
-              props: {
-                row: params.row
-              }
-            })
-          }
-        },
-        {
           key: 'id',
           title: 'id'
         },
@@ -124,15 +125,11 @@ export default {
         },
         {
           title: '报名状态',
-          key: 'enterState'
+          slot: 'enterState'
         },
         {
           title: '参赛状态',
-          key: 'joinState'
-        },
-        {
-          title: '参赛类型',
-          slot: 'type'
+          slot: 'joinState'
         },
         {
           title: '操作',
@@ -159,7 +156,8 @@ export default {
       .then(res => {
         this.PROGRESS_LIST = res.body
         this.progressId = res.body[0].id
-      }).then(() => {
+      })
+      .then(() => {
         this.getEnterPage()
       })
   },
@@ -168,9 +166,9 @@ export default {
       'handleGetEnterList',
       'handleExportEnterExcel',
       'handleSetJoinEnterState',
-      'handleGetCompetitionById',
       'handleGetProgressListByCompetitionId',
-      'handleGetType'
+      'handleGetType',
+      'handlePromotion'
     ]),
     /**
      * 分页
@@ -186,7 +184,12 @@ export default {
     getEnterPage (pageNum = 1, pageSize = 12) {
       let competitionId = this.competition.id
       if (this.progressId === 0) { this.progressId = this.PROGRESS_LIST[0].id }
-      this.handleGetEnterList({ pageNum, pageSize, competitionId, progressId: this.progressId }).then(res => {
+      this.handleGetEnterList({
+        pageNum,
+        pageSize,
+        competitionId,
+        progressId: this.progressId
+      }).then(res => {
         if (res.flag) {
           this.page = res.body
           this.$Message.success('成功')
@@ -226,6 +229,11 @@ export default {
     },
     check (obj) {
       return obj.apply_state === '通过' && obj.enter_state === '通过'
+    },
+    promotion (obj, flag) {
+      this.handlePromotion({ joinInProgressId: obj.inProgress.id, flag }).then(res => {
+
+      })
     }
   },
   computed: {
@@ -244,6 +252,6 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 
 </style>

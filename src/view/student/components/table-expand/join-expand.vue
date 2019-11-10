@@ -1,102 +1,45 @@
 <template>
   <div>
-    <CellGroup>
-      <Row>
-        <Col span="24">
-          <Cell>
-            <div slot="icon">比赛简介</div>
-            <div slot="label">{{ row.competition.intro }}</div>
-          </Cell>
-          <Cell>
-            <div slot="icon">比赛流程</div>
-            <div slot="label">{{ row.competition.process }}</div>
-          </Cell>
-          <Cell>
-            <div slot="icon">预期结果</div>
-            <div slot="label">{{ row.competition.exRes }}</div>
-          </Cell>
-          <Row>
-            <Col span="8">
-              <Cell>
-                <div slot="icon">预期参赛人数:</div>
-                <div slot="label">{{ row.competition.stuNum }}</div>
-              </Cell>
-            </Col>
-            <Col span="8">
-              <Cell>
-                <div slot="icon">预期参赛队伍数:</div>
-                <div slot="label">{{ row.competition.groupNum }}</div>
-              </Cell>
-            </Col>
-            <Col span="8">
-              <Cell>
-                <div slot="icon">参赛形式:</div>
-                <div slot="label">{{ row.competition.joinTypeId }}</div>
-              </Cell>
-            </Col>
-          </Row>
-          <Row>
-            <Col span="8">
-              <Cell>
-                <div slot="icon">负责人:</div>
-                <div slot="label">{{ row.competition.personInCharge }}</div>
-              </Cell>
-            </Col>
-            <Col span="8">
-              <Cell>
-                <div slot="icon">立项者:</div>
-                <div slot="label">{{ row.competition.creator }}</div>
-              </Cell>
-            </Col>
-            <Col span="8">
-              <Cell>
-                <div slot="icon">立项工作组:</div>
-                <div slot="label">{{ row.competition.teacherGroupId }}</div>
-              </Cell>
-            </Col>
-          </Row>
-          <Cell>
-            <div slot="label">
-              <Table size="small"
-                     :columns="PROGRESS_HEAD"
-                     :data="row.competition.progressList">
-                <template slot-scope="{ row, index }" slot="typeId">
-                  <div v-if="COMPETITION_TYPE[row.typeId-1] !== undefined">
-                    {{COMPETITION_TYPE[row.typeId-1].typeName}}
-                  </div>
-                </template>
-                <template slot-scope="{ row, index }" slot="enterStartTime">
-                  {{formatDate(row.enterStartTime)}}
-                </template>
-                <template slot-scope="{ row, index }" slot="enterEndTime">
-                  {{formatDate(row.enterEndTime)}}
-                </template>
-                <template slot-scope="{ row, index }" slot="startTime">
-                  {{formatDate(row.startTime)}}
-                </template>
-                <template slot-scope="{ row, index }" slot="endTime">
-                  {{formatDate(row.endTime)}}
-                </template>
-                <template slot-scope="{ row, index }" slot="startState">
-                  {{formatDate(row.startState)}}
-                </template>
-                <template slot-scope="{ row, index }" slot="enterState">
-                  {{formatDate(row.enterState)}}
-                </template>
-                <template slot-scope="{ row, index }" slot="action">
-                  <Button size="small"
-                          type="primary"
-                          @click="showResult(row.id)"
-                          :disabled="row.startState !== '结算中'">
-                    提交结果
-                  </Button>
-                </template>
-              </Table>
+    <Row>
+      <Col span="24">
+        <Table :columns="PROGRESS_HEAD"
+               :data="progressList"
+               :loading="isLoading"
+               :row-class-name="rowClassName"
+               size="small">
+          <template slot="typeId" slot-scope="{ row, index }">
+            <div v-if="COMPETITION_TYPE[row.typeId-1] !== undefined">
+              {{COMPETITION_TYPE[row.typeId-1].typeName}}
             </div>
-          </Cell>
-        </Col>
-      </Row>
-    </CellGroup>
+          </template>
+          <template slot="enterStartDate" slot-scope="{ row, index }">
+            {{formatDate(row.enterStartTime)}}
+            →
+            {{formatDate(row.enterEndTime)}}
+          </template>
+          <template slot="startDate" slot-scope="{ row, index }">
+            {{formatDate(row.startTime)}}
+            →
+            {{formatDate(row.endTime)}}
+          </template>
+
+          <template slot="startState" slot-scope="{ row, index }">
+            {{formatDate(row.startState)}}
+          </template>
+          <template slot="enterState" slot-scope="{ row, index }">
+            {{formatDate(row.enterState)}}
+          </template>
+          <template slot="action" slot-scope="{ row, index }">
+            <Button :disabled="row.startState !== '结算中'"
+                    @click="showResult(row.id)"
+                    size="small"
+                    type="primary">
+              提交结果
+            </Button>
+          </template>
+        </Table>
+      </Col>
+    </Row>
   </div>
 </template>
 
@@ -107,7 +50,8 @@ import { mapActions } from 'vuex'
 export default {
   name: 'stu-join-expand',
   props: {
-    row: Object
+    row: Object,
+    flag: Boolean
   },
   mounted () {
     this.handleGetType({ type: 'competition' }).then(res => {
@@ -126,23 +70,15 @@ export default {
         },
         {
           title: '报名开始时间',
-          slot: 'enterStartTime',
-          width: 180
-        },
-        {
-          title: '报名结束时间',
-          slot: 'enterEndTime',
-          width: 180
+          slot: 'enterStartDate',
+          align: 'center',
+          width: 300
         },
         {
           title: '开始时间',
-          slot: 'startTime',
-          width: 180
-        },
-        {
-          title: '结束时间',
-          slot: 'endTime',
-          width: 180
+          slot: 'startDate',
+          align: 'center',
+          width: 300
         },
         {
           title: '开始状态',
@@ -158,22 +94,40 @@ export default {
           width: 120,
           slot: 'action'
         }
-      ]
+      ],
+      progressList: [],
+      isLoading: true
     }
   },
   methods: {
     ...mapActions([
-      'handleGetType'
+      'handleGetType',
+      'handleGetProgressListByJoinId'
     ]),
     /**
-     * 格式化时间
-     * @param time
-     */
+       * 格式化时间
+       * @param time
+       */
     formatDate (time) {
       return dateFomat(time)
     },
     showResult (id) {
       this.$emit('showResult', id)
+    },
+    rowClassName (row, index) {
+      if (row.startState === '已开始') {
+        return 'table-info-primary'
+      } else if (row.startState === '结算中') {
+        return 'table-info-warning'
+      }
+      return ''
+    },
+    getProgressList (id) {
+      this.isLoading = true
+      this.handleGetProgressListByJoinId({ joinId: id }).then(res => {
+        this.progressList = res.body
+        this.isLoading = false
+      })
     }
   },
   computed: {
@@ -189,10 +143,32 @@ export default {
     enterEndTime () {
       return dateFomat(this.row.competition.enterEndTime)
     }
+  },
+  watch: {
+    row: {
+      handler (val) {
+        this.getProgressList(val.id)
+      },
+      deep: true,
+      immediate: true
+    }
   }
 }
 </script>
 
-<style scoped>
+<style>
+  .ivu-table .table-info-primary td {
+    background-color: #2db7f5 !important;
+    color: #fff;
+  }
 
+  .ivu-table .table-info-warning td {
+    background-color: #ffe70c !important;
+    color: #14161d;
+  }
+
+  .ivu-table .table-info-success td {
+    background-color: #187 !important;
+    color: #fff;
+  }
 </style>

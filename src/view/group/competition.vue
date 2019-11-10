@@ -9,7 +9,7 @@
       </div>
       <!--步骤条-->
       <Row>
-        <Col span="24" style="text-align: center">
+        <Col span="20" style="text-align: center">
           <FormStep :step-index="stepIndex"
                     :step-title="STEP_TITLE"
           />

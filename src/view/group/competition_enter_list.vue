@@ -202,7 +202,10 @@ export default {
      * 导出报名表
      */
     exportsExcel () {
-      this.handleExportEnterExcel({ competitionId: this.competition.id }).then(res => {
+      this.handleExportEnterExcel({
+        competitionId: this.competition.id,
+        progressId: this.progressId
+      }).then(res => {
         if (res) {
           this.$Message.success('成功')
         } else {

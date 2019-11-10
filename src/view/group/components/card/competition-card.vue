@@ -13,7 +13,8 @@
                       :title="item.name"
                       :description='"主办方："+item.org + "，协办方："+item.coOrg '/>
         <template slot="action">
-          <tag color="success">通过审核</tag>
+          <tag color="success" v-if="item.state === '通过'">{{item.state}}</tag>
+          <tag color="error" v-else>{{item.state}}</tag>
         </template>
       </ListItem>
     </List>

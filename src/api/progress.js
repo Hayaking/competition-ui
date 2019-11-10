@@ -10,7 +10,14 @@ export const save_progress = (progress) => {
 
 export const get_progress_list_by_competition_id = (competitionId) => {
   return axios.request({
-    url: `/progress/competition/${competitionId}`,
+    url: `/progress/list/competition/${competitionId}`,
+    method: 'get'
+  })
+}
+
+export const get_progress_list_by_join_id = (joinId) => {
+  return axios.request({
+    url: `/progress/list/join/${joinId}`,
     method: 'get'
   })
 }

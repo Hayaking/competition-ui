@@ -1,4 +1,10 @@
-import { export_enter_excel, get_enter_list, get_enter_list_by_competition_id, promotion } from '@/api/enter'
+import {
+  export_enter_excel,
+  get_enter_list,
+  get_enter_list_by_competition_id,
+  get_enter_list_excel,
+  promotion
+} from '@/api/enter'
 import { create_join } from '@/api/join'
 
 export default {
@@ -65,15 +71,18 @@ export default {
     handleGetEnterList ({ commit }, { pageNum, pageSize, competitionId, progressId }) {
       return new Promise((resolve, reject) => {
         get_enter_list(pageNum, pageSize, competitionId, progressId).then(res => {
-          resolve({ flag: res.data.state === 'SUCCESS', body: res.data.body })
+          resolve({
+            flag: res.data.state === 'SUCCESS',
+            body: res.data.body
+          })
         }).catch(err => {
           reject(err)
         })
       })
     },
-    handleExportEnterExcel ({ commit }, { competitionId }) {
-      return new Promise((resolve, reject) => {
-        export_enter_excel(competitionId).then(res => {
+    handleExportEnterExcel ({ commit }, { competitionId, progressId }) {
+      return new Promise((resolve) => {
+        get_enter_list_excel(competitionId, progressId).then(res => {
           let val = res.headers['content-disposition'] + ''
           const blob = new Blob([res.data])
           const fileName = val.substring(val.indexOf('filename=') + 'filename='.length, val.length)
@@ -85,8 +94,7 @@ export default {
           elink.click()
           URL.revokeObjectURL(elink.href)
           document.body.removeChild(elink)
-        }).catch(err => {
-          reject(err)
+          resolve(true)
         })
       })
     },

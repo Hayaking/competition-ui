@@ -8,7 +8,7 @@
       </Input>
       <ButtonGroup>
         <Button  type="primary">全部通过</Button>
-        <Button type="primary">全部开始报名</Button>
+<!--        <Button type="primary">全部开始报名</Button>-->
       </ButtonGroup>
     </div>
     <Table :columns="TABLE_HEAD" :data="tb_res" stripe border >

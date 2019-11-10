@@ -1,26 +1,27 @@
 <template>
   <Card>
-    <ResultModal :show="isShowResultModal"
-                 :id = "joinInProcessId"
-                @cancel="cancel"/>
+    <ResultModal :id="joinInProcessId"
+                 :show="isShowResultModal"
+                 @cancel="cancel"/>
     <EditJoinModal :show="isShowJoinModal"
-               @cancel="cancel"/>
+                   @cancel="cancel"/>
     <div slot="title">
       <Input search
              style="width: 300px"/>
-      <Button type="primary" @click="toJoin">添加参赛</Button>
+      <Button @click="toJoin" type="primary">添加参赛</Button>
     </div>
     <Table :columns="TABLE_HEAD"
            :data="page.records"
+           @on-expand="onExpand"
            border
            stripe>
-      <template slot-scope="{ row, index }" slot="competition">
+      <template slot="competition" slot-scope="{ row, index }">
         <div>{{row.competition.name}}</div>
       </template>
-      <template slot-scope="{ row, index }" slot="works">
+      <template slot="works" slot-scope="{ row, index }">
         <div>{{row.works.worksName}}</div>
       </template>
-      <template slot-scope="{ row, index }" slot="teacher1">
+      <template slot="teacher1" slot-scope="{ row, index }">
         <div v-if="row.teacher1 === null">无</div>
         <Row v-else>
           <Col span="12">
@@ -31,7 +32,7 @@
           </Col>
         </Row>
       </template>
-      <template slot-scope="{ row, index }" slot="teacher2">
+      <template slot="teacher2" slot-scope="{ row, index }">
         <div v-if="row.teacher2 === null">无</div>
         <Row v-else>
           <Col span="12">
@@ -42,23 +43,23 @@
           </Col>
         </Row>
       </template>
-      <template slot-scope="{ row, index }" slot="type">
+      <template slot="type" slot-scope="{ row, index }">
         <div>{{row.competition.joinTypeId}}</div>
       </template>
-      <template slot-scope="{ row, index }" slot="action">
-        <Button type="success" size="small" style="margin-right: 5px" @click="showEditJoinModal(row)">
+      <template slot="action" slot-scope="{ row, index }">
+        <Button @click="showEditJoinModal(row)" size="small" style="margin-right: 5px" type="success">
           编辑
         </Button>
-        <Button type="error" size="small" @click="deleteJoin(row)">
+        <Button @click="deleteJoin(row)" size="small" type="error">
           删除
         </Button>
       </template>
     </Table>
-    <Page show-total
-          :total="page.total"
-          :current="page.current"
+    <Page :current="page.current"
           :page-size="page.size"
-          @on-change = "pageChange"
+          :total="page.total"
+          @on-change="pageChange"
+          show-total
     />
   </Card>
 </template>
@@ -68,6 +69,7 @@ import EditJoinModal from '@/view/components/modal/join-edit_modal'
 import ResultModal from '@/view/student/components/modal/submit-result-modal'
 import { mapActions } from 'vuex'
 import JoinExpand from '@/view/student/components/table-expand/join-expand'
+
 export default {
   name: 'stu_join_list',
   components: { EditJoinModal, JoinExpand, ResultModal },
@@ -80,11 +82,11 @@ export default {
           render: (h, params) => {
             return h(JoinExpand, {
               props: {
-                row: params.row
+                row: params.row,
+                flag: params.row._expanded
               },
               on: {
                 showResult: (id) => {
-                  console.info(id)
                   this.showResultModal(id)
                 }
               }
@@ -149,9 +151,6 @@ export default {
       this.page.current = index
       this.getJoin(index, this.page.size)
     },
-    /**
-       * 分页获取学生或教师
-       */
     getJoin (pageNum = 1, pageSize = 12) {
       this.handleGetJoinList({ pageNum, pageSize }).then(res => {
         this.page = res
@@ -182,6 +181,14 @@ export default {
     },
     toJoin () {
       this.$router.push({ name: 'common_competition' })
+    },
+    onExpand (row, status) {
+      let index = this.page.records.findIndex(item => {
+        return item.id === row.id
+      })
+      let obj = this.page.records[index]
+      obj._expanded = status
+      this.$set(this.page.records, index, obj)
     }
   }
 }

@@ -29,9 +29,23 @@ export const get_simple_join_list_by_group_id = (groupId) => {
   })
 }
 
-export const set_enter_state = (joinId, flag) => {
+export const get_join_list_by_progress_Id = (pageNum, pageSize, progressId) => {
   return axios.request({
-    url: `/enter/${joinId}/${flag}`,
+    url: `/join/progress/${progressId}/${pageNum}/${pageSize}`,
+    method: 'get'
+  })
+}
+
+export const set_enter_state = (inProgressId, flag) => {
+  return axios.request({
+    url: `/enter/${inProgressId}/${flag}`,
+    method: 'post'
+  })
+}
+
+export const review_join_in_progress = (id, reviewState, editState) => {
+  return axios.request({
+    url: `/join/progress/review/${id}/${reviewState}/${editState}`,
     method: 'post'
   })
 }

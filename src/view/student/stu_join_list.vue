@@ -1,5 +1,6 @@
 <template>
   <Card>
+    {{page.records}}
     <ResultModal :id="joinInProcessId"
                  :show="isShowResultModal"
                  @cancel="cancel"/>
@@ -108,14 +109,6 @@ export default {
         {
           title: '指导老师2',
           slot: 'teacher2'
-        },
-        {
-          title: '报名状态',
-          key: 'enterState'
-        },
-        {
-          title: '参赛状态',
-          key: 'joinState'
         },
         {
           title: '参赛类型',

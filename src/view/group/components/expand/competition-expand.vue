@@ -99,7 +99,7 @@
                   提交比赛过程
                 </Button>
                 <Button :disabled="flag" @click="showResult(row.id)" type="primary">
-                  提交比赛结果
+                  查看比赛结果
                 </Button>
                 <Button @click="showEdit(row.id, true)" type="success">
                   编辑

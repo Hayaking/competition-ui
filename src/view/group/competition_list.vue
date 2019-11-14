@@ -82,7 +82,7 @@
 <script>
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 import SubmitProcessModal from '@/view/group/components/modal/submit-process-modal'
-import CompetitionExpand from '@/view/components/table-expand/group-competition-expand'
+import CompetitionExpand from '@/view/group/components/expand/competition-expand'
 import EditCompetitionModal from '@/view/group/components/modal/edit-modal'
 import SetProgressModal from '@/view/group/components/modal/submit-progress-modal'
 import SubmitResultModal from '@/view/group/components/modal/submit-result-modal'
@@ -231,7 +231,8 @@ export default {
     ...mapMutations([
       'closeTag',
       'setTeacherGroupForCompetitionList',
-      'setEnterListCompetition'
+      'setEnterListCompetition',
+      'setResultListCompetition'
     ]),
     /**
        * 分页
@@ -287,10 +288,20 @@ export default {
       this.showProcessModal = true
       this.processHolder.competitionId = id
     },
-    showResult (id) {
-      this.showResultModal = true
-      this.competitionId = id
+    /**
+     * 前往比赛结果页
+     * @param competitionId
+     */
+    showResult (competitionId) {
+      this.setResultListCompetition(this.page.records.find(item => {
+        return item.id === competitionId
+      }))
+      this.$router.push({ name: 'group_result_list' })
     },
+    /**
+     * 前往报名列表
+     * @param competitionId
+     */
     showEnterList (competitionId) {
       this.setEnterListCompetition(this.page.records.find(item => {
         return item.id === competitionId

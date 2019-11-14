@@ -30,16 +30,16 @@
            stripe
            border >
       <template slot-scope="{ row, index }" slot="competition">
-        <div>{{row.competition.name}}</div>
+        <div>{{row.progress.competition.name}}</div>
       </template>
       <template slot-scope="{ row, index }" slot="works">
-        <div>{{row.works.worksName}}</div>
+        <div>{{row.progress.works.worksName}}</div>
       </template>
       <template slot-scope="{ row, index }" slot="teacher1">
-        <div v-if="row.teacher1 === null">无</div>
+        <div v-if="row.join.teacher1 === null">无</div>
         <Row v-else>
           <Col span="12">
-            {{row.teacher1.teacherName}}
+            {{row.join.teacher1.teacherName}}
           </Col>
           <Col span="12">
             <Tag color="primary">{{row.applyState}}</Tag>
@@ -47,10 +47,10 @@
         </Row>
       </template>
       <template slot-scope="{ row, index }" slot="teacher2">
-        <div v-if="row.teacher2 === null">无</div>
+        <div v-if="row.join.teacher2 === null">无</div>
         <Row v-else>
           <Col span="12">
-            {{row.teacher2.teacherName}}
+            {{row.join.teacher2.teacherName}}
           </Col>
           <Col span="12">
             <Tag color="primary">{{row.applyState}}</Tag>
@@ -59,9 +59,6 @@
       </template>
       <template slot-scope="{ row, index }" slot="enterState">
         <Tag>{{row.enterState}}</Tag>
-      </template>
-      <template slot-scope="{ row, index }" slot="joinState">
-        <Tag>{{row.inProgress.state}}</Tag>
       </template>
       <template slot-scope="{ row, index }" slot="group">
         <div>
@@ -112,7 +109,7 @@ export default {
           slot: 'works'
         },
         {
-          title: '组员',
+          title: '参赛人员',
           slot: 'group'
         },
         {
@@ -125,11 +122,15 @@ export default {
         },
         {
           title: '报名状态',
-          slot: 'enterState'
+          key: 'enterState'
         },
         {
-          title: '参赛状态',
-          slot: 'joinState'
+          title: '晋级状态',
+          key: 'promotionState'
+        },
+        {
+          title: '得奖状态',
+          key: 'priceState'
         },
         {
           title: '操作',
@@ -214,28 +215,26 @@ export default {
       })
     },
     review (obj, flag) {
-      if (this.check(obj)) {
-        this.handleSetJoinEnterState({ joinId: obj.id, flag: flag }).then(res => {
-          if (res) {
-            this.$Message.success('成功')
-            this.getEnterPage()
-          } else {
-            this.$Message.error('失败')
-          }
-        })
-      } else {
-        this.$Message.error('失败')
-      }
+      this.handleSetJoinEnterState({ inProgressId: obj.id, flag: flag }).then(res => {
+        if (res) {
+          this.$Message.success('成功')
+          this.getEnterPage()
+        } else {
+          this.$Message.error('失败')
+        }
+      })
     },
     reviewAll () {
       // 审核全部
     },
-    check (obj) {
-      return obj.apply_state === '通过' && obj.enter_state === '通过'
-    },
     promotion (obj, flag) {
-      this.handlePromotion({ joinInProgressId: obj.inProgress.id, flag }).then(res => {
-
+      this.handlePromotion({ joinInProgressId: obj.id, flag }).then(res => {
+        if (res) {
+          this.$Message.success('成功')
+          this.getEnterPage()
+        } else {
+          this.$Message.error('失败')
+        }
       })
     }
   },

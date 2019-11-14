@@ -91,7 +91,13 @@ export default {
       })
     },
     callForm1 (flag) {
-      this.index += this.competition.joinTypeId
+      let offset = this.competition.joinTypeId
+      if (!this.competition.isHaveWorks) {
+        offset++
+      }
+      this.join.competitionId = this.competition.id
+      this.join.joinTypeId = this.competition.joinTypeId
+      this.index += offset
     },
     callForm2 (flag) {
       if (flag) {
@@ -102,8 +108,6 @@ export default {
     },
     callForm3 (flag) {
       if (flag) {
-        this.join.competitionId = this.competition.id
-        this.join.joinTypeId = this.competition.joinTypeId
         this.group.name = this.groupName
         this.index++
       } else {

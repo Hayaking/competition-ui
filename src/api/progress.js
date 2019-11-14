@@ -21,3 +21,10 @@ export const get_progress_list_by_join_id = (joinId) => {
     method: 'get'
   })
 }
+
+export const end_progress = (id) => {
+  return axios.request({
+    url: `/progress/${id}/end`,
+    method: 'post'
+  })
+}

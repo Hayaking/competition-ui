@@ -4,12 +4,6 @@
         :rules="rules"
         :model="competition"
         label-position="left">
-<!--    <FormItem label="比赛时间" prop="startDate">-->
-<!--      <DatePicker type="daterange" v-model="competition.startDate"></DatePicker>-->
-<!--    </FormItem>-->
-<!--    <FormItem label="报名时间" prop="enterDate">-->
-<!--      <DatePicker type="daterange" v-model="competition.enterDate"></DatePicker>-->
-<!--    </FormItem>-->
     <FormItem label="预期参赛队数" prop="groupNum">
       <Input v-model="competition.groupNum"/>
     </FormItem>
@@ -51,7 +45,6 @@ export default {
         personInCharge: '',
         joinTypeId: 0,
         process: '',
-        intro: '',
         startTime: '',
         endTime: '',
         enterStartTime: '',
@@ -68,7 +61,7 @@ export default {
         intro: [{ required: true, message: '不为空' }]
       },
       competitionType: [],
-      JOIN_TYPE: ['单人赛', '多人赛']
+      JOIN_TYPE: ['多人赛', '单人赛']
     }
   },
   props: {

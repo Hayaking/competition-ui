@@ -17,7 +17,11 @@
         </i-switch>
       </FormItem>
       <FormItem  label = "获奖类型：" >
-        <Select :disabled="!form.isWinThePrice" v-model="form.price.typeId"/>
+        <Select :disabled="!form.isWinThePrice" v-model="form.price.typeId">
+          <Option v-for="(item,index) in PRICE_TYPE" :key="index" :value="item.id">
+            {{item.typeName}}
+          </Option>
+        </Select>
       </FormItem>
       <FormItem  label = "获奖时间：" >
         <DatePicker :disabled="!form.isWinThePrice" v-model="form.price.priceTime"/>
@@ -52,7 +56,6 @@ export default {
       type: Boolean,
       default: false
     },
-    resultHolder: { Object },
     id: { Number }
   },
   data () {
@@ -64,20 +67,22 @@ export default {
         price: {
           typeId: 0,
           priceTime: new Date(),
-          joinInProcessId: 0
+          joinInProgressId: 0
         },
         certificate: {
           certificateNo: 0,
           picId: 0
         }
-      }
+      },
+      PRICE_TYPE: []
     }
   },
   methods: {
     ...mapActions([
       'handleGetProgressListByCompetitionId',
       'handleUploadPic',
-      'handleCreatePrice'
+      'handleCreatePrice',
+      'handleGetType'
     ]),
     /**
      * 上传文件之前的钩子，参数为上传的文件，若返回 false 或者 Promise 则停止上传
@@ -97,40 +102,45 @@ export default {
       })
     },
     submitResult () {
-      let formData = new FormData()
-      formData.append('file', this.image)
-      this.handleUploadPic({ formData }).then(res => {
-        if (res.flag) {
-          this.form.certificate.picId = res.body
-          this.form.price.joinInProcessId = this.id
-          this.handleCreatePrice({
-            price: this.form.price,
-            certificate: this.form.certificate
-          }).then(res => {
-            console.info(res.flag)
+      this.form.price.joinInProgressId = this.id
+      if (this.form.isWinThePrice) {
+        let formData = new FormData()
+        formData.append('file', this.image)
+        /* 先上传证书图片 */
+        this.handleUploadPic({ formData }).then(res => {
+          if (res.flag) {
+            /* 返回图片Id */
+            this.form.certificate.picId = res.body
+          }
+          this.handleCreatePrice({ form: this.form }).then(res => {
+            res.flag
+              ? this.$Message.info('成功')
+              : this.$Message.info('失败')
           })
-        }
+        })
+      } else {
+        this.handleCreatePrice(this.form).then(res => {
+          res.flag
+            ? this.$Message.info('成功')
+            : this.$Message.info('失败')
+        })
+      }
+    },
+    getPriceType () {
+      this.handleGetType({ type: 'price' }).then(res => {
+        this.PRICE_TYPE = res.body
       })
     }
   },
   computed: {
     modalShow: {
       get () {
+        this.getPriceType()
         return this.show
       },
       set (val) {
         console.info(val)
       }
-    }
-  },
-  watch: {
-    resultHolder: {
-      handler (newVal) {
-        this.getProgressList(newVal.competitionId)
-        // this.getProcessPage(newVal.competitionId)
-      },
-      deep: true,
-      immediate: true
     }
   }
 }

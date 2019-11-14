@@ -7,30 +7,34 @@
                :loading="isLoading"
                :row-class-name="rowClassName"
                size="small">
+          <!--阶段名-->
           <template slot="typeId" slot-scope="{ row, index }">
-            <div v-if="COMPETITION_TYPE[row.typeId-1] !== undefined">
-              {{COMPETITION_TYPE[row.typeId-1].typeName}}
+            <div v-if="COMPETITION_TYPE[row.progress.typeId-1] !== undefined">
+              {{COMPETITION_TYPE[row.progress.typeId-1].typeName}}
             </div>
           </template>
+          <!--报名开始时间-->
           <template slot="enterStartDate" slot-scope="{ row, index }">
-            {{formatDate(row.enterStartTime)}}
-            →
-            {{formatDate(row.enterEndTime)}}
+            {{formatDate(row.progress.enterStartTime)}}
+            <br>
+            {{formatDate(row.progress.enterEndTime)}}
           </template>
+          <!--比赛开始时间-->
           <template slot="startDate" slot-scope="{ row, index }">
-            {{formatDate(row.startTime)}}
-            →
-            {{formatDate(row.endTime)}}
+            {{formatDate(row.progress.startTime)}}
+            <br>
+            {{formatDate(row.progress.endTime)}}
           </template>
-
+          <!--阶段比赛开始状态-->
           <template slot="startState" slot-scope="{ row, index }">
-            {{formatDate(row.startState)}}
+            {{row.progress.startState}}
           </template>
+          <!--阶段报名开始状态-->
           <template slot="enterState" slot-scope="{ row, index }">
-            {{formatDate(row.enterState)}}
+            {{row.progress.enterState}}
           </template>
           <template slot="action" slot-scope="{ row, index }">
-            <Button :disabled="row.startState !== '结算中'"
+            <Button :disabled="isClick(row)"
                     @click="showResult(row.id)"
                     size="small"
                     type="primary">
@@ -66,27 +70,41 @@ export default {
       PROGRESS_HEAD: [
         {
           title: '级别',
-          slot: 'typeId'
+          slot: 'typeId',
+          align: 'center',
+          width: 80
         },
         {
           title: '报名开始时间',
           slot: 'enterStartDate',
           align: 'center',
-          width: 300
+          width: 160
         },
         {
           title: '开始时间',
           slot: 'startDate',
           align: 'center',
-          width: 300
+          width: 160
         },
         {
           title: '开始状态',
-          key: 'startState'
+          slot: 'startState'
         },
         {
           title: '报名状态',
+          slot: 'enterState'
+        },
+        {
+          title: '报名成功',
           key: 'enterState'
+        },
+        {
+          title: '是否得奖',
+          key: 'priceState'
+        },
+        {
+          title: '是否晋级',
+          key: 'promotionState'
         },
         {
           title: '操作',
@@ -115,9 +133,9 @@ export default {
       this.$emit('showResult', id)
     },
     rowClassName (row, index) {
-      if (row.startState === '已开始') {
+      if (row.progress.startState === '已开始') {
         return 'table-info-primary'
-      } else if (row.startState === '结算中') {
+      } else if (row.progress.startState === '结算中') {
         return 'table-info-warning'
       }
       return ''
@@ -128,6 +146,14 @@ export default {
         this.progressList = res.body
         this.isLoading = false
       })
+    },
+    isClick (row) {
+      if (row.progress.startState === '已结束') {
+        if (row.editState) {
+          return !row.promotionState
+        }
+      }
+      return true
     }
   },
   computed: {

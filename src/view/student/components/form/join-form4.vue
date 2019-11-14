@@ -100,15 +100,15 @@ export default {
       this.tb_res[_index].state = false
       this.counter++
       this.counter === 1
-        ? this.join.teacherId1 = this.tb_res[_index].account
-        : this.join.teacherId2 = this.tb_res[_index].account
+        ? this.join.teacherId1 = this.tb_res[_index].id
+        : this.join.teacherId2 = this.tb_res[_index].id
     },
     cancelInviteLead (_index) {
       this.tb_res[_index].state = true
       this.counter--
       this.counter === 1
-        ? this.join.teacherId1 = this.tb_res[_index].account
-        : this.join.teacherId2 = this.tb_res[_index].account
+        ? this.join.teacherId1 = this.tb_res[_index].id
+        : this.join.teacherId2 = this.tb_res[_index].id
     }
   },
   computed: {

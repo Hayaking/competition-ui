@@ -1,4 +1,10 @@
-import { delete_join, get_join_list, get_simple_join_list_by_group_id, set_enter_state } from '@/api/join'
+import {
+  delete_join,
+  get_join_list,
+  get_join_list_by_progress_Id,
+  get_simple_join_list_by_group_id, review_join_in_progress,
+  set_enter_state
+} from '@/api/join'
 
 export default {
   state: {
@@ -53,12 +59,32 @@ export default {
         }
       })
     },
-    handleSetJoinEnterState ({ commit }, { joinId, flag }) {
+    handleSetJoinEnterState ({ commit }, { inProgressId, flag }) {
       return new Promise((resolve, reject) => {
-        set_enter_state(joinId, flag).then(res => {
+        set_enter_state(inProgressId, flag).then(res => {
           resolve(res.data.state === 'SUCCESS')
         }).catch(err => {
           reject(err)
+        })
+      })
+    },
+    handleGetJoinListByProgressId ({ commit }, { pageNum, pageSize, progressId }) {
+      return new Promise((resolve) => {
+        get_join_list_by_progress_Id(pageNum, pageSize, progressId).then(res => {
+          resolve({
+            flag: res.data.state === 'SUCCESS',
+            body: res.data.body
+          })
+        })
+      })
+    },
+    handleReviewJoinInProgress ({ commit }, { inProgressId, reviewState, editState }) {
+      return new Promise((resolve) => {
+        review_join_in_progress(inProgressId, reviewState, editState).then(res => {
+          resolve({
+            flag: res.data.state === 'SUCCESS',
+            body: res.data.body
+          })
         })
       })
     }

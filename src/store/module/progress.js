@@ -9,10 +9,15 @@ import {
 
 export default {
   state: {
+    formList: []
   },
   mutations: {
+    setFormList (state, list) {
+      state.formList = list
+    }
   },
   getters: {
+    getFormList: state => state.formList
   },
   actions: {
     handleGetProgressListByCompetitionId ({ commit }, { competitionId }) {

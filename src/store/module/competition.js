@@ -23,7 +23,8 @@ export default {
     /**
      * 工作组查看比赛结果时使用
      */
-    competition_for_result_list: {}
+    competition_for_result_list: {},
+    competition_for_create: {}
   },
   mutations: {
     setEnterCompetition (state, competition) {
@@ -34,12 +35,16 @@ export default {
     },
     setResultListCompetition (state, competition) {
       state.competition_for_result_list = competition
+    },
+    setCreateCompetition (state, competition) {
+      state.competition_for_create = competition
     }
   },
   getters: {
     getEnterCompetition: state => state.competition_for_enter,
     getEnterListCompetition: state => state.competition_for_enter_list,
-    getResultListCompetition: state => state.competition_for_result_list
+    getResultListCompetition: state => state.competition_for_result_list,
+    getCreateCompetition: state => state.competition_for_create
   },
   actions: {
     handleGetCompetitionById ({ commit }, { id }) {

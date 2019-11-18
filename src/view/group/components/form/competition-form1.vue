@@ -1,49 +1,48 @@
 <template>
-  <Form :label-width="70"
-        ref="form"
-        :rules="rules"
+  <Form :hide-required-mark="true"
+        :label-width="120"
         :model="competition"
-        :hide-required-mark="true"
-        label-position="left">
-<!--    <FormItem label="当前工作组" prop="teacherGroupId">-->
-<!--      <Select v-model="competition.teacherGroupId">-->
-<!--        <Option  v-for="item in groupList"  :value="item.id" :key="item.id">-->
-<!--          {{item.name}}-->
-<!--        </Option>-->
-<!--      </Select>-->
-<!--    </FormItem>-->
-<!--    <FormItem label="是否需要参赛作品">-->
-<!--      <i-switch v-model="competition.isHaveWorks" size="large">-->
-<!--        <span slot="true">是</span>-->
-<!--        <span slot="false">否</span>-->
-<!--      </i-switch>-->
-<!--    </FormItem>-->
-    <FormItem label="比赛名称" prop = "name">
-      <Input v-model="competition.name"/>
+        :rules="rules"
+        label-position="right"
+        ref="form">
+    <Row>
+      <Col span="11">
+        <FormItem label="比赛名称：" prop="name">
+          <Input v-model="competition.name"/>
+        </FormItem>
+      </Col>
+      <Col offset="2" span="11">
+        <FormItem label="负责人：" prop="personInChargeId">
+          <Input v-model="competition.personInChargeId"/>
+        </FormItem>
+      </Col>
+    </Row>
+    <Row>
+      <Col span="6">
+        <FormItem label="预期参赛队数：" prop="exGroupNum">
+          <InputNumber :max="9999" :min="1" v-model="competition.exGroupNum"/>
+        </FormItem>
+      </Col>
+      <Col span="5">
+        <FormItem label="预期参赛人数：" prop="exStuNum">
+          <InputNumber :max="9999" :min="1" v-model="competition.exStuNum"/>
+        </FormItem>
+      </Col>
+      <Col span="13">
+        <FormItem label="预设奖项：" prop="prePrice">
+          <Input v-model="competition.prePrice"/>
+        </FormItem>
+      </Col>
+    </Row>
+    <FormItem label="比赛介绍" prop="intro">
+      <Input :rows="4" placeholder="比赛介绍" type="textarea" v-model="competition.intro"/>
     </FormItem>
-<!--    <FormItem label="比赛地点" prop="place">-->
-<!--      <Input v-model="competition.place"/>-->
-<!--    </FormItem>-->
-<!--    <FormItem label="主办方" prop="org">-->
-<!--      <Input v-model="competition.org"/>-->
-<!--    </FormItem>-->
-<!--    <FormItem label="协办方" prop="coOrg">-->
-<!--      <Input v-model="competition.coOrg"/>-->
-<!--    </FormItem>-->
-<!--    <FormItem label="最低级别" prop="minLevelId">-->
-<!--      <Select v-model="competition.minLevelId">-->
-<!--        <Option v-for="item in competitionType"  :value="item.id" :key="item.id">-->
-<!--          {{item.typeName}}-->
-<!--        </Option>-->
-<!--      </Select>-->
-<!--    </FormItem>-->
-<!--    <FormItem label="最高级别" prop="maxLevelId">-->
-<!--      <Select v-model="competition.maxLevelId">-->
-<!--        <Option v-for="item in competitionType"  :value="item.id" :key="item.id">-->
-<!--          {{item.typeName}}-->
-<!--        </Option>-->
-<!--      </Select>-->
-<!--    </FormItem>-->
+    <FormItem label="比赛条件" prop="exCondition">
+      <Input :rows="4" placeholder="比赛条件" type="textarea" v-model="competition.exCondition"/>
+    </FormItem>
+    <FormItem label="比赛过程" prop="process">
+      <Input :rows="4" placeholder="比赛过程" type="textarea" v-model="competition.process"/>
+    </FormItem>
     <FormItem label="预期结果" prop="exRes">
       <Input :rows="4" placeholder="预期结果" type="textarea" v-model="competition.exRes"/>
     </FormItem>
@@ -51,24 +50,12 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
 
 export default {
   name: 'competition-form1',
   data () {
     return {
-      getter: this.$store.getters,
-      competition: {
-        // groupId: '',
-        isHaveWorks: true,
-        name: '',
-        place: '',
-        org: '',
-        coOrg: '',
-        minLevelId: 0,
-        maxLevelId: 0,
-        exRes: ''
-      },
       rules: {
         // groupId: [{ required: true, message: '不为空' }],
         name: [{ required: true, message: '不为空' }],
@@ -78,9 +65,7 @@ export default {
         minLevelId: [{ required: true, message: '不为空' }],
         maxLevelId: [{ required: true, message: '不为空' }],
         exRes: [{ required: true, message: '不为空' }]
-      },
-      competitionType: [],
-      groupList: []
+      }
     }
   },
   props: {
@@ -89,35 +74,32 @@ export default {
       default: false
     }
   },
-  mounted () {
-    this.$nextTick(() => {
-      this.getCompetitionType()
-      // this.handleGetTeacherGroup().then(res => {
-      //   this.groupList = res
-      //   this.competition.groupId = res[0].id
-      // })
-    })
-  },
   methods: {
     ...mapActions([
       'handleGetType',
       'handleGetTeacherGroup'
     ]),
+    ...mapMutations([
+      'setCreateCompetition'
+    ]),
     submit () {
       // this.$refs.form.validate(res => {
       //   this.$emit('on-success-valid', res, this.competition)
       // })
-      this.$emit('on-success-valid', true, this.competition)
-    },
-    /**
-     * 获取竞赛级别
-     */
-    getCompetitionType () {
-      this.handleGetType({ type: 'competition' }).then(res => {
-        res.flag
-          ? this.competitionType = res.body
-          : this.$Message.error('获取竞赛类型失败')
-      })
+      this.$emit('on-success-valid', true)
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'getCreateCompetition'
+    ]),
+    competition: {
+      get () {
+        return this.getCreateCompetition
+      },
+      set (val) {
+        this.setCreateCompetition(val)
+      }
     }
   },
   watch: {

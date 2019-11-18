@@ -1,105 +1,107 @@
 <template>
   <div>
-    <div :key="index" v-for="(item,index) in formList">
-      <Form :label-width="70"
-            :model="item"
-            :rules="rules"
-            label-position="left"
-            ref="form">
-        <h2>{{COMPETITION_TYPE[item.typeId-1].typeName}}</h2>
+    <Card title="竞赛信息" icon="ios-options" :padding="0" shadow >
+      <CellGroup>
         <Row>
-          <Col span="11">
-            <FormItem label="报名时间" prop="enterDate">
-              <DatePicker type="daterange" v-model="item.enterDate"></DatePicker>
-            </FormItem>
+          <Col span="12">
+            <Cell>
+              <div slot="icon">比赛名称：</div>
+              <div slot="label">{{competition.name}}</div>
+            </Cell>
           </Col>
-          <Col offset="2" span="11">
-            <FormItem label="比赛时间" prop="startDate">
-              <DatePicker type="daterange" v-model="item.startDate"></DatePicker>
-            </FormItem>
+          <Col span="12">
+            <Cell>
+              <div slot="icon">负责人：</div>
+              <div slot="label">{{competition.personInChargeId}}</div>
+            </Cell>
           </Col>
         </Row>
         <Row>
-          <Col span="11">
-            <FormItem label="报名费" prop="enter">
-              <Input v-model="item.enter"/>
-            </FormItem>
+          <Col span="8">
+            <Cell>
+              <div slot="icon">预期参赛队数：</div>
+              <div slot="label">{{competition.exGroupNum}}</div>
+            </Cell>
           </Col>
-          <Col offset="2" span="11">
-            <FormItem label="差旅费" prop="travel">
-              <Input v-model="item.travel"/>
-            </FormItem>
+          <Col span="8">
+            <Cell>
+              <div slot="icon">预期参赛人数：</div>
+              <div slot="label">{{competition.exStuNum}}</div>
+            </Cell>
           </Col>
-        </Row>
-        <Row>
-          <Col span="11">
-            <FormItem label="材料费：" prop="thing">
-              <Input v-model="item.thing"/>
-            </FormItem>
-          </Col>
-          <Col offset="2" span="11">
-            <FormItem label="其他费用：" prop="other">
-              <Input v-model="item.other"/>
-            </FormItem>
+          <Col span="8">
+            <Cell>
+              <div slot="icon">预设奖项：</div>
+              <div slot="label">{{competition.prePrice}}</div>
+            </Cell>
           </Col>
         </Row>
-        <Row>
-          <Col>
-            <FormItem label="计算依据及理由：" prop="reason">
-              <Input type="textarea" v-model="item.reason"/>
-            </FormItem>
-          </Col>
-        </Row>
-      </Form>
-    </div>
-    <Select v-model="typeId">
-      <Option :key="index"
-              :value="item.id"
-              v-for="(item,index) in COMPETITION_TYPE">
-        {{item.typeName}}
-      </Option>
-    </Select>
-    <Button @click="handleAdd" icon="md-add" long type="dashed">Add item</Button>
+        <Cell>
+          <div slot="icon">比赛介绍：</div>
+          <div slot="label">{{competition.intro}}</div>
+        </Cell>
+        <Cell>
+          <div slot="icon">比赛条件：</div>
+          <div slot="label">{{competition.exCondition}}</div>
+        </Cell>
+        <Cell>
+          <div slot="icon">比赛过程：</div>
+          <div slot="label">{{competition.process}}</div>
+        </Cell>
+        <Cell>
+          <div slot="icon">预期结果：</div>
+          <div slot="label">{{competition.exRes}}</div>
+        </Cell>
+      </CellGroup>
+    </Card>
+    <Table :columns="tb_head2" :data="budgets" size="small">
+      <template slot-scope="{ row, index }" slot="typeName">
+        {{COMPETITION_TYPE[row.typeId].typeName}}
+      </template>
+    </Table>
   </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex'
-
+import { mapActions, mapGetters } from 'vuex'
+import { dateFomat } from '@/libs/tools'
 export default {
   name: 'competition-form1',
   data () {
     return {
-      getter: this.$store.getters,
-      rules: {
-        startDate: [{ required: true, message: '不为空' }],
-        enterDate: [{ required: true, message: '不为空' }],
-        groupNum: [{ required: true, message: '不为空' }],
-        stuNum: [{ required: true, message: '不为空' }],
-        personInCharge: [{ required: true, message: '不为空' }],
-        joinTypeId: [{ required: true, message: '不为空' }],
-        process: [{ required: true, message: '不为空' }],
-        intro: [{ required: true, message: '不为空' }]
-      },
       COMPETITION_TYPE: [],
-      JOIN_TYPE: ['单人赛', '多人赛'],
-      budgets: [],
-      formList: [],
-      typeId: 0
+      tb_head2: [
+        {
+          title: '阶段',
+          slot: 'typeName'
+        },
+        {
+          title: '报名费',
+          key: 'enter'
+        },
+        {
+          title: '差旅费',
+          key: 'travel'
+        },
+        {
+          title: '材料费',
+          key: 'thing'
+        },
+        {
+          title: '原因',
+          key: 'reason'
+        },
+        {
+          title: '其它',
+          key: 'other'
+        }
+      ]
     }
   },
   props: {
     flag: {
       type: Boolean,
       default: false
-    },
-    minLevelId: {
-      type: Number,
-      default: 0
-    },
-    maxLevelId: {
-      type: Number,
-      default: 0
     }
   },
   mounted () {
@@ -113,53 +115,70 @@ export default {
   },
   methods: {
     ...mapActions([
-      'handleGetType'
+      'handleGetType',
+      'handleSaveCompetition',
+      'handleSaveCompetitionHolder',
+      'handleSaveBudgets'
     ]),
-    submit () {
-      let res = { flag: true, formList: this.formList }
-      this.$emit('on-success-valid', res)
-    },
-    handleAdd () {
-      this.formList.push({
-        // 比赛进程
-        enterDate: [],
-        startDate: [],
-        typeId: this.typeId,
-        // 预算
-        enter: '',
-        travel: '',
-        thing: '',
-        other: '',
-        reason: ''
+    save () {
+      let competitionHolder = {
+        competition: this.competition,
+        progresses: this.progresses,
+        budgets: this.budgets
+      }
+      this.handleSaveCompetitionHolder({ competitionHolder }).then(res => {
+        res
+          ? this.$Message.success('保存成功')
+          : this.$Message.error('保存失败')
+        this.$emit('callback', res)
       })
+    },
+    fomatDate (date) {
+      return dateFomat(date)
     }
   },
   computed: {
-    typeList () {
-      // 返回有效类型区间
-      let arr = this.COMPETITION_TYPE.filter(item => {
-        if (item.id >= this.minLevelId && item.id <= this.maxLevelId) {
-          // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-          this.budgets.push({
-            enter: '',
-            travel: '',
-            thing: '',
-            other: '',
-            reason: '',
-            typeId: item.id
-          })
-          return true
+    ...mapGetters([
+      'getCreateCompetition',
+      'getFormList'
+    ]),
+    competition: {
+      get () {
+        return this.getCreateCompetition
+      },
+      set (val) {
+
+      }
+    },
+    budgets () {
+      return this.getFormList.map(item => {
+        return {
+          typeId: item.typeId,
+          enter: item.enter,
+          travel: item.travel,
+          thing: item.thing,
+          other: item.other,
+          reason: item.reason
         }
-        return false
       })
-      console.info(this.budgets)
-      return arr
+    },
+    progresses () {
+      return this.getFormList.map(item => {
+        return {
+          typeId: item.typeId,
+          competitionId: 0,
+          startTime: item.startDate[0],
+          endTime: item.startDate[1],
+          enterStartTime: item.enterDate[0],
+          enterEndTime: item.enterDate[1]
+        }
+      })
     }
   },
   watch: {
     flag (newVal) {
       if (newVal) {
-        this.submit()
+        this.save()
       }
     }
   }

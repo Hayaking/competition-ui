@@ -13,13 +13,13 @@
     <FormItem label="负责人" prop="personInCharge">
       <Input v-model="competition.personInCharge"/>
     </FormItem>
-    <FormItem label="参赛形式" prop="joinTypeId">
-      <Select v-model="competition.joinTypeId">
-        <Option v-for="(item,index) in JOIN_TYPE"  :value="index+1" :key="item.id">
-          {{item}}
-        </Option>
-      </Select>
-    </FormItem>
+<!--    <FormItem label="参赛形式" prop="joinTypeId">-->
+<!--      <Select v-model="competition.joinTypeId">-->
+<!--        <Option v-for="(item,index) in JOIN_TYPE"  :value="index+1" :key="item.id">-->
+<!--          {{item}}-->
+<!--        </Option>-->
+<!--      </Select>-->
+<!--    </FormItem>-->
     <FormItem label="比赛过程" prop="process">
       <Input :rows="4" placeholder="比赛过程" type="textarea" v-model="competition.process"/>
     </FormItem>

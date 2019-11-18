@@ -1,15 +1,18 @@
 import {
-  save_competition,
-  delete_competition,
-  get_competition_by_group_id,
+  delete_competition, download_competition_budget_word,
+  download_competition_word,
   get_competition5_by_type_id,
   get_competition_all,
-  set_competition_state,
-  set_competition_enter_state,
-  search_competition,
+  get_competition_by_group_id,
+  get_competition_by_id,
   get_competition_pass_all,
+  get_simple_competition_list_by_group_id,
+  save_competition,
+  save_competition_holder,
+  search_competition,
   search_pass_competition,
-  get_competition_by_id, get_competition_word, save_competition_holder, get_simple_competition_list_by_group_id
+  set_competition_enter_state,
+  set_competition_state
 } from '@/api/competition'
 
 export default {
@@ -185,9 +188,28 @@ export default {
         })
       })
     },
-    handleGetCompetitionWord ({ commit }, { competitionId }) {
+    handleDownloadCompetitionWord ({ commit }, { competitionId }) {
       return new Promise((resolve, reject) => {
-        get_competition_word(competitionId).then(res => {
+        download_competition_word(competitionId).then(res => {
+          let val = res.headers['content-disposition'] + ''
+          const blob = new Blob([res.data])
+          const fileName = val.substring(val.indexOf('filename=') + 'filename='.length, val.length)
+          const elink = document.createElement('a')
+          elink.download = fileName
+          elink.style.display = 'none'
+          elink.href = URL.createObjectURL(blob)
+          document.body.appendChild(elink)
+          elink.click()
+          URL.revokeObjectURL(elink.href)
+          document.body.removeChild(elink)
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
+    handleDownloadCompetitionBudgetWord ({ commit }, { competitionId }) {
+      return new Promise((resolve, reject) => {
+        download_competition_budget_word(competitionId).then(res => {
           let val = res.headers['content-disposition'] + ''
           const blob = new Blob([res.data])
           const fileName = val.substring(val.indexOf('filename=') + 'filename='.length, val.length)

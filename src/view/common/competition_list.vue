@@ -79,13 +79,8 @@ export default {
           width: 200
         },
         {
-          title: '主办方',
-          key: 'org',
-          align: 'center'
-        },
-        {
-          title: '协办方',
-          key: 'coOrg',
+          title: '简介',
+          key: 'intro',
           align: 'center'
         },
         {

@@ -3,10 +3,10 @@
     <CellGroup>
       <Row>
         <Col span="24">
-          <Cell>
-            <div slot="icon">比赛简介</div>
-            <div slot="label">{{ row.intro }}</div>
-          </Cell>
+<!--          <Cell>-->
+<!--            <div slot="icon">比赛简介</div>-->
+<!--            <div slot="label">{{ row.intro }}</div>-->
+<!--          </Cell>-->
           <Cell>
             <div slot="icon">比赛流程</div>
             <div slot="label">{{ row.process }}</div>
@@ -19,13 +19,13 @@
             <Col span="8">
               <Cell>
                 <div slot="icon">预期参赛人数:</div>
-                <div slot="label">{{ row.stuNum }}</div>
+                <div slot="label">{{ row.exStuNum }}</div>
               </Cell>
             </Col>
             <Col span="8">
               <Cell>
                 <div slot="icon">预期参赛队伍数:</div>
-                <div slot="label">{{ row.groupNum }}</div>
+                <div slot="label">{{ row.exGroupNum }}</div>
               </Cell>
             </Col>
             <Col span="8">
@@ -39,13 +39,13 @@
             <Col span="8">
               <Cell>
                 <div slot="icon">负责人:</div>
-                <div slot="label">{{ row.personInCharge }}</div>
+                <div slot="label">{{ row.personInCharge.teacherName }}</div>
               </Cell>
             </Col>
             <Col span="8">
               <Cell>
                 <div slot="icon">立项者:</div>
-                <div slot="label">{{ row.creator }}</div>
+                <div slot="label">{{ row.creator.teacherName }}</div>
               </Cell>
             </Col>
             <Col span="8">
@@ -56,8 +56,7 @@
             </Col>
           </Row>
           <Cell>
-            <div slot="icon">比赛进度:</div>
-            <div slot="label">
+
               <Table size="small" :columns="PROGRESS_HEAD" :data="row.progressList">
                 <template slot-scope="{ row, index }" slot="typeId">
                   {{COMPETITION_TYPE[row.typeId-1].typeName}}
@@ -81,7 +80,6 @@
                   {{formatDate(row.enterState)}}
                 </template>
               </Table>
-            </div>
           </Cell>
         </Col>
       </Row>

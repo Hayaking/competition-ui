@@ -24,10 +24,11 @@ export default {
   },
   methods: {
     ...mapActions([
-      'handleGetCompetitionWord'
+      'handleDownloadCompetitionWord',
+      'handleDownloadCompetitionBudgetWord'
     ]),
     downloadApply () {
-      this.handleGetCompetitionWord({ competitionId: this.row.id }).then(res => {
+      this.handleDownloadCompetitionWord({ competitionId: this.row.id }).then(res => {
         if (res) {
           this.$Message.success('成功')
         } else {
@@ -36,7 +37,13 @@ export default {
       })
     },
     downloadBudget () {
-
+      this.handleDownloadCompetitionBudgetWord({ competitionId: this.row.id }).then(res => {
+        if (res) {
+          this.$Message.success('成功')
+        } else {
+          this.$Message.error('失败')
+        }
+      })
     }
   }
 }

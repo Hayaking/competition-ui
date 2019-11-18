@@ -2,7 +2,7 @@ import {
   get_all_student_by_page,
   insert_or_update_student,
   is_exist,
-  search_student_by_page
+  search_student_by_page, update_student_info
 } from '@/api/student'
 
 export default {
@@ -39,6 +39,15 @@ export default {
     handleSaveStudent ({ commit }, { student }) {
       return new Promise((resolve, reject) => {
         insert_or_update_student(student).then(res => {
+          resolve(res.data.state === 'SUCCESS')
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
+    handleUpdateStudentInfo ({ commit }, { student }) {
+      return new Promise((resolve, reject) => {
+        update_student_info(student).then(res => {
           resolve(res.data.state === 'SUCCESS')
         }).catch(err => {
           reject(err)

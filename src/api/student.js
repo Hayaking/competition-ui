@@ -23,6 +23,14 @@ export const insert_or_update_student = (student) => {
   })
 }
 
+export const update_student_info = (student) => {
+  return axios.request({
+    url: `/student/info`,
+    data: student,
+    method: 'post'
+  })
+}
+
 export const search_student_by_page = (key, pageNum, pageSize) => {
   return axios.request({
     url: `/student/search/${key}/${pageNum}/${pageSize}`,

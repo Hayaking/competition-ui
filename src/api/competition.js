@@ -83,9 +83,16 @@ export const search_pass_competition = (key, pageNum, pageSize) => {
     method: 'get'
   })
 }
-export const get_competition_word = (competitionId) => {
+export const download_competition_word = (competitionId) => {
   return axios.request({
     url: `/download/${competitionId}`,
+    method: 'post',
+    responseType: 'blob'
+  })
+}
+export const download_competition_budget_word = (competitionId) => {
+  return axios.request({
+    url: `/download/budget/${competitionId}`,
     method: 'post',
     responseType: 'blob'
   })

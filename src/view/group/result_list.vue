@@ -20,6 +20,7 @@
         </Col>
         <Col span="5">
           <Button type="primary" @click="endCurrentProgress">结束当前阶段</Button>
+          <Button type="primary" @click="submitResultList">提交当前比赛结果</Button>
         </Col>
       </Row>
     </div>
@@ -161,7 +162,8 @@ export default {
       'handlePromotion',
       'handleGetJoinListByProgressId',
       'handleReviewJoinInProgress',
-      'handleEndProgress'
+      'handleEndProgress',
+      'handleSetProgressResultState'
     ]),
     /**
      * 分页
@@ -196,8 +198,23 @@ export default {
         }
       })
     },
+    /**
+     * 结束当前阶段
+     */
     endCurrentProgress () {
       this.handleEndProgress({ id: this.progressId }).then(res => {
+        if (res.flag) {
+          this.$Message.success('成功')
+        } else {
+          this.$Message.error('失败')
+        }
+      })
+    },
+    /**
+     * 将比赛结果提交给管理员审核
+     */
+    submitResultList () {
+      this.handleSetProgressResultState({ id: this.progressId, state: true }).then(res => {
         if (res.flag) {
           this.$Message.success('成功')
         } else {

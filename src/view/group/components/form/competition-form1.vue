@@ -12,24 +12,24 @@
 <!--        </Option>-->
 <!--      </Select>-->
 <!--    </FormItem>-->
-    <FormItem label="是否需要参赛作品">
-      <i-switch v-model="competition.isHaveWorks" size="large">
-        <span slot="true">是</span>
-        <span slot="false">否</span>
-      </i-switch>
-    </FormItem>
+<!--    <FormItem label="是否需要参赛作品">-->
+<!--      <i-switch v-model="competition.isHaveWorks" size="large">-->
+<!--        <span slot="true">是</span>-->
+<!--        <span slot="false">否</span>-->
+<!--      </i-switch>-->
+<!--    </FormItem>-->
     <FormItem label="比赛名称" prop = "name">
       <Input v-model="competition.name"/>
     </FormItem>
-    <FormItem label="比赛地点" prop="place">
-      <Input v-model="competition.place"/>
-    </FormItem>
-    <FormItem label="主办方" prop="org">
-      <Input v-model="competition.org"/>
-    </FormItem>
-    <FormItem label="协办方" prop="coOrg">
-      <Input v-model="competition.coOrg"/>
-    </FormItem>
+<!--    <FormItem label="比赛地点" prop="place">-->
+<!--      <Input v-model="competition.place"/>-->
+<!--    </FormItem>-->
+<!--    <FormItem label="主办方" prop="org">-->
+<!--      <Input v-model="competition.org"/>-->
+<!--    </FormItem>-->
+<!--    <FormItem label="协办方" prop="coOrg">-->
+<!--      <Input v-model="competition.coOrg"/>-->
+<!--    </FormItem>-->
 <!--    <FormItem label="最低级别" prop="minLevelId">-->
 <!--      <Select v-model="competition.minLevelId">-->
 <!--        <Option v-for="item in competitionType"  :value="item.id" :key="item.id">-->

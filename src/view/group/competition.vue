@@ -50,10 +50,10 @@
 <script>
 import { mapMutations } from 'vuex'
 import FormStep from '@/view/components/form-step'
-import Form1 from '@/view/components/form/competition-form1'
-import Form2 from '@/view/components/form/competition-form2'
-import Form3 from '@/view/components/form/competition-form3'
-import Form4 from '@/view/components/form/competition-form4'
+import Form1 from '@/view/group/components/form/competition-form1'
+import Form2 from '@/view/group/components/form/competition-form2'
+import Form3 from '@/view/group/components/form/competition-form3'
+import Form4 from '@/view/group/components/form/competition-form4'
 export default {
   name: 'group_competition',
   components: { FormStep, Form1, Form2, Form3, Form4 },

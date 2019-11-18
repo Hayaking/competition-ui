@@ -47,3 +47,9 @@ export const delete_teacher_role = (id, roleId) => {
     method: 'delete'
   })
 }
+export const get_self_role_list = () => {
+  return axios.request({
+    url: 'role/list/self',
+    method: 'get'
+  })
+}

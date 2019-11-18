@@ -5,13 +5,14 @@ import {
   delete_student_role,
   get_teacher_role,
   add_teacher_role,
-  delete_teacher_role
+  delete_teacher_role, get_self_role_list
 } from '@/api/role'
 
 export default {
   state: {
     all_role: [],
-    user_roles: []
+    user_roles: [],
+    self_role_list: []
   },
   mutations: {
     setAllRole (state, all) {
@@ -19,13 +20,25 @@ export default {
     },
     setUserRoles (state, all) {
       state.user_roles = all
+    },
+    setSelfRoleList (state, all) {
+      state.self_role_list = all
     }
   },
   getters: {
     getAllRole: state => state.all_role,
-    getUserRoles: state => state.user_roles
+    getUserRoles: state => state.user_roles,
+    getSelfRoleList: state => state.self_role_list
   },
   actions: {
+    handleGetSelfRoleList ({ commit }) {
+      return new Promise((resolve) => {
+        get_self_role_list().then(res => {
+          commit('setSelfRoleList', res.data.body)
+          resolve(res.data.state === 'SUCCESS')
+        })
+      })
+    },
     handleGetRoleList ({ commit }) {
       return new Promise((resolve, reject) => {
         get_role_list().then(res => {

@@ -1,5 +1,5 @@
 import { get_user_info, login, logout, sign } from '@/api/user'
-import { getToken, getType, setToken, setType } from '@/libs/util'
+import { getToken, setToken } from '@/libs/util'
 
 export default {
   state: {
@@ -7,8 +7,6 @@ export default {
       account: ''
     },
     hasGetInfo: false,
-    // 当前用户类型;将type存入localstage
-    type: getType(),
     token: getToken(),
     access: []
   },
@@ -20,15 +18,8 @@ export default {
       state.token = token
       setToken(token)
     },
-    setStudentInfo (state, obj) {
-      state.student = obj
-    },
     setUser (state, user) {
       state.user = user
-    },
-    setType (state, type) {
-      state.type = type
-      setType(type)
     }
   },
   getters: {

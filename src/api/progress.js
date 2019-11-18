@@ -28,3 +28,24 @@ export const end_progress = (id) => {
     method: 'post'
   })
 }
+
+export const set_progress_result_state = (id, state) => {
+  return axios.request({
+    url: `/progress/${id}/result/${state}`,
+    method: 'post'
+  })
+}
+
+export const get_need_review_progress_page = (pageNum, pageSize) => {
+  return axios.request({
+    url: `/progress/review/list/${pageNum}/${pageSize}`,
+    method: 'get'
+  })
+}
+
+export const review_result = (id, state) => {
+  return axios.request({
+    url: `/progress/${id}/review/${state}`,
+    method: 'post'
+  })
+}

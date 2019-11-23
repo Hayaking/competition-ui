@@ -165,6 +165,12 @@ export default {
     progresses () {
       return this.getFormList.map(item => {
         return {
+          isNeedWorks: item.isNeedWorks,
+          isSingle: item.isSingle,
+          name: item.name,
+          org: item.org,
+          coOrg: item.coOrg,
+          place: item.place,
           typeId: item.typeId,
           competitionId: 0,
           startTime: item.startDate[0],

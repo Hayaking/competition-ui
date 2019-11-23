@@ -57,9 +57,9 @@ export const get_competition_pass_all = (pageNum, pageSize) => {
   })
 }
 
-export const set_competition_state = (id, flag) => {
+export const set_competition_state = (id, state) => {
   return axios.request({
-    url: `competition/state/${id}/${flag}`,
+    url: `competition/state/${id}/${state}`,
     method: 'post'
   })
 }

@@ -4,18 +4,18 @@
     title="title"
     v-model="modalShow">
 
-    <Form :model="this.join.works">
+    <Form :model="join">
     <FormItem label="作评名称">
-      <Input v-model="this.join.works.worksName"></Input>
+      <Input v-model="join.works.worksName"></Input>
     </FormItem>
     <FormItem label="竞赛名称">
-      <Input v-model="this.join.competition.name"></Input>
+      <Input v-model="join.competition.name"></Input>
     </FormItem>
     <FormItem label="指导老师1">
-      <Input v-model="this.join.teacherId1"></Input>
+      <Input v-model="join.teacherId1"></Input>
     </FormItem>
     <FormItem label="指导老师1">
-      <Input v-model="this.join.teacherId2"></Input>
+      <Input v-model="join.teacherId2"></Input>
     </FormItem>
   </Form>
 

@@ -1,5 +1,6 @@
 <template>
-  <div>
+  <Row>
+    <Col span="12" offset="6">
     <Form ref="form" :label-width="80" :model="groupMember" >
       <FormItem label="组名" :prop="groupName" >
           <Input type="text" v-model="groupName" placeholder="输入组名"/>
@@ -22,7 +23,8 @@
           <Button  @click="handleAdd" icon="md-add">添加组员</Button>
       </FormItem>
     </Form>
-  </div>
+    </Col>
+  </Row>
 </template>
 
 <script>

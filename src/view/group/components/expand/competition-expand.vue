@@ -1,12 +1,8 @@
 <template>
-<!--  <div>-->
+  <div>
     <CellGroup>
       <Row>
-        <Col span="22">
-          <Cell>
-            <div slot="icon">比赛简介</div>
-            <div slot="label">{{ row.intro }}</div>
-          </Cell>
+        <Col span="24">
           <Cell>
             <div slot="icon">比赛流程</div>
             <div slot="label">{{ row.process }}</div>
@@ -19,13 +15,13 @@
             <Col span="8">
               <Cell>
                 <div slot="icon">预期参赛人数:</div>
-                <div slot="label">{{ row.stuNum }}</div>
+                <div slot="label">{{ row.exStuNum }}</div>
               </Cell>
             </Col>
             <Col span="8">
               <Cell>
                 <div slot="icon">预期参赛队伍数:</div>
-                <div slot="label">{{ row.groupNum }}</div>
+                <div slot="label">{{ row.exGroupNum }}</div>
               </Cell>
             </Col>
             <Col span="8">
@@ -39,13 +35,13 @@
             <Col span="8">
               <Cell>
                 <div slot="icon">负责人:</div>
-                <div slot="label">{{ row.personInCharge }}</div>
+                <div slot="label">{{ row.personInCharge.teacherName }}</div>
               </Cell>
             </Col>
             <Col span="8">
               <Cell>
                 <div slot="icon">立项者:</div>
-                <div slot="label">{{ row.creator }}</div>
+                <div slot="label">{{ row.creator.teacherName }}</div>
               </Cell>
             </Col>
             <Col span="8">
@@ -55,63 +51,42 @@
               </Cell>
             </Col>
           </Row>
-          <Cell>
-            <div slot="label">
-              <Table size="small"
-                     :row-class-name="rowClassName"
-                     :columns="PROGRESS_HEAD"
-                     :data="row.progressList">
-                <template slot-scope="{ row, index }" slot="typeId">
-                  <div v-if="COMPETITION_TYPE[row.typeId-1] !== undefined">
-                    {{COMPETITION_TYPE[row.typeId-1].typeName}}
-                  </div>
-                </template>
-                <template slot-scope="{ row, index }" slot="enterStartDate">
-                  {{formatDate(row.enterStartTime)}}
-                  →
-                  {{formatDate(row.enterEndTime)}}
-                </template>
-                <template slot-scope="{ row, index }" slot="startDate">
-                  {{formatDate(row.startTime)}}
-                  →
-                  {{formatDate(row.endTime)}}
-                </template>
-
-                <template slot-scope="{ row, index }" slot="startState">
-                  {{formatDate(row.startState)}}
-                </template>
-                <template slot-scope="{ row, index }" slot="enterState">
-                  {{formatDate(row.enterState)}}
-                </template>
-              </Table>
-            </div>
-          </Cell>
-        </Col>
-        <Col span="2">
-          <ButtonGroup vertical>
-                <Button @click="showEnterList(row.id)" type="primary">
-                  报名列表
-                </Button>
-                <Button @click="toSetProgress(row.id)" type="primary">
-                  设置比赛进度
-                </Button>
-                <Button :disabled="flag" @click="showProcess(row.id)" type="primary">
-                  提交比赛过程
-                </Button>
-                <Button :disabled="flag" @click="showResult(row.id)" type="primary">
-                  查看比赛结果
-                </Button>
-                <Button @click="showEdit(row.id, true)" type="success">
-                  编辑
-                </Button>
-                <Button @click="toDelete(row.id)" type="error">
-                  删除
-                </Button>
-              </ButtonGroup>
         </Col>
       </Row>
     </CellGroup>
-<!--  </div>-->
+    <Table size="small"
+         :row-class-name="rowClassName"
+         :columns="PROGRESS_HEAD"
+         :data="row.progressList">
+    <template slot-scope="{ row, index }" slot="typeId">
+      <div v-if="COMPETITION_TYPE[row.typeId-1] !== undefined">
+        {{COMPETITION_TYPE[row.typeId-1].typeName}}
+      </div>
+    </template>
+    <template slot-scope="{ row, index }" slot="enterStartDate">
+      {{formatDate(row.enterStartTime)}}
+      <br>
+      {{formatDate(row.enterEndTime)}}
+    </template>
+    <template slot-scope="{ row, index }" slot="startDate">
+      {{formatDate(row.startTime)}}
+      <br>
+      {{formatDate(row.endTime)}}
+    </template>
+    <template slot-scope="{ row, index }" slot="isSingle">
+      {{isSingle(row.isSingle)}}
+    </template>
+    <template slot-scope="{ row, index }" slot="isNeedWorks">
+      {{isNeedWorks(row.isNeedWorks)}}
+    </template>
+    <template slot-scope="{ row, index }" slot="startState">
+      {{formatDate(row.startState)}}
+    </template>
+    <template slot-scope="{ row, index }" slot="enterState">
+      {{formatDate(row.enterState)}}
+    </template>
+  </Table>
+  </div>
 </template>
 
 <script>
@@ -136,28 +111,58 @@ export default {
       COMPETITION_TYPE: [],
       PROGRESS_HEAD: [
         {
-          title: '级别',
-          slot: 'typeId'
+          title: '阶段名称',
+          key: 'name',
+          width: 150,
+          fixed: 'left'
         },
         {
-          title: '报名开始时间',
-          slot: 'enterStartDate',
-          align: 'center',
-          width: 300
+          title: '级别',
+          slot: 'typeId',
+          width: 80,
+          fixed: 'left'
         },
         {
           title: '开始时间',
+          slot: 'enterStartDate',
+          width: 170
+        },
+        {
+          title: '结束时间',
           slot: 'startDate',
-          align: 'center',
-          width: 300
+          width: 170
+        },
+        {
+          title: '主办方',
+          key: 'org',
+          width: 150
+        },
+        {
+          title: '比赛地点',
+          key: 'place',
+          width: 150
+        },
+        {
+          title: '比赛类型',
+          slot: 'isSingle',
+          width: 150
+        },
+        {
+          title: '作品要求',
+          slot: 'isNeedWorks',
+          width: 150
         },
         {
           title: '开始状态',
-          key: 'startState'
+          key: 'startState',
+          width: 100,
+          fixed: 'right'
         },
         {
           title: '报名状态',
-          key: 'enterState'
+          key: 'enterState',
+          width: 100,
+          fixed: 'right'
         }
       ]
     }
@@ -166,28 +171,6 @@ export default {
     ...mapActions([
       'handleGetType'
     ]),
-    showEnterList (id) {
-      this.$emit('showEnterList', id)
-    },
-    showProcess (id) {
-      this.$emit('showProcess', id)
-    },
-    showResult (id) {
-      this.$emit('showResult', id)
-    },
-    toDelete (id) {
-      this.$emit('toDelete', id)
-    },
-    showEdit (id) {
-      this.$emit('toEdit', id)
-    },
-    /**
-     * 设置比赛进度
-     * @param id
-     */
-    toSetProgress (id) {
-      this.$emit('toSetProgress', id)
-    },
     /**
      * 格式化时间
      * @param time
@@ -202,6 +185,12 @@ export default {
         return 'table-info-warning'
       }
       return ''
+    },
+    isSingle (state) {
+      return state ? '单人赛' : '小组赛/多人赛'
+    },
+    isNeedWorks (state) {
+      return state ? '需要作品' : '不需要作品'
     }
   }
 }

@@ -44,7 +44,7 @@ export default {
     ]),
     logout () {
       this.handleLogOut().then(res => {
-        this.$Message.success(res)
+        location.reload()
         this.$router.push({ name: 'login' })
       })
     },

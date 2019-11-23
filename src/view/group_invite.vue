@@ -83,7 +83,7 @@ export default {
   methods: {
     ...mapActions([
       'handleInviteTeacherMember',
-      'handleGetTeacherGroup',
+      'handleGetTeacherGroupList',
       'handleGetAllTeacher',
       'handleRemoveTeacherFromGroup'
     ]),
@@ -128,7 +128,7 @@ export default {
      * 获取教师所在工作组
      */
     getTeacherGroup () {
-      this.handleGetTeacherGroup().then(res => {
+      this.handleGetTeacherGroupList().then(res => {
         this.groupList = res
         this.groupId = res[0].id
       })

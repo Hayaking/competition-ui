@@ -16,7 +16,7 @@ export default {
   common: '通用',
   common_message: '消息中心',
   common_edit_self: '个人信息',
-  common_competition: '比赛列表',
+  common_competition_list: '比赛列表',
   student: '学生',
   stu_join: '参赛',
   stu_join_list: '查看参赛列表',

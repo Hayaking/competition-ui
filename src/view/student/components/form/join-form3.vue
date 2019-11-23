@@ -1,12 +1,16 @@
 <template>
-  <Form :model="works"  style="width: 300px">
-    <FormItem label="作品名">
-        <Input type="text" v-model="works.worksName" placeholder="输入作品名"/>
-    </FormItem>
-    <FormItem label="作品介绍：">
-      <Input type="textarea"  v-model="works.des" placeholder="作品介绍"/>
-    </FormItem>
-  </Form>
+  <Row>
+    <Col span="12" offset="6">
+      <Form :model="works">
+        <FormItem label="作品名">
+          <Input type="text" v-model="works.worksName" placeholder="输入作品名"/>
+        </FormItem>
+        <FormItem label="作品介绍：">
+          <Input type="textarea"  v-model="works.des" placeholder="作品介绍"/>
+        </FormItem>
+      </Form>
+    </Col>
+  </Row>
 </template>
 
 <script>

@@ -24,7 +24,8 @@ export default {
      * 工作组查看比赛结果时使用
      */
     competition_for_result_list: {},
-    competition_for_create: {}
+    competition_for_create: {},
+    simple_competition_list: []
   },
   mutations: {
     setEnterCompetition (state, competition) {
@@ -38,13 +39,17 @@ export default {
     },
     setCreateCompetition (state, competition) {
       state.competition_for_create = competition
+    },
+    setSimpleCompetitionList (state, competition) {
+      state.simple_competition_list = competition
     }
   },
   getters: {
     getEnterCompetition: state => state.competition_for_enter,
     getEnterListCompetition: state => state.competition_for_enter_list,
     getResultListCompetition: state => state.competition_for_result_list,
-    getCreateCompetition: state => state.competition_for_create
+    getCreateCompetition: state => state.competition_for_create,
+    getSimpleCompetitionList: state => state.simple_competition_list
   },
   actions: {
     handleGetCompetitionById ({ commit }, { id }) {
@@ -145,9 +150,9 @@ export default {
         })
       })
     },
-    handleSetCompetitionState ({ state, commit }, { id, flag }) {
+    handleSetCompetitionState ({ state, commit }, { id, newState }) {
       return new Promise((resolve, reject) => {
-        set_competition_state(id, flag).then(res => {
+        set_competition_state(id, newState).then(res => {
           if (res.data.state === 'SUCCESS') {
             resolve(true)
           } else {
@@ -232,13 +237,14 @@ export default {
       })
     },
     handleGetSimpleCompetitionListByGroupId ({ commit }, { groupId }) {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         if (groupId === undefined) {
           resolve({
             flag: false
           })
         } else {
           get_simple_competition_list_by_group_id(groupId).then(res => {
+            commit('setSimpleCompetitionList', res.data.body)
             resolve({
               flag: res.data.state === 'SUCCESS',
               body: res.data.body

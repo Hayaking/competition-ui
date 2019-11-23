@@ -1,11 +1,12 @@
 <template>
   <div>
     <div :key="index" v-for="(item,index) in formList">
-      <Form :label-width="120"
+      <Form :hide-required-mark="true"
+            :label-width="120"
             :model="item"
             :rules="rules"
             label-position="right"
-            ref="form">
+            :ref='"form"+index'>
         <Row>
           <Col span="20">
             <Divider orientation="left"><h2>阶段{{index +1}}</h2></Divider>
@@ -18,7 +19,7 @@
         <Row>
           <Col span="11">
             <FormItem label="需要参赛作品：">
-              <i-switch :value="item.isNeedWorks" size="large">
+              <i-switch v-model="item.isNeedWorks" size="large">
                 <span slot="true">是</span>
                 <span slot="false">否</span>
               </i-switch>
@@ -26,7 +27,7 @@
           </Col>
           <Col offset="2" span="11">
             <FormItem label="是单人赛：">
-              <i-switch :value="item.isSingle" size="large">
+              <i-switch v-model="item.isSingle" size="large">
                 <span slot="true">是</span>
                 <span slot="false">否</span>
               </i-switch>
@@ -36,13 +37,13 @@
         <!--阶段名 && 阶段级别-->
         <Row>
           <Col span="11">
-            <FormItem label="名称：" prop="enter">
+            <FormItem label="名称：" prop="name">
               <Input v-model="item.name"/>
             </FormItem>
           </Col>
           <Col offset="2" span="11">
             <FormItem label="级别：">
-              <Input :disabled="true" v-model="COMPETITION_TYPE[item.typeId-1].typeName"/>
+              <Input :disabled="true" v-model="COMPETITION_TYPE[item.typeId-1].typeName" v-if="COMPETITION_TYPE[item.typeId-1]"/>
             </FormItem>
           </Col>
         </Row>
@@ -62,18 +63,18 @@
         <!-- 主办方 && 协办方 && 比赛地点-->
         <Row>
           <Col span="8">
-            <FormItem label="主办方：" prop="enter">
+            <FormItem label="主办方：" prop="org">
               <Input v-model="item.org"/>
             </FormItem>
           </Col>
           <Col span="8">
-            <FormItem label="协办方：">
-              <Input :disabled="true" v-model="item.coOrg"/>
+            <FormItem label="协办方：" prop="coOrg">
+              <Input  v-model="item.coOrg"/>
             </FormItem>
           </Col>
           <Col span="8">
-            <FormItem label="比赛地点：">
-              <Input :disabled="true" v-model="item.place"/>
+            <FormItem label="比赛地点：" prop="place">
+              <Input v-model="item.place"/>
             </FormItem>
           </Col>
         </Row>
@@ -81,22 +82,22 @@
         <Row>
           <Col span="4">
             <FormItem label="报名费：" prop="enter">
-              <InputNumber  v-model="item.enter"/>
+              <InputNumber  :max="9999" :min="1" v-model="item.enter"/>
             </FormItem>
           </Col>
           <Col offset="2" span="4">
             <FormItem label="差旅费：" prop="travel">
-              <InputNumber  v-model="item.travel"/>
+              <InputNumber  :max="9999" :min="1" v-model="item.travel"/>
             </FormItem>
           </Col>
           <Col offset="2" span="4">
             <FormItem label="材料费：" prop="thing">
-              <InputNumber  v-model="item.thing"/>
+              <InputNumber  :max="9999" :min="1" v-model="item.thing"/>
             </FormItem>
           </Col>
           <Col offset="2" span="4">
             <FormItem label="其他费用：" prop="other">
-              <InputNumber  v-model="item.other"/>
+              <InputNumber  :max="9999" :min="1"  v-model="item.other"/>
             </FormItem>
           </Col>
         </Row>
@@ -110,9 +111,10 @@
         </Row>
       </Form>
     </div>
+    {{COMPETITION_TYPE}}
     <Select v-model="typeId">
       <Option :key="index"
-              :value="item.id"
+              :value=item.id
               v-for="(item,index) in COMPETITION_TYPE">
         {{item.typeName}}
       </Option>
@@ -129,14 +131,17 @@ export default {
   data () {
     return {
       rules: {
-        startDate: [{ required: true, message: '不为空' }],
+        name: [{ required: true, message: '不为空' }],
         enterDate: [{ required: true, message: '不为空' }],
-        groupNum: [{ required: true, message: '不为空' }],
-        stuNum: [{ required: true, message: '不为空' }],
-        personInChargeId: [{ required: true, message: '不为空' }],
-        joinTypeId: [{ required: true, message: '不为空' }],
-        process: [{ required: true, message: '不为空' }],
-        intro: [{ required: true, message: '不为空' }]
+        startDate: [{ required: true, message: '不为空' }],
+        org: [{ required: true, message: '不为空' }],
+        coOrg: [{ required: true, message: '不为空' }],
+        place: [{ required: true, message: '不为空' }],
+        enter: [{ required: true, message: '不为空' }],
+        travel: [{ required: true, message: '不为空' }],
+        thing: [{ required: true, message: '不为空' }],
+        other: [{ required: true, message: '不为空' }],
+        reason: [{ required: true, message: '不为空' }]
       },
       COMPETITION_TYPE: [],
       typeId: 0
@@ -165,7 +170,18 @@ export default {
       'setFormList'
     ]),
     submit () {
-      this.$emit('on-success-valid', true)
+      let count = 0
+      let size = this.formList.length
+      // for (let i = 0; i < size; i++) {
+      //   let name = 'form' + i
+      //   this.$refs[name].validate(res => {
+      //     if (res) {
+      //       count++
+      //     }
+      //   })
+      // }
+      // this.$emit('callBack', count === size)
+      this.$emit('callBack', true)
     },
     handleAdd () {
       if (this.typeId === 0) {
@@ -184,10 +200,10 @@ export default {
         startDate: [],
         typeId: this.typeId,
         // 预算
-        enter: '',
-        travel: '',
-        thing: '',
-        other: '',
+        enter: 0,
+        travel: 0,
+        thing: 0,
+        other: 0,
         reason: ''
       })
     }

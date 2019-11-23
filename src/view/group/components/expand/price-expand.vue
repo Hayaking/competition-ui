@@ -1,6 +1,5 @@
 <template>
   <div>
-
     <Row >
       <Col span="24">
         <Spin size="large" fix v-if="isLoading"/>

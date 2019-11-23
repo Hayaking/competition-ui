@@ -57,13 +57,14 @@ export default {
   data () {
     return {
       rules: {
-        // groupId: [{ required: true, message: '不为空' }],
         name: [{ required: true, message: '不为空' }],
-        place: [{ required: true, message: '不为空' }],
-        org: [{ required: true, message: '不为空' }],
-        coOrg: [{ required: true, message: '不为空' }],
-        minLevelId: [{ required: true, message: '不为空' }],
-        maxLevelId: [{ required: true, message: '不为空' }],
+        personInChargeId: [{ required: true, message: '不为空' }],
+        exGroupNum: [{ required: true, message: '不为空' }],
+        exStuNum: [{ required: true, message: '不为空' }],
+        prePrice: [{ required: true, message: '不为空' }],
+        intro: [{ required: true, message: '不为空' }],
+        exCondition: [{ required: true, message: '不为空' }],
+        process: [{ required: true, message: '不为空' }],
         exRes: [{ required: true, message: '不为空' }]
       }
     }
@@ -77,16 +78,16 @@ export default {
   methods: {
     ...mapActions([
       'handleGetType',
-      'handleGetTeacherGroup'
+      'handleGetTeacherGroupList'
     ]),
     ...mapMutations([
       'setCreateCompetition'
     ]),
     submit () {
-      // this.$refs.form.validate(res => {
-      //   this.$emit('on-success-valid', res, this.competition)
-      // })
-      this.$emit('on-success-valid', true)
+      this.$refs.form.validate(res => {
+        this.$emit('callBack', res)
+      })
+      // this.$emit('on-success-valid', true)
     }
   },
   computed: {

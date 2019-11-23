@@ -7,36 +7,18 @@
         <Button @click="next(true)" type="success" v-if="index===3">确认</Button>
         <Button @click="next(true)" type="primary" v-if="index<3">下一步</Button>
       </div>
-      <Row v-if="index ===0">
+      <Row>
         <Col span="24" style="text-align: center">
-          <CompetitionInfo @on-success-valid="callForm1"
-                           :flag="flag1"/>
-        </Col>
-      </Row>
-      <Row v-else-if="index ===1">
-        <Col span="8" offset="8">
-          <GroupForm @call-back="callForm2"
-                     :flag="flag2"/>
-        </Col>
-      </Row>
-      <Row v-else-if="index ===2">
-        <Col span="8" offset="8">
-          <WorksForm @on-success-valid="callForm3"
-                     :flag="flag3"/>
-        </Col>
-      </Row>
-      <Row v-else-if="index ===3">
-        <Col span=16 offset="4">
-          <LeadForm @on-success-valid="callForm4"
-                    :flag="flag4"/>
-        </Col>
-      </Row>
-      <Row v-else-if="index ===4">
-        <Col span="24" style="text-align: center">
-          小组: <div> {{group}}</div>
-          小组成员: <div>{{list}}</div>
-          作品：<div>{{works}}</div>
-          指导老师： <div>{{join}}</div>
+          <CompetitionInfo v-if="index ===0" @call-back="callBack1" :flag="flag1"/>
+          <GroupForm v-if="index ===1" @call-back="callBack2" :flag="flag2"/>
+          <WorksForm v-if="index ===2" @on-success-valid="callForm3" :flag="flag3"/>
+          <LeadForm  v-if="index ===3" @on-success-valid="callForm4" :flag="flag4"/>
+          <div v-if="index ===4">
+            小组: <div> {{group}}</div>
+            小组成员: <div>{{list}}</div>
+            作品：<div>{{works}}</div>
+            指导老师： <div>{{join}}</div>
+          </div>
         </Col>
       </Row>
     </Card>
@@ -59,7 +41,9 @@ export default {
       flag1: false,
       flag2: false,
       flag3: false,
-      flag4: false
+      flag4: false,
+      isSingle: false,
+      isNeedWorks: false
     }
   },
   methods: {
@@ -68,7 +52,8 @@ export default {
       'setEnterHolderJoin',
       'setEnterHolderGroup',
       'setEnterHolderWorks',
-      'setEnterHolderList'
+      'setEnterHolderList',
+      'setRefreshFlag'
     ]),
     ...mapActions([
       'handleEnter'
@@ -84,31 +69,39 @@ export default {
         if (res) {
           this.$Message.success('成功')
           this.closeTag({ name: 'stu_join' })
+          this.refreshFlag = !this.refreshFlag
           this.$router.push({ name: 'stu_join_list' })
         } else {
           this.$Message.error('失败')
         }
       })
     },
-    callForm1 (flag) {
-      let offset = this.competition.joinTypeId
-      if (!this.competition.isHaveWorks) {
-        offset++
-      }
+    callBack1 (isSingle, isNeedWorks) {
+      this.isSingle = isSingle
+      this.isNeedWorks = isNeedWorks
       this.join.competitionId = this.competition.id
       this.join.joinTypeId = this.competition.joinTypeId
-      this.index += offset
-    },
-    callForm2 (flag) {
-      if (flag) {
+      if (isSingle) {
+        if (isNeedWorks) this.index += 2
+        else this.index += 3
+      } else {
         this.index++
+      }
+    },
+    callBack2 (flag) {
+      if (flag) {
+        this.group.name = this.groupName
+        if (this.isNeedWorks) {
+          this.index++
+        } else {
+          this.index += 2
+        }
       } else {
         this.flag2 = false
       }
     },
     callForm3 (flag) {
       if (flag) {
-        this.group.name = this.groupName
         this.index++
       } else {
         this.flag3 = false
@@ -125,8 +118,16 @@ export default {
     },
     next (flag = true) {
       if (!flag) {
-        if (this.competition.joinTypeId === 2 && this.index === 2) {
+        if (this.index === 2 && this.isSingle) {
           this.index = 0
+        } else if (this.index === 2 && !this.isSingle) {
+          this.index = 1
+        } else if (this.index === 3 && this.isNeedWorks) {
+          this.index = 2
+        } else if (this.index === 3 && !this.isNeedWorks && this.isSingle) {
+          this.index = 0
+        } else if (this.index === 3 && !this.isNeedWorks && !this.isSingle) {
+          this.index = 1
         } else {
           this.index--
         }
@@ -146,7 +147,8 @@ export default {
     ...mapGetters([
       'getEnterCompetition',
       'getEnterHolder',
-      'getEnterGroupName'
+      'getEnterGroupName',
+      'getRefreshFlag'
     ]),
     competition () {
       return this.getEnterCompetition
@@ -184,6 +186,14 @@ export default {
       },
       set (val) {
         this.setEnterHolderWorks(val)
+      }
+    },
+    refreshFlag: {
+      get () {
+        return this.getRefreshFlag
+      },
+      set (val) {
+        this.setRefreshFlag(val)
       }
     }
   }

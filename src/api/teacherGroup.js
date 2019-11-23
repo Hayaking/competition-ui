@@ -1,18 +1,18 @@
 import axios from '@/libs/api.request'
 
-export const get_teacher_group = () => {
+export const get_teacher_group_list = () => {
   return axios.request({
     url: 'teacherGroup/list',
     method: 'get'
   })
 }
 
-export const get_teacher_group_by_page = (pageNum, pageSize) => {
-  return axios.request({
-    url: `teacherGroup/list/${pageNum}/${pageSize}`,
-    method: 'get'
-  })
-}
+// export const get_teacher_group_by_page = (pageNum, pageSize) => {
+//   return axios.request({
+//     url: `teacherGroup/list/${pageNum}/${pageSize}`,
+//     method: 'get'
+//   })
+// }
 
 export const get_teacher_group_all = (pageNum, pageSize) => {
   return axios.request({

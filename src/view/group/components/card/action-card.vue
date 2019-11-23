@@ -55,7 +55,7 @@ export default {
   },
   methods: {
     ...mapActions([
-      'handleGetTeacherGroupByPage'
+      'handleGetTeacherGroupList'
     ]),
     ...mapMutations([
       'setTeacherGroup'
@@ -69,11 +69,11 @@ export default {
     toPost () {
       this.$router.push({ name: 'group_post' })
     },
-    getGroupList (pageNum = 1, pageSize = 12) {
-      this.handleGetTeacherGroupByPage({ pageNum, pageSize }).then(res => {
-        this.groupList = res.records
-        this.group = res.records[0]
-        this.groupId = res.records[0].id
+    getGroupList () {
+      this.handleGetTeacherGroupList().then(res => {
+        this.groupList = res
+        this.group = res[0]
+        this.groupId = res[0].id
       })
     },
     selectChanged (id) {

@@ -1,6 +1,5 @@
 <template>
   <Card>
-    {{page.records}}
     <ResultModal :id="joinInProcessId"
                  :show="isShowResultModal"
                  @cancel="cancel"/>
@@ -20,7 +19,7 @@
         <div>{{row.competition.name}}</div>
       </template>
       <template slot="works" slot-scope="{ row, index }">
-        <div>{{row.works.worksName}}</div>
+        <div v-if="row.works">{{row.works.worksName}}</div>
       </template>
       <template slot="teacher1" slot-scope="{ row, index }">
         <div v-if="row.teacher1 === null">无</div>
@@ -44,9 +43,6 @@
           </Col>
         </Row>
       </template>
-      <template slot="type" slot-scope="{ row, index }">
-        <div>{{row.competition.joinTypeId}}</div>
-      </template>
       <template slot="action" slot-scope="{ row, index }">
         <Button @click="showEditJoinModal(row)" size="small" style="margin-right: 5px" type="success">
           编辑
@@ -68,7 +64,7 @@
 <script>
 import EditJoinModal from '@/view/components/modal/join-edit_modal'
 import ResultModal from '@/view/student/components/modal/submit-result-modal'
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
 import JoinExpand from '@/view/student/components/table-expand/join-expand'
 
 export default {
@@ -111,10 +107,6 @@ export default {
           slot: 'teacher2'
         },
         {
-          title: '参赛类型',
-          slot: 'type'
-        },
-        {
           title: '操作',
           slot: 'action'
         }
@@ -139,6 +131,9 @@ export default {
     ...mapActions([
       'handleGetJoinList',
       'handleDeleteJoin'
+    ]),
+    ...mapMutations([
+      'setRefreshFlag'
     ]),
     pageChange (index) {
       this.page.current = index
@@ -173,7 +168,7 @@ export default {
       this.isShowResultModal = false
     },
     toJoin () {
-      this.$router.push({ name: 'common_competition' })
+      this.$router.push({ name: 'common_competition_list' })
     },
     onExpand (row, status) {
       let index = this.page.records.findIndex(item => {
@@ -182,6 +177,28 @@ export default {
       let obj = this.page.records[index]
       obj._expanded = status
       this.$set(this.page.records, index, obj)
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'getRefreshFlag'
+    ]),
+    refreshFlag: {
+      get () {
+        return this.getRefreshFlag
+      },
+      set (val) {
+        this.setRefreshFlag(val)
+      }
+    }
+  },
+  watch: {
+    refreshFlag: {
+      handler () {
+        this.getJoin()
+      },
+      deep: true,
+      immediate: true
     }
   }
 }

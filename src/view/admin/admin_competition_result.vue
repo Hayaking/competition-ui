@@ -18,8 +18,8 @@
         {{reviewState(row.isReviewResult)}}
       </template>
       <template slot-scope="{ row, index }" slot="actions">
-        <Button @click="review(row.id, 1)">通过</Button>
-        <Button @click="review(row.id, -1)">拒绝</Button>
+        <Button type="success" @click="review(row.id, 1)">通过</Button>
+        <Button type="error" @click="review(row.id, -1)">拒绝</Button>
       </template>
     </Table>
     <Page show-total

@@ -16,10 +16,10 @@
       <Col span="4">
         <Row>
           <Col span="12">
-            <h3>小组数：</h3>10
+            <h3>小组数：</h3>{{groupList.length}}
           </Col>
           <Col span="12">
-            <h3>竞赛数：</h3>5
+            <h3>竞赛数：</h3>{{competitionList.length}}
           </Col>
         </Row>
       </Col>
@@ -28,8 +28,22 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
-  name: 'PageHeader'
+  name: 'PageHeader',
+  computed: {
+    ...mapGetters([
+      'getTeacherGroupList',
+      'getSimpleCompetitionList'
+    ]),
+    groupList () {
+      return this.getTeacherGroupList
+    },
+    competitionList () {
+      return this.getSimpleCompetitionList
+    }
+  }
 }
 </script>
 

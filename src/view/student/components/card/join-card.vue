@@ -15,7 +15,7 @@
                       :title="item.competition.name"
                       :description='"简介："+item.competition.intro'/>
         <template slot="action">
-          <tag color="success">报名通过</tag>
+<!--          <tag color="success">报名通过</tag>-->
         </template>
       </ListItem>
     </List>

@@ -11,8 +11,8 @@
         <Col span="16" offset="4" >
           <!--步骤条-->
           <FormStep :step-index="stepIndex" :step-title="STEP_TITLE"/>
-          <Form1 v-if="stepIndex ===0" @on-success-valid="callBack1" :flag="flag1"/>
-          <Form2 v-if="stepIndex ===1" @on-success-valid="callBack2" :flag="flag2"/>
+          <Form1 v-if="stepIndex ===0" @callBack="callBack1" :flag="flag1"/>
+          <Form2 v-if="stepIndex ===1" @callBack="callBack2" :flag="flag2"/>
           <Form3 v-if="stepIndex ===2" :flag="flag3" @callback="finish" />
         </Col>
       </Row>
@@ -69,6 +69,7 @@ export default {
       if (flag) {
         this.stepIndex++
       } else {
+        this.flag1 = false
         this.$Message.error('失败')
       }
     },
@@ -77,6 +78,7 @@ export default {
         this.competition.teacherGroupId = this.groupId
         this.stepIndex++
       } else {
+        this.flag2 = false
         this.$Message.error('失败')
       }
     },

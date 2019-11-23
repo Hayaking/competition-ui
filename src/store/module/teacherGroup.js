@@ -4,10 +4,9 @@ import {
   delete_teacher_group,
   exit_teacher_group,
   get_teacher_by_group_id,
-  get_teacher_group,
   get_teacher_group_all,
-  get_teacher_group_by_page,
   get_teacher_group_inviting,
+  get_teacher_group_list,
   invite_teacher_member,
   refuse_teacher_group_invite,
   remove_teacher_from_group,
@@ -18,9 +17,13 @@ import {
 export default {
   state: {
     group_for_cards: {},
+    group_list: [],
     group_for_competition_list: {}
   },
   mutations: {
+    setGroupList (state, obj) {
+      state.group_list = obj
+    },
     setTeacherGroup (state, obj) {
       state.group_for_cards = obj
     },
@@ -29,6 +32,7 @@ export default {
     }
   },
   getters: {
+    getTeacherGroupList: state => state.group_list,
     getTeacherGroup: state => state.group_for_cards,
     getTeacherGroupForCompetitionList: state => state.group_for_competition_list
   },
@@ -38,21 +42,11 @@ export default {
      * @param commit
      * @returns {Promise<unknown>}
      */
-    handleGetTeacherGroup ({ commit }) {
-      return new Promise((resolve, reject) => {
-        get_teacher_group().then(res => {
+    handleGetTeacherGroupList ({ commit }) {
+      return new Promise((resolve) => {
+        get_teacher_group_list().then(res => {
+          commit('setGroupList', res.data.body)
           resolve(res.data.body)
-        }).catch(err => {
-          reject(err)
-        })
-      })
-    },
-    handleGetTeacherGroupByPage ({ commit }, { pageNum, pageSize }) {
-      return new Promise((resolve, reject) => {
-        get_teacher_group_by_page(pageNum, pageSize).then(res => {
-          resolve(res.data.body)
-        }).catch(err => {
-          reject(err)
         })
       })
     },

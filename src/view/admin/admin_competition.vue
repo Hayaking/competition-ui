@@ -8,35 +8,14 @@
       </Input>
       <ButtonGroup>
         <Button  type="primary">全部通过</Button>
-<!--        <Button type="primary">全部开始报名</Button>-->
       </ButtonGroup>
     </div>
     <Table :columns="TABLE_HEAD" :data="tb_res" stripe border >
-      <!--报名状态-->
-      <template slot-scope="{ row, index }" slot="enterState">
-        <Button :type="type(row.enterState)"
-                size="small">
-          {{row.enterState}}
-        </Button>
-      </template>
-      <!--比赛开始状态-->
-      <template slot-scope="{ row, index }" slot="startState">
-        <Button :type="type(row.startState)"
-                size="small">
-          {{row.startState}}
-        </Button>
-      </template>
       <!--比赛审核状态-->
       <template slot-scope="{ row, index }" slot="state">
-        <Button :type="type(row.state)"
-                size="small"
-                @click="review(row.id,row.state !== '通过')">
-          {{row.state}}
-        </Button>
-      </template>
-      <!--竞赛级别-->
-      <template slot-scope="{ row, index }" slot="level">
-        {{level(row.minLevelId,row.maxLevelId)}}
+        <Button type="success" v-if="row.state === 1"  @click="review(row.id,row.state)">审核通过</Button>
+        <Button type="primary" v-else-if="row.state === 0" @click="review(row.id,row.state)">未审核</Button>
+        <Button type="error" v-else-if="row.state === -1" @click="review(row.id,row.state)">未通过审核</Button>
       </template>
       <!--下载-->
       <template slot-scope="{ row, index }" slot="download">
@@ -88,13 +67,8 @@ export default {
           width: 200
         },
         {
-          title: '主办方',
-          key: 'org',
-          align: 'center'
-        },
-        {
-          title: '协办方',
-          key: 'coOrg',
+          title: '简介',
+          key: 'intro',
           align: 'center'
         },
         {
@@ -176,8 +150,14 @@ export default {
     /**
      * 审核competition
      */
-    review (id, flag) {
-      this.handleSetCompetitionState({ id, flag }).then(res => {
+    review (id, state) {
+      let newState
+      if (state + 1 >= 2) {
+        newState = -1
+      } else {
+        newState = state + 1
+      }
+      this.handleSetCompetitionState({ id, newState }).then(res => {
         if (res) {
           this.getApplyPage()
         }
@@ -200,9 +180,9 @@ export default {
     },
     // 返回Button的type
     type (state) {
-      if (state === '通过' || state === '已开始') {
+      if (state === 1) {
         return 'success'
-      } else if (state === '申请中' || state === '未开始') {
+      } else if (state === 0) {
         return 'primary'
       } else {
         return 'error'

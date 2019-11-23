@@ -21,42 +21,10 @@ const HOME_PAGE_NAME = '_home'
 router.beforeEach((to, from, next) => {
   ViewUI.LoadingBar.start()
   const token = getToken()
-  console.info('to:' + to.name)
-  if (store.getters.getRoutes.length === 0 && store.getters.getToken) {
-    let constRoutes = []
-    let menuData = [
-      {
-        'path': '/',
-        'name': '_home',
-        'redirect': '/home',
-        'component': 'Main',
-        'meta': {
-          'hideInMenu': 'false'
-        },
-        'children': [
-          {
-            'path': '/home',
-            'name': 'home',
-            'meta': {
-              'hideInMenu': 'false',
-              'title': '首页',
-              'icon': 'md-home'
-            },
-            'component': 'home'
-          }
-        ]
-      }
-    ]
+  if (store.getters.getRoutes.length === 0) {
     store.dispatch('handleGetRoute').then(res => {
-      if (!res) {
-        // 跳转到登录页
-        next({ name: LOGIN_PAGE_NAME })
-      } else {
-        menuData = menuData.concat(res)
-        initRouterNode(constRoutes, menuData)
-        store.commit('setHomeRoute', menuData)
-        store.commit('updateAppRouter', constRoutes)
-      }
+      // 跳转到登录页
+      if (!res.flag) { next({ name: LOGIN_PAGE_NAME }) }
     })
   }
 

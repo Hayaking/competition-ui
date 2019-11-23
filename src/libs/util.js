@@ -7,22 +7,9 @@ const { title, cookieExpires, useI18n } = config
 
 export const TOKEN_KEY = 'token'
 
-export const TYPE_KEY = 'type'
-
-export const setType = (type) => {
-  Cookies.set(TYPE_KEY, type, { expires: cookieExpires || 1 })
-}
-
-export const getType = () => {
-  const type = Cookies.get(TYPE_KEY)
-  if (type) return type
-  else return false
-}
-
 export const setToken = (token) => {
   Cookies.set(TOKEN_KEY, token, { expires: cookieExpires || 1 })
 }
-
 export const removeToken = () => {
   Cookies.set(TOKEN_KEY, '', { expires: -1 })
 }
@@ -33,6 +20,19 @@ export const getToken = () => {
   else return false
 }
 
+export const setInfo = (info) => {
+  Cookies.set('info', info, { expires: cookieExpires || 1 })
+}
+
+export const getInfo = () => {
+  const info = Cookies.get('info')
+  if (info) return info
+  else return false
+}
+
+export const removeInfo = () => {
+  Cookies.set('info', '', { expires: -1 })
+}
 export const hasChild = (item) => {
   return item.children && item.children.length !== 0
 }

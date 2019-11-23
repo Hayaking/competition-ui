@@ -1,12 +1,9 @@
 import { get_user_info, login, logout, sign } from '@/api/user'
-import { getToken, setToken } from '@/libs/util'
+import { getInfo, getToken, removeInfo, removeToken, setInfo, setToken } from '@/libs/util'
 
 export default {
   state: {
-    user: {
-      account: ''
-    },
-    hasGetInfo: false,
+    user: getInfo(),
     token: getToken(),
     access: []
   },
@@ -20,62 +17,53 @@ export default {
     },
     setUser (state, user) {
       state.user = user
+      setInfo(user)
     }
   },
   getters: {
-    getToken: state => state.token,
     getUserInfo: state => state.user
   },
   actions: {
     // 登录
-    handleLogin ({ commit }, { token }) {
-      return new Promise((resolve, reject) => {
+    handleLogin ({ commit, dispatch }, { token }) {
+      return new Promise((resolve) => {
         login(token).then(res => {
-          if (res.data.state === 'SUCCESS') {
-            commit('setToken', res.data.body)
-          }
-          resolve(res.data.state)
-        }).catch(err => {
-          reject(err)
+          commit('setToken', res.data.body)
+          resolve(res.data.state === 'SUCCESS')
         })
       })
     },
     // 退出登录
     handleLogOut ({ commit }) {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         logout().then(res => {
-          commit('setToken', '')
-          commit('setAccess', [])
-          localStorage.removeItem('tagNaveList')
+          removeToken()
+          removeInfo()
           resolve(res.data.body)
-        }).catch(err => {
-          reject(err)
         })
       })
     },
     // 获取用户相关信息
     handleGetUserInfo ({ commit }) {
-      return new Promise((resolve, reject) => {
-        get_user_info().then(res => {
-          if (res.data.state === 'SUCCESS') {
+      return new Promise((resolve) => {
+        if (!getInfo()) {
+          get_user_info().then(res => {
             commit('setUser', res.data.body)
-          }
-          resolve(res.data.state === 'SUCCESS')
-        }).catch(err => {
-          reject(err)
-        })
+            resolve(res.data.state === 'SUCCESS')
+          })
+        } else {
+          resolve(true)
+        }
       })
     },
     // 注册
     handleSign ({ state }, { student }) {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         sign(student).then(res => {
           resolve({
-            'flag': res.data.state === 'SUCCESS',
-            'body': res.data.body
+            flag: res.data.state === 'SUCCESS',
+            body: res.data.body
           })
-        }).catch(err => {
-          reject(err)
         })
       })
     }

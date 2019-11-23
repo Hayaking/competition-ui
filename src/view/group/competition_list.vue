@@ -40,11 +40,22 @@
       </template>
       <!--比赛审核状态-->
       <template slot="state" slot-scope="{ row, index }">
-        <Button :type="type(row.state)"
-                @click="review(row.id,row.state !== '通过')"
-                size="small">
-          {{row.state}}
-        </Button>
+        <tag color="success" v-if="row.state === 1">审核通过</tag>
+        <tag color="primary" v-else-if="row.state === 0">未审核</tag>
+        <tag color="error" v-else-if="row.state === -1">未通过审核</tag>
+      </template>
+      <template slot="actions" slot-scope="{ row, index }">
+        <Dropdown trigger="click" @on-click="handleClick">
+          <a>操作<Icon type="ios-arrow-down" /></a>
+          <DropdownMenu slot="list">
+            <DropdownItem :name='"showEnterList(" + row.id + ")"'> 报名列表</DropdownItem>
+            <DropdownItem :name='"setProgress(" + row.id + ")"'>设置比赛进度</DropdownItem>
+            <DropdownItem :name='"showProcess(" + row.id + ")"'>提交比赛过程</DropdownItem>
+            <DropdownItem :name='"showResult(" + row.id + ")"'>查看比赛结果</DropdownItem>
+            <DropdownItem :name='"showEdit(" + row.id + ")"'>编辑</DropdownItem>
+            <DropdownItem :nmae='"toDelete(" + row.id + ")"'>删除</DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
       </template>
     </Table>
     <Page :current="page.current"
@@ -102,26 +113,6 @@ export default {
               props: {
                 row: params.row,
                 flag: this.flag
-              },
-              on: {
-                showProcess: (competitionId) => {
-                  this.showProcess(competitionId)
-                },
-                showResult: (competitionId) => {
-                  this.showResult(competitionId)
-                },
-                showEdit: (competitionId) => {
-                  this.showEditCompetition(competitionId)
-                },
-                showEnterList: (competitionId) => {
-                  this.showEnterList(competitionId)
-                },
-                toDelete: (competitionId) => {
-                  this.deleteCompetition(competitionId)
-                },
-                toSetProgress: (competitionId) => {
-                  this.setProgress(competitionId)
-                }
               }
             })
           }
@@ -139,14 +130,8 @@ export default {
           width: 200
         },
         {
-          title: '主办方',
-          key: 'org',
-          align: 'center'
-        },
-        {
-          title: '协办方',
-          key: 'coOrg',
-          align: 'center'
+          title: '简介',
+          key: 'intro'
         },
         {
           title: '审核状态',
@@ -176,6 +161,11 @@ export default {
               return row.state === '拒绝'
             }
           }
+        },
+        {
+          title: '操作',
+          align: 'center',
+          slot: 'actions'
         }
       ],
       groupList: [],
@@ -207,7 +197,7 @@ export default {
     this.$nextTick(() => {
       this.getCompetitionType()
       // 获取该老师属于的工作组
-      this.handleGetTeacherGroup().then(res => {
+      this.handleGetTeacherGroupList().then(res => {
         this.groupList = res
         if (Object.keys(this.group).length === 0) {
           this.group = res[0]
@@ -224,7 +214,7 @@ export default {
     ...mapActions([
       'handleGetCompetitionPageByGroupId',
       'handleSetEnterState',
-      'handleGetTeacherGroup',
+      'handleGetTeacherGroupList',
       'handleGetType',
       'handleDeleteCompetition'
     ]),
@@ -260,8 +250,8 @@ export default {
           : this.$Message.error('获取竞赛类型失败')
       })
     },
-    deleteCompetition (id) {
-      this.handleDeleteCompetition({ id: id }).then(res => {
+    deleteCompetition (competitionId) {
+      this.handleDeleteCompetition({ id: competitionId }).then(res => {
         if (res) {
           this.getCompetitionList()
           this.$Message.success('删除成功')
@@ -281,12 +271,12 @@ export default {
         }
       })
     },
-    showEditCompetition (id) {
+    showEditCompetition (competitionId) {
       this.showEditModal = true
     },
-    showProcess (id) {
+    showProcess (competitionId) {
       this.showProcessModal = true
-      this.processHolder.competitionId = id
+      this.processHolder.competitionId = competitionId
     },
     /**
      * 前往比赛结果页
@@ -335,6 +325,10 @@ export default {
       this.showEditModal = false
       this.showProgressModal = false
       this.showResultModal = false
+    },
+    handleClick (name) {
+      // eslint-disable-next-line no-eval
+      eval('this.' + name)
     }
   },
   computed: {

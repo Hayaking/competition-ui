@@ -57,9 +57,9 @@ export default {
         password,
         isRemember
       }
-      this.handleLogin({ token }).then(res => {
-        res ? this.handleGetUserInfo().then(res2 => {
-          res2 ? this.$router.push({ name: 'home' })
+      this.handleLogin({ token }).then(flag => {
+        flag ? this.handleGetUserInfo().then(res => {
+          res ? this.$router.push({ name: 'home' })
             : this.$Message.error('获取失败')
         }) : this.$Message.error('登陆失败')
       })

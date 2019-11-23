@@ -102,7 +102,6 @@ export default {
       'closeTag'
     ]),
     ...mapActions([
-      'handleGetTeacherGroupByPage',
       'handleSetTeacherGroupState',
       'handleSearchTeacherGroup',
       'handleExitTeacherGroup',

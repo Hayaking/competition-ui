@@ -9,7 +9,8 @@ import {
 export default {
   state: {
     join_for_edit: {},
-    simple_join_list: []
+    simple_join_list: [],
+    refresh_flag: false
   },
   mutations: {
     setEditJoin (state, join) {
@@ -17,19 +18,21 @@ export default {
     },
     setSimpleJoinList (state, list) {
       state.simple_join_list = list
+    },
+    setRefreshFlag (state, flag) {
+      state.refresh_flag = flag
     }
   },
   getters: {
     getEditJoin: state => state.join_for_edit,
-    getSimpleJoinList: state => state.simple_join_list
+    getSimpleJoinList: state => state.simple_join_list,
+    getRefreshFlag: state => state.refresh_flag
   },
   actions: {
     handleDeleteJoin ({ commit }, { id }) {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         delete_join(id).then(res => {
           resolve(res.data.state === 'SUCCESS')
-        }).catch(err => {
-          reject(err)
         })
       })
     },

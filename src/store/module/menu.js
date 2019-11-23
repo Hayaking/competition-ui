@@ -6,8 +6,9 @@ import {
   set_role_and_menu,
   set_role_and_menu1
 } from '@/api/routers'
-import { removeToken } from '@/libs/util'
+import { initRouterNode, removeToken } from '@/libs/util'
 import theme from 'echarts/src/theme/dark'
+import store from '@/store'
 
 export default {
   state: {
@@ -24,20 +25,6 @@ export default {
     getEditMenu: state => state.edit_menu
   },
   actions: {
-    handleGetRoute ({ commit, rootState }) {
-      return new Promise((resolve, reject) => {
-        get_route().then(res => {
-          if (res.data.state === 'SUCCESS') {
-            resolve(res.data.body)
-          } else {
-            removeToken()
-            resolve(false)
-          }
-        }).catch(err => {
-          reject(err)
-        })
-      })
-    },
     handleGetAllMenu ({ commmit }) {
       return new Promise((resolve, reject) => {
         get_all_route().then(res => {

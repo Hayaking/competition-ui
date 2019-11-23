@@ -4,9 +4,9 @@ import {
   getMenuByRouter,
   getNextRoute,
   getRouteTitleHandled,
-  getTagNavListFromLocalstorage,
+  getTagNavListFromLocalstorage, initRouterNode,
   localRead,
-  localSave,
+  localSave, removeToken,
   routeEqual,
   routeHasExist,
   setTagNavListInLocalstorage
@@ -15,6 +15,7 @@ import { saveErrorLogger } from '@/api/data'
 import router from '@/router'
 import otherRouters from '@/router/routers'
 import config from '@/config'
+import { get_route } from '@/api/routers'
 
 const { homeName } = config
 
@@ -97,7 +98,6 @@ export default {
     // 动态添加主界面路由，需要缓存
     updateAppRouter (state, routes) {
       state.routers.push(...routes)
-      console.info(state.routers)
       router.addRoutes(routes)
     },
     // 动态添加全局路由，不需要缓存
@@ -122,6 +122,49 @@ export default {
       }
       saveErrorLogger(info).then(() => {
         commit('addError', data)
+      })
+    },
+    handleGetRoute ({ commit }) {
+      let constRoutes = []
+      let menuData = [
+        {
+          'path': '/',
+          'name': '_home',
+          'redirect': '/home',
+          'component': 'Main',
+          'meta': {
+            'hideInMenu': 'false'
+          },
+          'children': [
+            {
+              'path': '/home',
+              'name': 'home',
+              'meta': {
+                'hideInMenu': 'false',
+                'title': '首页',
+                'icon': 'md-home'
+              },
+              'component': 'home'
+            }
+          ]
+        }
+      ]
+      return new Promise((resolve) => {
+        get_route().then(res => {
+          if (res.data.state === 'SUCCESS') {
+            menuData = menuData.concat(res.data.body)
+            initRouterNode(constRoutes, menuData)
+            commit('setHomeRoute', menuData)
+            commit('updateAppRouter', constRoutes)
+            resolve({
+              flag: false,
+              body: res.data.body
+            })
+          } else {
+            removeToken()
+            resolve({ flag: false })
+          }
+        })
       })
     }
   }

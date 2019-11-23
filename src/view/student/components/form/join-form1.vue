@@ -1,14 +1,7 @@
 <template>
     <div>
-      <div>比赛名称：{{competition.name}}</div>
-      <div>开始时间：{{competition.startTime}}</div>
-      <div>结束时间：{{competition.endTime}}</div>
-      <div>报名开始时间：{{competition.enterStartTime}}</div>
-      <div>报名结束时间：{{competition.enterEndTime}}</div>
-      <div>主办方：{{competition.org}}</div>
-      <div>比赛地点：{{competition.place}}</div>
-      <div>负责人：{{competition.personInCharge}}</div>
-      <div>比赛最高级别：{{competition.highestLevel}}</div>
+      <div>比赛名称：{{competition}}</div>
+      <div>负责人：{{competition.progressList}}</div>
     </div>
 </template>
 
@@ -29,7 +22,9 @@ export default {
   },
   methods: {
     submit () {
-      this.$emit('on-success-valid', true)
+      let isSingle = this.competition.progressList[0].isSingle
+      let isNeedWorks = this.competition.progressList[0].isNeedWorks
+      this.$emit('call-back', isSingle, isNeedWorks)
     }
   },
   computed: {

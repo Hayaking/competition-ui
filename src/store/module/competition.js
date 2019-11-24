@@ -12,7 +12,7 @@ import {
   search_competition,
   search_pass_competition,
   set_competition_enter_state,
-  set_competition_state
+  set_competition_state, update_competition
 } from '@/api/competition'
 
 export default {
@@ -24,6 +24,7 @@ export default {
      * 工作组查看比赛结果时使用
      */
     competition_for_result_list: {},
+    /* form1的 */
     competition_for_create: {},
     simple_competition_list: []
   },
@@ -64,27 +65,13 @@ export default {
         })
       })
     },
-    saveCompetition ({ state, commit }, { competition }) {
-      return new Promise((resolve, reject) => {
-        save_competition(competition).then(res => {
+    handleUpdateCompetition ({ state, commit }, { competition }) {
+      return new Promise((resolve) => {
+        update_competition(competition).then(res => {
           resolve(res.data.state === 'SUCCESS')
-        }).catch(err => {
-          reject(err)
         })
       })
     },
-    // handleSaveCompetition ({ commit }, { competition }) {
-    //   return new Promise((resolve, reject) => {
-    //     save_competition(competition).then(res => {
-    //       resolve({
-    //         flag: res.data.state === 'SUCCESS',
-    //         body: res.data.body
-    //       })
-    //     }).catch(err => {
-    //       reject(err)
-    //     })
-    //   })
-    // },
     handleSaveCompetitionHolder ({ commit }, { competitionHolder }) {
       return new Promise((resolve, reject) => {
         save_competition_holder(competitionHolder).then(res => {

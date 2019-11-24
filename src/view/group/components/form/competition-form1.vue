@@ -87,7 +87,6 @@ export default {
       this.$refs.form.validate(res => {
         this.$emit('callBack', res)
       })
-      // this.$emit('on-success-valid', true)
     }
   },
   computed: {

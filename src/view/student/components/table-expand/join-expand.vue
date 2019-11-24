@@ -100,11 +100,11 @@ export default {
         },
         {
           title: '是否得奖',
-          key: 'priceState'
+          key: 'isPrice'
         },
         {
           title: '是否晋级',
-          key: 'promotionState'
+          key: 'isPromotion'
         },
         {
           title: '操作',
@@ -148,10 +148,8 @@ export default {
       })
     },
     isClick (row) {
-      if (row.progress.startState === '已结束') {
-        if (row.editState) {
-          return !row.promotionState
-        }
+      if (row.progress.startState === '结算中' && row.isEditable) {
+        return !row.isPromotion
       }
       return true
     }

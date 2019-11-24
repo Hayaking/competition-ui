@@ -44,13 +44,13 @@
         <Tag>{{row.reviewState}}</Tag>
       </template>
       <template slot-scope="{ row, index }" slot="action">
-        <Button type="success" size="small" style="margin-right: 5px" @click="review(row.id,true,false)">
+        <Button type="success" size="small" style="margin-right: 5px" @click="review(row.id,1,false)">
           得奖了
         </Button>
-        <Button type="primary" size="small" @click="review(row.id,false,false)">
+        <Button type="primary" size="small" @click="review(row.id,-1,false)">
           没得奖
         </Button>
-        <Button type="error" size="small" @click="review(row.id,false,true)">
+        <Button type="error" size="small" @click="review(row.id,0,true)">
           打回修改
         </Button>
       </template>
@@ -188,6 +188,12 @@ export default {
         }
       })
     },
+    /**
+     * 审核比赛结果
+     * @param inProgressId
+     * @param reviewState
+     * @param editState
+     */
     review (inProgressId, reviewState, editState) {
       this.handleReviewJoinInProgress({ inProgressId, reviewState, editState }).then(res => {
         if (res) {

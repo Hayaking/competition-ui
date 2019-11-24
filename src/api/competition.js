@@ -7,6 +7,13 @@ export const save_competition_holder = holder => {
     method: 'post'
   })
 }
+export const update_competition = competition => {
+  return axios.request({
+    url: 'competition/update',
+    data: competition,
+    method: 'post'
+  })
+}
 
 export const get_competition_by_id = (id) => {
   return axios.request({

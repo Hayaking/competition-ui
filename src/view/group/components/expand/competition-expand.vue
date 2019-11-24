@@ -54,38 +54,38 @@
         </Col>
       </Row>
     </CellGroup>
-    <Table size="small"
-         :row-class-name="rowClassName"
-         :columns="PROGRESS_HEAD"
-         :data="row.progressList">
-    <template slot-scope="{ row, index }" slot="typeId">
-      <div v-if="COMPETITION_TYPE[row.typeId-1] !== undefined">
-        {{COMPETITION_TYPE[row.typeId-1].typeName}}
-      </div>
-    </template>
-    <template slot-scope="{ row, index }" slot="enterStartDate">
-      {{formatDate(row.enterStartTime)}}
-      <br>
-      {{formatDate(row.enterEndTime)}}
-    </template>
-    <template slot-scope="{ row, index }" slot="startDate">
-      {{formatDate(row.startTime)}}
-      <br>
-      {{formatDate(row.endTime)}}
-    </template>
-    <template slot-scope="{ row, index }" slot="isSingle">
-      {{isSingle(row.isSingle)}}
-    </template>
-    <template slot-scope="{ row, index }" slot="isNeedWorks">
-      {{isNeedWorks(row.isNeedWorks)}}
-    </template>
-    <template slot-scope="{ row, index }" slot="startState">
-      {{formatDate(row.startState)}}
-    </template>
-    <template slot-scope="{ row, index }" slot="enterState">
-      {{formatDate(row.enterState)}}
-    </template>
-  </Table>
+    <Table :columns="PROGRESS_HEAD"
+           :data="row.progressList"
+           :row-class-name="rowClassName"
+           size="small">
+      <template slot="typeId" slot-scope="{ row, index }">
+        <div v-if="COMPETITION_TYPE[row.typeId-1] !== undefined">
+          {{COMPETITION_TYPE[row.typeId-1].typeName}}
+        </div>
+      </template>
+      <template slot="enterStartDate" slot-scope="{ row, index }">
+        {{formatDate(row.enterStartTime)}}
+        <br>
+        {{formatDate(row.enterEndTime)}}
+      </template>
+      <template slot="startDate" slot-scope="{ row, index }">
+        {{formatDate(row.startTime)}}
+        <br>
+        {{formatDate(row.endTime)}}
+      </template>
+      <template slot="isSingle" slot-scope="{ row, index }">
+        {{isSingle(row.isSingle)}}
+      </template>
+      <template slot="isNeedWorks" slot-scope="{ row, index }">
+        {{isNeedWorks(row.isNeedWorks)}}
+      </template>
+      <template slot="startState" slot-scope="{ row, index }">
+        {{formatDate(row.startState)}}
+      </template>
+      <template slot="enterState" slot-scope="{ row, index }">
+        {{formatDate(row.enterState)}}
+      </template>
+    </Table>
   </div>
 </template>
 
@@ -172,9 +172,9 @@ export default {
       'handleGetType'
     ]),
     /**
-     * 格式化时间
-     * @param time
-     */
+       * 格式化时间
+       * @param time
+       */
     formatDate (time) {
       return dateFomat(time)
     },
@@ -197,14 +197,16 @@ export default {
 </script>
 
 <style>
-  .ivu-table .table-info-primary td{
+  .ivu-table .table-info-primary td {
     background-color: #2db7f5 !important;
     color: #fff;
   }
-  .ivu-table .table-info-warning td{
+
+  .ivu-table .table-info-warning td {
     background-color: #ffe70c !important;
     color: #14161d;
   }
+
   .ivu-table .table-info-success td {
     background-color: #187 !important;
     color: #fff;

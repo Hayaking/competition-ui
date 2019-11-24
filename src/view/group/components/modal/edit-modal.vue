@@ -1,9 +1,9 @@
 <template>
   <Modal
+    @on-ok="toValidate"
     @on-cancel="cancel"
-    :footer-hide="true"
-    :fullscreen="fullscreen"
-    width="800"
+    :fullscreen="isFullscreen"
+    width="1000"
     v-model="modalShow">
     <div slot="header">
       <Row>
@@ -15,13 +15,16 @@
         </Button>
       </Row>
     </div>
-
+    <Form1 :flag="flag" @callBack="callBack"/>
   </Modal>
 </template>
 
 <script>
+import Form1 from '@/view/group/components/form/competition-form1'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
 export default {
   name: 'group-edit-competition',
+  components: { Form1 },
   props: {
     show: {
       type: Boolean,
@@ -30,18 +33,38 @@ export default {
   },
   data () {
     return {
-      fullscreen: false
+      isFullscreen: true,
+      flag: false
     }
   },
   methods: {
+    ...mapActions([
+      'handleUpdateCompetition'
+    ]),
+    ...mapMutations([
+      'setCreateCompetition'
+    ]),
     full () {
-      this.fullscreen = !this.fullscreen
+      this.isFullscreen = !this.isFullscreen
     },
     cancel () {
+      this.competition = {}
       this.$emit('cancel')
+      this.flag = false
+    },
+    toValidate () {
+      this.flag = true
+    },
+    callBack () {
+      this.handleUpdateCompetition({ competition: this.competition }).then(res => {
+        this.$Message.info(res)
+      })
     }
   },
   computed: {
+    ...mapGetters([
+      'getCreateCompetition'
+    ]),
     modalShow: {
       get () {
         return this.show
@@ -49,7 +72,16 @@ export default {
       set (val) {
         console.info(val)
       }
+    },
+    competition: {
+      get () {
+        return this.getCreateCompetition
+      },
+      set (val) {
+        this.setCreateCompetition(val)
+      }
     }
+
   }
 }
 </script>

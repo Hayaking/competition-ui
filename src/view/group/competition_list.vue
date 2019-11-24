@@ -48,11 +48,11 @@
         <Dropdown trigger="click" @on-click="handleClick">
           <a>操作<Icon type="ios-arrow-down" /></a>
           <DropdownMenu slot="list">
-            <DropdownItem :name='"showEnterList(" + row.id + ")"'> 报名列表</DropdownItem>
-            <DropdownItem :name='"setProgress(" + row.id + ")"'>设置比赛进度</DropdownItem>
-            <DropdownItem :name='"showProcess(" + row.id + ")"'>提交比赛过程</DropdownItem>
+            <DropdownItem :name='"showEnterList(" + row.id + ")"'>查看报名列表</DropdownItem>
             <DropdownItem :name='"showResult(" + row.id + ")"'>查看比赛结果</DropdownItem>
-            <DropdownItem :name='"showEdit(" + row.id + ")"'>编辑</DropdownItem>
+            <DropdownItem :name='"showProcess(" + row.id + ")"'>提交比赛过程</DropdownItem>
+            <DropdownItem :name='"showEditCompetitionModal(" + row.id + ")"'>编辑比赛信息</DropdownItem>
+            <DropdownItem :name='"setProgress(" + row.id + ")"'>编辑比赛进度</DropdownItem>
             <DropdownItem :nmae='"toDelete(" + row.id + ")"'>删除</DropdownItem>
           </DropdownMenu>
         </Dropdown>
@@ -95,7 +95,7 @@ import { mapActions, mapGetters, mapMutations } from 'vuex'
 import SubmitProcessModal from '@/view/group/components/modal/submit-process-modal'
 import CompetitionExpand from '@/view/group/components/expand/competition-expand'
 import EditCompetitionModal from '@/view/group/components/modal/edit-modal'
-import SetProgressModal from '@/view/group/components/modal/submit-progress-modal'
+import SetProgressModal from '@/view/group/components/modal/edit-progress-modal'
 import SubmitResultModal from '@/view/group/components/modal/submit-result-modal'
 
 export default {
@@ -222,7 +222,8 @@ export default {
       'closeTag',
       'setTeacherGroupForCompetitionList',
       'setEnterListCompetition',
-      'setResultListCompetition'
+      'setResultListCompetition',
+      'setCreateCompetition'
     ]),
     /**
        * 分页
@@ -271,7 +272,15 @@ export default {
         }
       })
     },
-    showEditCompetition (competitionId) {
+    /**
+     * 显示编辑对话框
+     * @param competitionId
+     */
+    showEditCompetitionModal (competitionId) {
+      let competition = this.page.records.find(item => {
+        return item.id === competitionId
+      })
+      this.setCreateCompetition(competition)
       this.showEditModal = true
     },
     showProcess (competitionId) {

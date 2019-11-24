@@ -8,6 +8,28 @@ export const save_progress = (progress) => {
   })
 }
 
+export const update_progress = (progress) => {
+  return axios.request({
+    url: '/progress/update',
+    data: progress,
+    method: 'post'
+  })
+}
+
+export const update_progress_scan_state = (id, name, flag) => {
+  return axios.request({
+    url: `/progress/${id}/update/scan/${name}/${flag}`,
+    method: 'post'
+  })
+}
+
+export const update_progress_state = (id, state) => {
+  return axios.request({
+    url: `/progress/${id}/update/state/${state}`,
+    method: 'post'
+  })
+}
+
 export const get_progress_list_by_competition_id = (competitionId) => {
   return axios.request({
     url: `/progress/list/competition/${competitionId}`,

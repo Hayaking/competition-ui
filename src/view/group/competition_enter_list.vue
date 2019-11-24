@@ -68,10 +68,10 @@
         </div>
       </template>
       <template slot-scope="{ row, index }" slot="action">
-        <Button type="success" size="small" style="margin-right: 5px" @click="review(row,true)">
+        <Button type="success" size="small" style="margin-right: 5px" @click="review(row,1)">
           通过
         </Button>
-        <Button type="error" size="small" @click="review(row,false)">
+        <Button type="error" size="small" @click="review(row,-1)">
           拒绝
         </Button>
         <Button type="primary" size="small" @click="promotion(row,true)">
@@ -127,10 +127,6 @@ export default {
         {
           title: '晋级状态',
           key: 'promotionState'
-        },
-        {
-          title: '得奖状态',
-          key: 'priceState'
         },
         {
           title: '操作',
@@ -214,6 +210,11 @@ export default {
         }
       })
     },
+    /**
+     * 审核报名
+     * @param obj
+     * @param flag
+     */
     review (obj, flag) {
       this.handleSetJoinEnterState({ inProgressId: obj.id, flag: flag }).then(res => {
         if (res) {

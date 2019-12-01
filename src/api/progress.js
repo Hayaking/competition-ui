@@ -23,9 +23,9 @@ export const update_progress_scan_state = (id, name, flag) => {
   })
 }
 
-export const update_progress_state = (id, state) => {
+export const update_progress_state = (id, name, state) => {
   return axios.request({
-    url: `/progress/${id}/update/state/${state}`,
+    url: `/progress/${id}/update/state/${name}/${state}`,
     method: 'post'
   })
 }
@@ -68,6 +68,13 @@ export const get_need_review_progress_page = (pageNum, pageSize) => {
 export const review_result = (id, state) => {
   return axios.request({
     url: `/progress/${id}/review/${state}`,
+    method: 'post'
+  })
+}
+export const submit_result = (progressId, params) => {
+  return axios.request({
+    url: `/progress/${progressId}/result`,
+    data: params,
     method: 'post'
   })
 }

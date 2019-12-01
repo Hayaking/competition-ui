@@ -21,14 +21,6 @@ export const get_enter_list = (pageNum, pageSize, competitionId, progressId) => 
   })
 }
 
-export const get_enter_list_excel = (competitionId, progressId) => {
-  return axios.request({
-    url: `/download/${competitionId}/${progressId}/enter/list`,
-    method: 'post',
-    responseType: 'blob'
-  })
-}
-
 export const promotion = (joinInProgressId, flag) => {
   return axios.request({
     url: `/enter/promotion/${joinInProgressId}/${flag}`,

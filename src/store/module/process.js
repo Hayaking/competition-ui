@@ -1,4 +1,4 @@
-import { create_process, get_process_list_by_join_id } from '@/api/process'
+import { create_process, get_process_list_by_join_id, get_process_list_by_progress_id } from '@/api/process'
 
 export default {
   state: {
@@ -26,6 +26,16 @@ export default {
           })
         }).catch(err => {
           reject(err)
+        })
+      })
+    },
+    handleGetProcessListByProgressId ({ commit }, { progressId }) {
+      return new Promise((resolve) => {
+        get_process_list_by_progress_id(progressId).then(res => {
+          resolve({
+            flag: res.data.state === 'SUCCESS',
+            body: res.data.body
+          })
         })
       })
     }

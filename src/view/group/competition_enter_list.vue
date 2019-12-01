@@ -161,7 +161,7 @@ export default {
   methods: {
     ...mapActions([
       'handleGetEnterList',
-      'handleExportEnterExcel',
+      'handleDownloadEnterListExcel',
       'handleSetJoinEnterState',
       'handleGetProgressListByCompetitionId',
       'handleGetType',
@@ -199,7 +199,7 @@ export default {
      * 导出报名表
      */
     exportsExcel () {
-      this.handleExportEnterExcel({
+      this.handleDownloadEnterListExcel({
         competitionId: this.competition.id,
         progressId: this.progressId
       }).then(res => {

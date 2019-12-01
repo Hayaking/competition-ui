@@ -1,7 +1,7 @@
 <template>
   <Modal
     @on-cancel="cancel"
-    :footer-hide="true"
+    @on-ok="submit"
     :fullscreen="fullscreen"
     width="800"
     v-model="modalShow">
@@ -15,15 +15,36 @@
         </Button>
       </Row>
     </div>
-    <Form ref="form" label-position="left">
-      <FormItem label="比赛进度">
-        <Select>
-          <Option v-for="(item,index) in list"
-                  :value="item.id"
+    <Form ref="form" label-position="top">
+      <FormItem label="竞赛小结：">
+        <Input type="textarea" v-model="summary"/>
+      </FormItem>
+      <FormItem label="赛事行程：">
+        <div v-for="(item,index) in this.processList"
+                  v-if="item.showState"
                   :key="index">
-            {{competitionType[item.typeId-1].typeName}}
+          {{item.time}}
+          {{item.description}}
+        </div>
+        <Select size="small" v-model="processId" @on-change="selectChanged">
+          <Option v-for="(item,index) in this.processList"
+                  :value="item.id"
+                  v-if="!item.showState"
+                  :key="index">
+            {{item}}
           </Option>
         </Select>
+      </FormItem>
+      <FormItem label="经费使用：">
+        <br>
+        <div v-for="(item,index) in this.costList" :key="index">
+          <Row>
+            <Col span="7">subject: <Input type="text" v-model="item.subject"/></Col>
+            <Col span="7" offset="1">value: <Input  type="text" v-model="item.value"/></Col>
+            <Col span="7" offset="1">reason: <Input  type="text" v-model="item.reason"/></Col>
+          </Row>
+        </div>
+        <Button @click="addCost"/>
       </FormItem>
     </Form>
   </Modal>
@@ -39,17 +60,21 @@ export default {
       type: Boolean,
       default: false
     },
-    resultHolder: { Object }
+    progressId: { Number }
   },
   data () {
     return {
       fullscreen: false,
-      list: []
+      processList: [],
+      costList: [],
+      processId: 0,
+      summary: ''
     }
   },
   methods: {
     ...mapActions([
-      'handleGetProgressListByCompetitionId'
+      'handleGetProcessListByProgressId',
+      'handleSubmitResult'
     ]),
     full () {
       this.fullscreen = !this.fullscreen
@@ -57,9 +82,37 @@ export default {
     cancel () {
       this.$emit('cancel')
     },
-    getProgressList (id) {
-      this.handleGetProgressListByCompetitionId({ competitionId: id }).then(res => {
-        this.list = res.body
+    getProcessList () {
+      this.handleGetProcessListByProgressId({ progressId: this.progressId }).then(res => {
+        this.processList = res.body.map(item => {
+          item.showState = false
+          return item
+        })
+      })
+    },
+    selectChanged (id) {
+      this.processList = this.processList.map(item => {
+        if (item.id === id) {
+          item.showState = true
+        }
+        return item
+      })
+    },
+    addCost () {
+      this.costList.push({
+        subject: '',
+        value: '',
+        reason: ''
+      })
+    },
+    submit () {
+      let params = {
+        summary: this.summary,
+        costList: this.costList,
+        processList: this.processList
+      }
+      this.handleSubmitResult({ progressId: this.progressId, params }).then(res => {
+
       })
     }
   },
@@ -68,19 +121,14 @@ export default {
       get () {
         return this.show
       },
-      set (val) {
-        console.info(val)
-      }
+      set (val) {}
     }
   },
   watch: {
-    resultHolder: {
-      handler (newVal) {
-        this.getProgressList(newVal.competitionId)
-        // this.getProcessPage(newVal.competitionId)
-      },
-      deep: true,
-      immediate: true
+    show: {
+      handler () {
+        this.getProcessList()
+      }
     }
   }
 }

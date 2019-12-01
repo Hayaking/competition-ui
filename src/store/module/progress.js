@@ -4,7 +4,7 @@ import {
   get_progress_list_by_competition_id,
   get_progress_list_by_join_id, review_result,
   save_progress,
-  set_progress_result_state, update_progress, update_progress_scan_state, update_progress_state
+  set_progress_result_state, submit_result, update_progress, update_progress_scan_state, update_progress_state
 } from '@/api/progress'
 
 export default {
@@ -111,9 +111,18 @@ export default {
         })
       })
     },
-    handleUpdateProgressState ({ commit }, { id, state }) {
+    handleUpdateProgressState ({ commit }, { id, name,state }) {
       return new Promise((resolve) => {
-        update_progress_state(id, state).then(res => {
+        update_progress_state(id, name, state).then(res => {
+          resolve({
+            flag: res.data.state === 'SUCCESS'
+          })
+        })
+      })
+    },
+    handleSubmitResult ({ commit }, { progressId, params }) {
+      return new Promise((resolve) => {
+        submit_result(progressId, params).then(res => {
           resolve({
             flag: res.data.state === 'SUCCESS'
           })

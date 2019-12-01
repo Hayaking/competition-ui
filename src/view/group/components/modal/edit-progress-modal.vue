@@ -54,15 +54,23 @@
           </i-switch>
         </template>
         <template slot="startState" slot-scope="{ row, index }">
-          <Select v-model="row.startState" @on-change="stateChange(row.id,row.startState)">
+          <Select v-model="row.startState"
+                  @on-change="stateChange(row.id,'start',row.startState)"
+                  :disabled="row.isScanStartState">
             <Option :value="0">未开始</Option>
             <Option :value="1">已开始</Option>
-            <Option :value="2">已开始</Option>
-            <Option :value="3">结算中</Option>
+            <Option :value="2">结算中</Option>
+            <Option :value="3">已结束</Option>
           </Select>
         </template>
         <template slot="enterState" slot-scope="{ row, index }">
-          <Button :disabled="row.isScanEnterState">{{row.enterState}}</Button>
+          <Select v-model="row.enterState"
+                  @on-change="stateChange(row.id,'enter',row.enterState)"
+                  :disabled="row.isScanEnterState">
+            <Option :value="0">未开始</Option>
+            <Option :value="1">已开始</Option>
+            <Option :value="3">已结束</Option>
+          </Select>
         </template>
         <template slot="actions" slot-scope="{ row, index }">
           <Button type="primary" @click="toEdit(row)">编辑</Button>
@@ -214,15 +222,15 @@ export default {
           width: 150
         },
         {
-          title: '比赛状态',
-          slot: 'startState',
+          title: '报名状态',
+          slot: 'enterState',
           width: 120,
           fixed: 'right'
         },
         {
-          title: '报名状态',
-          slot: 'enterState',
-          width: 100,
+          title: '比赛状态',
+          slot: 'startState',
+          width: 120,
           fixed: 'right'
         },
         {
@@ -337,8 +345,8 @@ export default {
         }
       })
     },
-    stateChange (id, state) {
-      this.handleUpdateProgressState({ id, state }).then(res => {
+    stateChange (id, name, state) {
+      this.handleUpdateProgressState({ id, name, state }).then(res => {
         if (res) {
           this.$Message.success('成功')
         } else {

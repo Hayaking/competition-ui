@@ -14,3 +14,10 @@ export const get_process_list_by_join_id = (pageNum, pageSize, competitionId) =>
     method: 'get'
   })
 }
+
+export const get_process_list_by_progress_id = (progressId) => {
+  return axios.request({
+    url: `/process/${progressId}`,
+    method: 'get'
+  })
+}

@@ -2,7 +2,7 @@
   <Card>
     <div slot="title">
       <Row>
-        <Col span="1">
+        <Col span="2">
           {{competition.name}}
         </Col>
         <Col span="3">
@@ -10,13 +10,14 @@
             <Option v-for="(item,index) in PROGRESS_LIST"
                     :value="item.id"
                     :key="index">
+              {{item.name}}
+              ：
               {{COMPETITION_TYPE[item.typeId-1].typeName}}
             </Option>
           </Select>
         </Col>
         <Col span="5">
-          <Input search
-                 class="tool-bar"/>
+          <Input search class="tool-bar"/>
         </Col>
         <Col span="5">
           <Button type="primary" @click="endCurrentProgress">结束当前阶段</Button>
@@ -61,6 +62,11 @@
           :page-size="page.page_size"
           @on-change = "pageChange"
     />
+    <ResultModal
+      :show="showResult"
+      @cancel="cancel"
+      :progressId="progressId"
+    />
   </Card>
 </template>
 
@@ -68,9 +74,10 @@
 import { mapActions, mapGetters } from 'vuex'
 import JoinExpand from '@/view/components/table-expand/join-expand'
 import PriceExpand from '@/view/group/components/expand/price-expand'
+import ResultModal from '@/view/group/components/modal/submit-result-modal'
 export default {
   name: 'competition_result_list',
-  components: { JoinExpand, PriceExpand },
+  components: { JoinExpand, PriceExpand, ResultModal },
   data () {
     return {
       TABLE_HEAD: [
@@ -135,7 +142,8 @@ export default {
         total: 0,
         records: []
       },
-      progressId: 0
+      progressId: 0,
+      showResult: false
     }
   },
   mounted () {
@@ -220,13 +228,17 @@ export default {
      * 将比赛结果提交给管理员审核
      */
     submitResultList () {
-      this.handleSetProgressResultState({ id: this.progressId, state: true }).then(res => {
-        if (res.flag) {
-          this.$Message.success('成功')
-        } else {
-          this.$Message.error('失败')
-        }
-      })
+      this.showResult = true
+      // this.handleSetProgressResultState({ id: this.progressId, state: true }).then(res => {
+      //   if (res.flag) {
+      //     this.$Message.success('成功')
+      //   } else {
+      //     this.$Message.error('失败')
+      //   }
+      // })
+    },
+    cancel () {
+      this.showResult = false
     }
   },
   computed: {

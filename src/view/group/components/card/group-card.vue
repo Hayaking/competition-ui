@@ -1,18 +1,22 @@
 <template>
   <Card title="小组" style="margin-bottom: 18px">
-    {{this.teacherGroup}}
+    <div>工作组名称：{{this.teacherGroup.name}}</div>
+    <div>组长：{{this.teacherGroup.creator.teacherName}}</div>
   </Card>
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'group-card',
   computed: {
-    ...mapState([
-      'teacherGroup'
-    ])
+    ...mapGetters([
+      'getTeacherGroup'
+    ]),
+    teacherGroup () {
+      return this.getTeacherGroup
+    }
   }
 }
 </script>

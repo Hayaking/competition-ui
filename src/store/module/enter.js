@@ -1,10 +1,4 @@
-import {
-  export_enter_excel,
-  get_enter_list,
-  get_enter_list_by_competition_id,
-  get_enter_list_excel,
-  promotion
-} from '@/api/enter'
+import { get_enter_list, get_enter_list_by_competition_id, promotion } from '@/api/enter'
 import { create_join } from '@/api/join'
 
 export default {
@@ -77,24 +71,6 @@ export default {
           })
         }).catch(err => {
           reject(err)
-        })
-      })
-    },
-    handleExportEnterExcel ({ commit }, { competitionId, progressId }) {
-      return new Promise((resolve) => {
-        get_enter_list_excel(competitionId, progressId).then(res => {
-          let val = res.headers['content-disposition'] + ''
-          const blob = new Blob([res.data])
-          const fileName = val.substring(val.indexOf('filename=') + 'filename='.length, val.length)
-          const elink = document.createElement('a')
-          elink.download = fileName
-          elink.style.display = 'none'
-          elink.href = URL.createObjectURL(blob)
-          document.body.appendChild(elink)
-          elink.click()
-          URL.revokeObjectURL(elink.href)
-          document.body.removeChild(elink)
-          resolve(true)
         })
       })
     },

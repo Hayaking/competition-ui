@@ -20,6 +20,7 @@
       <template slot-scope="{ row, index }" slot="actions">
         <Button type="success" @click="review(row.id, 1)">通过</Button>
         <Button type="error" @click="review(row.id, -1)">拒绝</Button>
+        <Button type="primary" @click="download(row.id)">下载总结表</Button>
       </template>
     </Table>
     <Page show-total
@@ -77,7 +78,8 @@ export default {
   methods: {
     ...mapActions([
       'handleGetNeedReviewProgressPage',
-      'handleReviewResult'
+      'handleReviewResult',
+      'handleDownloadResultWord'
     ]),
     pageChange (index) {
       this.page.current = index
@@ -99,6 +101,9 @@ export default {
       return state === 0
         ? '未审核'
         : state === 1 ? '审核通过' : '审核未通过'
+    },
+    download (progressId) {
+      this.handleDownloadResultWord({ progressId })
     }
   }
 }

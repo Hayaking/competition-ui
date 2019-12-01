@@ -23,6 +23,7 @@ import pic from './module/pic'
 import budget from './module/budget'
 import progress from './module/progress'
 import price from './module/price'
+import download from './module/download'
 
 Vue.use(Vuex)
 
@@ -58,6 +59,7 @@ export default new Vuex.Store({
     pic,
     budget,
     progress,
-    price
+    price,
+    download
   }
 })

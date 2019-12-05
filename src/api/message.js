@@ -6,3 +6,10 @@ export const get_message = () => {
     method: 'get'
   })
 }
+
+export const set_read_message = (id) => {
+  return axios.request({
+    url: `/message/${id}`,
+    method: 'post'
+  })
+}

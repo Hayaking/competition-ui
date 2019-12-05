@@ -1,18 +1,17 @@
 import {
-  delete_competition, download_competition_budget_word,
-  download_competition_word,
+  delete_competition,
   get_competition5_by_type_id,
   get_competition_all,
   get_competition_by_group_id,
   get_competition_by_id,
   get_competition_pass_all,
   get_simple_competition_list_by_group_id,
-  save_competition,
   save_competition_holder,
   search_competition,
   search_pass_competition,
   set_competition_enter_state,
-  set_competition_state, update_competition
+  set_competition_state,
+  update_competition
 } from '@/api/competition'
 
 export default {
@@ -54,14 +53,12 @@ export default {
   },
   actions: {
     handleGetCompetitionById ({ commit }, { id }) {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         get_competition_by_id(id).then(res => {
           if (res.data.state === 'SUCCESS') {
             commit('setEnterCompetition', res.data.body)
           }
           resolve(res.data.state === 'SUCCESS')
-        }).catch(err => {
-          reject(err)
         })
       })
     },
@@ -137,29 +134,17 @@ export default {
         })
       })
     },
-    handleSetCompetitionState ({ state, commit }, { id, newState }) {
-      return new Promise((resolve, reject) => {
-        set_competition_state(id, newState).then(res => {
-          if (res.data.state === 'SUCCESS') {
-            resolve(true)
-          } else {
-            resolve(false)
-          }
-        }).catch(err => {
-          reject(err)
+    handleSetCompetitionState ({ commit }, { id, state }) {
+      return new Promise((resolve) => {
+        set_competition_state(id, state).then(res => {
+          resolve(res.data.state === 'SUCCESS')
         })
       })
     },
     handleSetEnterState ({ state, commit }, { id, flag }) {
       return new Promise((resolve, reject) => {
         set_competition_enter_state(id, flag).then(res => {
-          if (res.data.state === 'SUCCESS') {
-            resolve(true)
-          } else {
-            resolve(false)
-          }
-        }).catch(err => {
-          reject(err)
+          resolve(res.data.state === 'SUCCESS')
         })
       })
     },

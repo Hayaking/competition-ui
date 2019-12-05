@@ -1,7 +1,8 @@
 <template>
     <div>
-      <div>比赛名称：{{competition}}</div>
-      <div>负责人：{{competition.progressList}}</div>
+      <div>比赛名称：{{competition.name}}</div>
+      <div>负责人：{{competition.personInCharge.teacherName}}</div>
+      <div>负责人：{{competition.progressList[0].name}}</div>
     </div>
 </template>
 

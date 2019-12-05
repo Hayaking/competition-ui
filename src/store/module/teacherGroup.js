@@ -1,5 +1,4 @@
 import {
-  agree_teacher_group_invite,
   create_teacher_group,
   delete_teacher_group,
   exit_teacher_group,
@@ -8,8 +7,7 @@ import {
   get_teacher_group_inviting,
   get_teacher_group_list,
   invite_teacher_member,
-  refuse_teacher_group_invite,
-  remove_teacher_from_group,
+  remove_teacher_from_group, review_teacher_group_invite,
   search_teacher_group,
   set_teacher_group_state
 } from '@/api/teacherGroup'
@@ -99,28 +97,35 @@ export default {
         })
       })
     },
-    handleAgreeTeacherGroupInvite ({ state }, { groupId }) {
-      return new Promise((resolve, reject) => {
-        agree_teacher_group_invite(groupId).then(res => {
-          if (res.data.state === 'SUCCESS') {
-            resolve(true)
-          }
-        }).catch(err => {
-          reject(err)
+    handleReviewTeacherGroupInvite ({ state }, { flag, groupId }) {
+      return new Promise((resolve) => {
+        review_teacher_group_invite(flag, groupId).then(res => {
+          resolve(res.data.state === 'SUCCESS')
         })
       })
     },
-    handleRefuseTeacherGroupInvite ({ state }, { groupId }) {
-      return new Promise((resolve, reject) => {
-        refuse_teacher_group_invite(groupId).then(res => {
-          if (res.data.state === 'SUCCESS') {
-            resolve(true)
-          }
-        }).catch(err => {
-          reject(err)
-        })
-      })
-    },
+    // handleAgreeTeacherGroupInvite ({ state }, { groupId }) {
+    //   return new Promise((resolve, reject) => {
+    //     agree_teacher_group_invite(groupId).then(res => {
+    //       if (res.data.state === 'SUCCESS') {
+    //         resolve(true)
+    //       }
+    //     }).catch(err => {
+    //       reject(err)
+    //     })
+    //   })
+    // },
+    // handleRefuseTeacherGroupInvite ({ state }, { groupId }) {
+    //   return new Promise((resolve, reject) => {
+    //     refuse_teacher_group_invite(groupId).then(res => {
+    //       if (res.data.state === 'SUCCESS') {
+    //         resolve(true)
+    //       }
+    //     }).catch(err => {
+    //       reject(err)
+    //     })
+    //   })
+    // },
     handleSearchTeacherGroup ({ commit }, { key, pageNum, pageSize }) {
       return new Promise((resolve, reject) => {
         search_teacher_group(key, pageNum, pageSize).then(res => {

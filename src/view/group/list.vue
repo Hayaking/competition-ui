@@ -3,9 +3,8 @@
     <PageHeader />
     <Row>
       <Col span="15">
-        <GroupCard />
         <CompetitionCard />
-        <Card title="动态"></Card>
+        <LogCard />
       </Col>
       <Col span="8" offset="1">
         <ActionCard :groupList="page.records"
@@ -39,9 +38,10 @@ import ActionCard from '@/view/group/components/card/action-card'
 import GroupCard from '@/view/group/components/card/group-card'
 import CompetitionCard from '@/view/group/components/card/competition-card'
 import GroupMemberCard from '@/view/group/components/card/group-member-card'
+import LogCard from '@/view/group/components/card/log-card'
 export default {
   name: 'list',
-  components: { InviteModal, CreateModal, PageHeader, ActionCard, GroupCard, CompetitionCard, GroupMemberCard },
+  components: { InviteModal, CreateModal, PageHeader, ActionCard, GroupCard, CompetitionCard, GroupMemberCard, LogCard },
   data () {
     return {
       getter: this.$store.getters,

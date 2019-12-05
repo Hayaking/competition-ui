@@ -2,7 +2,7 @@
   <Card style="margin: -18px -18px 18px -18px">
     <Row>
       <Col span="23" offset="1">
-        <h1>HaYa</h1>
+        <h1>{{group.name}}</h1>
       </Col>
     </Row>
     <Row>
@@ -40,9 +40,18 @@ export default {
   name: 'PageHeader',
   computed: {
     ...mapGetters([
+      'getStudentGroup',
       'getStudentGroupList',
       'getSimpleJoinList'
     ]),
+    group: {
+      get () {
+        return this.getStudentGroup
+      },
+      set (val) {
+        this.setStudentGroup(val)
+      }
+    },
     groupSize () {
       return this.getStudentGroupList.length
     },

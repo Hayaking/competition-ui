@@ -24,7 +24,7 @@
       <Col offset="3" span="18">
         小组列表：
         <Select size="small"
-                v-model="group.id"
+                v-model="groupId"
                 @on-change="selectChanged">
           <Option v-for="(item,index) in this.groupList"
                   :value="item.id"
@@ -43,7 +43,12 @@ import { mapActions, mapGetters, mapMutations } from 'vuex'
 export default {
   name: 'action-card',
   mounted () {
-    this.getGroupPage()
+    this.getGroupList()
+  },
+  data () {
+    return {
+      groupId: 0
+    }
   },
   methods: {
     ...mapMutations([
@@ -53,10 +58,10 @@ export default {
     ...mapActions([
       'handleGetStudentGroupList'
     ]),
-    getGroupPage () {
+    getGroupList () {
       this.handleGetStudentGroupList().then(res => {
         if (res) {
-          console.info('成功')
+          this.groupId = this.groupList[0].id
         } else {
           this.$Message.error('失败')
         }

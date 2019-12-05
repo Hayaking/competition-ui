@@ -7,19 +7,25 @@
     <div slot="extra">
       <a @click="more">更多</a>
     </div>
-    <List>
-      <ListItem v-for="(item,index) in joinList"
-                :key="index"
-                v-if="item.competition !== undefined">
-        <ListItemMeta avatar="https://dev-file.iviewui.com/userinfoPDvn9gKWYihR24SpgC319vXY8qniCqj4/avatar"
-                      :title="item.competition.name"
-                      :description='"简介："+item.competition.intro'/>
-        <template slot="action">
-<!--          <tag color="success">报名通过</tag>-->
-        </template>
-      </ListItem>
-    </List>
-<!--    {{joinList}}-->
+    <div v-if="joinList.length===0">
+      <Divider>
+        <div style="color:#9ea7b4;font-size: 12px">什么都没有</div>
+      </Divider>
+    </div>
+    <div v-else>
+      <List>
+        <ListItem v-for="(item,index) in joinList"
+                  :key="index"
+                  v-if="item.competition !== undefined">
+          <ListItemMeta avatar="https://dev-file.iviewui.com/userinfoPDvn9gKWYihR24SpgC319vXY8qniCqj4/avatar"
+                        :title="item.competition.name"
+                        :description='"简介："+item.competition.intro'/>
+          <template slot="action">
+            <!--          <tag color="success">报名通过</tag>-->
+          </template>
+        </ListItem>
+      </List>
+    </div>
   </Card>
 </template>
 

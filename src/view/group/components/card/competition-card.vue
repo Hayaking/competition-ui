@@ -7,18 +7,26 @@
     <div slot="extra">
       <a @click="more">更多</a>
     </div>
-    <List>
-      <ListItem v-for="(item,index) in this.competitionList" :key="index">
-        <ListItemMeta avatar="https://dev-file.iviewui.com/userinfoPDvn9gKWYihR24SpgC319vXY8qniCqj4/avatar"
-                      :title="item.name"
-                      :description='"简介："+item.intro'/>
-        <template slot="action">
-          <tag color="success" v-if="item.state === 1">审核通过</tag>
-          <tag color="primary" v-else-if="item.state === 0">未审核</tag>
-          <tag color="error" v-else-if="item.state === -1">未通过审核</tag>
-        </template>
-      </ListItem>
-    </List>
+    <div style="text-align:center" v-if="this.competitionList.length ===0">
+      <Divider>
+        <div style="color:#9ea7b4;font-size: 12px">什么比赛也没有</div>
+      </Divider>
+
+    </div>
+    <div v-else>
+      <List>
+        <ListItem :key="index" v-for="(item,index) in this.competitionList">
+          <ListItemMeta :description='"简介："+item.intro'
+                        :title="item.name"
+                        avatar="https://dev-file.iviewui.com/userinfoPDvn9gKWYihR24SpgC319vXY8qniCqj4/avatar"/>
+          <template slot="action">
+            <tag color="success" v-if="item.state === 1">审核通过</tag>
+            <tag color="primary" v-else-if="item.state === 0">未审核</tag>
+            <tag color="error" v-else-if="item.state === -1">未通过审核</tag>
+          </template>
+        </ListItem>
+      </List>
+    </div>
   </Card>
 </template>
 

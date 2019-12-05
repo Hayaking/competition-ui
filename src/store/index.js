@@ -24,6 +24,7 @@ import budget from './module/budget'
 import progress from './module/progress'
 import price from './module/price'
 import download from './module/download'
+import groupLog from './module/groupLog'
 
 Vue.use(Vuex)
 
@@ -60,6 +61,7 @@ export default new Vuex.Store({
     budget,
     progress,
     price,
-    download
+    download,
+    groupLog
   }
 })

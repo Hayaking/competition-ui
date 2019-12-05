@@ -2,7 +2,7 @@
   <Card style="margin: -18px -18px 18px -18px">
     <Row>
       <Col span="23" offset="1">
-        <h1>HaYa</h1>
+        <h1>{{teacherGroup.name}}</h1>
       </Col>
     </Row>
     <Row>
@@ -34,6 +34,7 @@ export default {
   name: 'PageHeader',
   computed: {
     ...mapGetters([
+      'getTeacherGroup',
       'getTeacherGroupList',
       'getSimpleCompetitionList'
     ]),
@@ -42,6 +43,9 @@ export default {
     },
     competitionList () {
       return this.getSimpleCompetitionList
+    },
+    teacherGroup () {
+      return this.getTeacherGroup
     }
   }
 }

@@ -44,6 +44,7 @@ export default {
     ]),
     logout () {
       this.handleLogOut().then(res => {
+        this.$socket.emit('logout')
         location.reload()
         this.$router.push({ name: 'login' })
       })
@@ -65,7 +66,6 @@ export default {
   computed: {
     userName: {
       get () {
-        console.info(this.getter.getUserInfo)
         if (this.getter.getUserInfo.stuName) {
           return this.getter.getUserInfo.stuName
         }

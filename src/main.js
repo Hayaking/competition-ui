@@ -16,7 +16,12 @@ import TreeTable from 'tree-table-vue'
 import VOrgTree from 'v-org-tree'
 import 'v-org-tree/dist/v-org-tree.css'
 import 'view-design/dist/styles/iview.css'
+import VueSocketIO from 'vue-socket.io'
 
+Vue.use(new VueSocketIO({
+  debug: true,
+  connection: 'http://localhost:8888'
+}))
 Vue.use(ViewUI, {
   i18n: (key, value) => i18n.t(key, value)
 })

@@ -7,7 +7,7 @@
         <Button @click="submit" type="success" v-if="stepIndex===2">提交</Button>
         <Button @click="next(true)" type="primary" v-if="stepIndex!==2">下一步</Button>
       </div>
-      <Row >
+      <Row>
         <Col span="16" offset="4" >
           <!--步骤条-->
           <FormStep :step-index="stepIndex" :step-title="STEP_TITLE"/>

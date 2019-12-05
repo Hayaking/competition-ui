@@ -1,69 +1,88 @@
 <template>
-  <div v-if="content">
-    <table class="group-info">
-      <tr>
-        <td>工作组id:</td>
-        <td>{{content.id}}</td>
-      </tr>
-      <tr>
-        <td>小组名:</td>
-        <td>{{content.name}}</td>
-      </tr>
-      <tr>
-        <td>创建者:</td>
-        <td>{{content.creator}}</td>
-      </tr>
-      <tr>
-        <td>创建时间:</td>
-        <td>{{content.createTime}}</td>
-      </tr>
-    </table>
-    <Button type="success" @click=review(true)>接受</Button>
-    <Button type="error" @click="review(false)">拒绝</Button>
+  <div v-if="inviteMessage">
+    <div :key="index" v-for="(item,index) in inviteMessage">
+      <Row>
+        <Col span="2">
+          <Avatar icon="ios-person" size="large" />
+        </Col>
+        <Col span="22">
+          <Card class="message-item" padding="0">
+            <div class="body">
+              {{item.body}}
+            </div>
+            <br>
+            <Row>
+              <Col span="12">
+                <Button :disabled="item.isRead" @click=review(item.id,index,true,item.extra) long type="success">接受</Button>
+              </Col>
+              <Col span="12">
+                <Button :disabled="item.isRead" @click="review(item.id,index,false,item.extra)" long type="error">拒绝</Button>
+              </Col>
+            </Row>
+          </Card>
+          <Time :time="new Date(item.createTime)" />
+          <span v-if="item.isRead">✔️</span>
+          <span v-else>⭕</span>
+        </Col>
+      </Row>
+    </div>
   </div>
   <div v-else>
     啥都没
   </div>
 </template>
-
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'invite-message',
-  props: {
-    content: {
-      type: Object,
-      default: null
-    }
-  },
   methods: {
     ...mapActions([
-      'handleAgreeTeacherGroupInvite',
-      'handleRefuseTeacherGroupInvite'
+      'handleReviewTeacherGroupInvite',
+      'handleSetReadMessage'
     ]),
-    review (flag) {
-      if (flag) {
-        this.handleAgreeTeacherGroupInvite({ groupId: this.content.id }).then(res => {
+    review (id, index, flag, groupId) {
+      this.handleReviewTeacherGroupInvite({ flag, groupId }).then(res => {
+        if (res) {
           this.$Message.success('成功')
-        })
-      } else {
-        this.handleRefuseTeacherGroupInvite({ groupId: this.content.id }).then(res => {
-          this.$Message.success('失败')
-        })
-      }
+          this.handleSetReadMessage({ id })
+          this.inviteMessage[index].isRead = true
+        } else {
+          this.$Message.error('失败')
+        }
+      })
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'getInviteMessage'
+    ]),
+    inviteMessage () {
+      return this.getInviteMessage
     }
   }
 }
 </script>
 
 <style scoped>
- .group-info tr td:nth-child(1){
-   padding: 2px;
-   font-size: 20px;
- }
- .group-info tr td:nth-child(2){
-   padding-left: 10px;
-   font-size: 15px;
- }
+  .group-info tr td:nth-child(1) {
+    padding: 2px;
+    font-size: 20px;
+  }
+
+  .group-info tr td:nth-child(2) {
+    padding-left: 10px;
+    font-size: 15px;
+  }
+
+  .message-item {
+    font-size: large;
+    color: #fff;
+    width: 30%;
+    background-color: #5cadff;
+  }
+
+  .message-item .body {
+    margin: 10px;
+  }
 </style>

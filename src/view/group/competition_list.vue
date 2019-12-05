@@ -40,6 +40,7 @@
       </template>
       <!--比赛审核状态-->
       <template slot="state" slot-scope="{ row, index }">
+        <tag color="warning" v-if="row.state === 2">打回修改</tag>
         <tag color="success" v-if="row.state === 1">审核通过</tag>
         <tag color="primary" v-else-if="row.state === 0">未审核</tag>
         <tag color="error" v-else-if="row.state === -1">未通过审核</tag>
@@ -51,8 +52,8 @@
             <DropdownItem :name='"showEnterList(" + row.id + ")"'>查看报名列表</DropdownItem>
             <DropdownItem :name='"showResult(" + row.id + ")"'>查看比赛结果</DropdownItem>
             <DropdownItem :name='"showProcess(" + row.id + ")"'>提交比赛过程</DropdownItem>
-            <DropdownItem :name='"showEditCompetitionModal(" + row.id + ")"'>编辑比赛信息</DropdownItem>
             <DropdownItem :name='"setProgress(" + row.id + ")"'>编辑比赛进度</DropdownItem>
+            <DropdownItem :name='"showEditCompetitionModal(" + row.id + ")"'>编辑</DropdownItem>
             <DropdownItem :nmae='"toDelete(" + row.id + ")"'>删除</DropdownItem>
           </DropdownMenu>
         </Dropdown>
@@ -280,40 +281,69 @@ export default {
       let competition = this.page.records.find(item => {
         return item.id === competitionId
       })
-      this.setCreateCompetition(competition)
-      this.showEditModal = true
+      let state = competition.state
+      if (state === -1) {
+        this.$Message.error('未通过审核，不能查看！')
+      } else {
+        this.setCreateCompetition(competition)
+        this.showEditModal = true
+      }
     },
     showProcess (competitionId) {
-      this.showProcessModal = true
-      this.processHolder.competitionId = competitionId
+      let competition = this.page.records.find(item => {
+        return item.id === competitionId
+      })
+      if (competition.state === -1) {
+        this.$Message.error('未通过审核，不能查看！')
+      } else {
+        this.showProcessModal = true
+        this.processHolder.competitionId = competitionId
+      }
     },
     /**
      * 前往比赛结果页
      * @param competitionId
      */
     showResult (competitionId) {
-      this.setResultListCompetition(this.page.records.find(item => {
+      let competition = this.page.records.find(item => {
         return item.id === competitionId
-      }))
-      this.$router.push({ name: 'group_result_list' })
+      })
+      if (competition.state === -1) {
+        this.$Message.error('未通过审核，不能查看！')
+      } else {
+        this.setResultListCompetition(competition)
+        this.$router.push({ name: 'group_result_list' })
+      }
     },
     /**
      * 前往报名列表
      * @param competitionId
      */
     showEnterList (competitionId) {
-      this.setEnterListCompetition(this.page.records.find(item => {
+      let competition = this.page.records.find(item => {
         return item.id === competitionId
-      }))
-      this.$router.push({ name: 'competition_enter_list' })
+      })
+      if (competition.state === -1) {
+        this.$Message.error('未通过审核，不能查看！')
+      } else {
+        this.setEnterListCompetition(competition)
+        this.$router.push({ name: 'competition_enter_list' })
+      }
     },
     /**
      * 设置比赛进度
      * @param competitionId
      */
     setProgress (competitionId) {
-      this.showProgressModal = true
-      this.progressHolder.competitionId = competitionId
+      let competition = this.page.records.find(item => {
+        return item.id === competitionId
+      })
+      if (competition.state === -1) {
+        this.$Message.error('未通过审核，不能查看！')
+      } else {
+        this.showProgressModal = true
+        this.progressHolder.competitionId = competitionId
+      }
     },
     /**
      * 返回Button的type

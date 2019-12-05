@@ -19,13 +19,6 @@
       <Header class="header-con">
         <header-bar :collapsed="collapsed" @on-coll-change="handleCollapsedChange">
           <user :message-unread-count="unreadCount" :user-avatar="userAvatar"/>
-<!--          <language :lang="local"-->
-<!--                    @on-lang-change="setLocal"-->
-<!--                    style="margin-right: 10px;"-->
-<!--                    v-if="$config.useI18n"/>-->
-<!--          <error-store :count="errorCount"-->
-<!--                       :has-read="hasReadErrorPage"-->
-<!--                       v-if="$config.plugin['error-store'] && $config.plugin['error-store'].showInHeader"/>-->
           <fullscreen style="margin-right: 10px;" v-model="isFullscreen"/>
         </header-bar>
       </Header>
@@ -83,8 +76,12 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'errorCount'
+      'errorCount',
+      'getUserInfo'
     ]),
+    userInfo () {
+      return this.getUserInfo
+    },
     tagNavList () {
       return this.$store.state.app.tagNavList
     },
@@ -120,7 +117,9 @@ export default {
       'addTag',
       'setLocal',
       'setHomeRoute',
-      'closeTag'
+      'closeTag',
+      'setSystemMessage',
+      'setInviteMessage'
     ]),
     ...mapActions([
       'handleLogin',
@@ -175,7 +174,38 @@ export default {
       this.$refs.sideMenu.updateOpenName(newRoute.name)
     }
   },
+  sockets: {
+    invite (message) {
+      this.$Notice.open({
+        title: '工作组邀请',
+        desc: message.body,
+        duration: 0
+      })
+    },
+    systemMessage (message) {
+      this.$Notice.open({
+        title: '系统消息',
+        desc: message.body,
+        duration: 0
+      })
+      this.setSystemMessage(JSON.parse(message.body))
+    },
+    inviteMessage (message) {
+      this.$Notice.open({
+        title: '邀请消息',
+        desc: message.body,
+        duration: 0
+      })
+      this.setInviteMessage(JSON.parse(message.body))
+    }
+  },
   mounted () {
+    // eslint-disable-next-line no-new
+    new Promise(() => {
+      this.$socket.emit('logined', {
+        body: this.userInfo.id
+      })
+    })
     /**
        * @description 初始化设置面包屑导航和标签导航
        */

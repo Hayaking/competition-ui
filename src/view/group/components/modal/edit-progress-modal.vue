@@ -56,11 +56,11 @@
         <template slot="startState" slot-scope="{ row, index }">
           <Select v-model="row.startState"
                   @on-change="stateChange(row.id,'start',row.startState)"
-                  :disabled="row.isScanStartState">
+                  :disabled="row.isScanStartState || row.startState === 3">
             <Option :value="0">未开始</Option>
             <Option :value="1">已开始</Option>
             <Option :value="2">结算中</Option>
-            <Option :value="3">已结束</Option>
+            <Option :value="3" disabled>已结束</Option>
           </Select>
         </template>
         <template slot="enterState" slot-scope="{ row, index }">
@@ -73,7 +73,7 @@
           </Select>
         </template>
         <template slot="actions" slot-scope="{ row, index }">
-          <Button type="primary" @click="toEdit(row)">编辑</Button>
+          <Button :disabled="row.startState === 3" type="primary" @click="toEdit(row)">编辑</Button>
         </template>
       </Table>
     </div>

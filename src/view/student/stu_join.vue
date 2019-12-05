@@ -14,10 +14,51 @@
           <WorksForm v-if="index ===2" @on-success-valid="callForm3" :flag="flag3"/>
           <LeadForm  v-if="index ===3" @on-success-valid="callForm4" :flag="flag4"/>
           <div v-if="index ===4">
-            小组: <div> {{group}}</div>
-            小组成员: <div>{{list}}</div>
-            作品：<div>{{works}}</div>
-            指导老师： <div>{{join}}</div>
+            <Row>
+              <Col span="10" style="text-align: right">
+                <h3>小组：</h3>
+              </Col>
+              <Col span="12" style="text-align: left">
+                <div v-if="group.name">{{group.name}}</div>
+                <div v-else>无</div>
+              </Col>
+            </Row>
+            <Row>
+              <Col span="10" style="text-align: right">
+                <h3>参赛人员：</h3>
+              </Col>
+              <Col span="12" style="text-align: left">
+                <div v-if="list.length>0">{{list}}</div>
+                <div v-else>无</div>
+              </Col>
+            </Row>
+            <Row>
+              <Col span="10" style="text-align: right">
+                <h3>作品名：</h3>
+              </Col>
+              <Col span="12" style="text-align: left">
+                <div v-if="works.woksName">{{works.worksName}}</div>
+                <div v-else>无</div>
+              </Col>
+            </Row>
+            <Row>
+              <Col span="10" style="text-align: right">
+                <h3>作品描述：</h3>
+              </Col>
+              <Col span="12" style="text-align: left">
+                <div v-if="works.des">{{works.des}}</div>
+                <div v-else>无</div>
+              </Col>
+            </Row>
+            <Row>
+              <Col span="10" style="text-align: right">
+                <h3>指导老师：</h3>
+              </Col>
+              <Col span="12" style="text-align: left">
+                 <div>指导老师1：<span v-if="join.teacherId1 ===0">无</span></div>
+                 <div>指导老师2：<span v-if="join.teacherId2 ===0">无</span></div>
+              </Col>
+            </Row>
           </div>
         </Col>
       </Row>

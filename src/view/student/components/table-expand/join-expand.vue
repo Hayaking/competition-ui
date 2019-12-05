@@ -27,11 +27,30 @@
           </template>
           <!--阶段比赛开始状态-->
           <template slot="startState" slot-scope="{ row, index }">
-            {{row.progress.startState}}
+            <div v-if="row.progress.startState === 0">未开始</div>
+            <div v-if="row.progress.startState === 1">已开始</div>
+            <div v-if="row.progress.startState === 2">结算中</div>
+            <div v-if="row.progress.startState === 3">已结束</div>
           </template>
           <!--阶段报名开始状态-->
           <template slot="enterState" slot-scope="{ row, index }">
-            {{row.progress.enterState}}
+            <div v-if="row.progress.enterState === 0">未开始</div>
+            <div v-if="row.progress.enterState === 1">已开始</div>
+            <div v-if="row.progress.enterState === 2">结算中</div>
+            <div v-if="row.progress.enterState === 3">已结束</div>
+          </template>
+          <template slot="isEnter" slot-scope="{ row, index }">
+            <div v-if="row.progress.enterState === -1">拒绝</div>
+            <div v-if="row.progress.enterState === 0">等待审核</div>
+            <div v-if="row.progress.enterState === 1">报名成功</div>
+          </template>
+          <template slot="isPrice" slot-scope="{ row, index }">
+            <div v-if="row.isPrice">是</div>
+            <div v-else>否</div>
+          </template>
+          <template slot="isPromotion" slot-scope="{ row, index }">
+            <div v-if="row.isPromotion">是</div>
+            <div v-else>否</div>
           </template>
           <template slot="action" slot-scope="{ row, index }">
             <Button :disabled="isClick(row)"
@@ -96,15 +115,15 @@ export default {
         },
         {
           title: '报名成功',
-          key: 'enterState'
+          slot: 'isEnter'
         },
         {
           title: '是否得奖',
-          key: 'isPrice'
+          slot: 'isPrice'
         },
         {
           title: '是否晋级',
-          key: 'isPromotion'
+          slot: 'isPromotion'
         },
         {
           title: '操作',
@@ -148,7 +167,7 @@ export default {
       })
     },
     isClick (row) {
-      if (row.progress.startState === '结算中' && row.isEditable) {
+      if (row.progress.startState === '2' && row.isEditable) {
         return !row.isPromotion
       }
       return true

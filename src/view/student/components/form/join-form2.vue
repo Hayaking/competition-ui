@@ -48,22 +48,22 @@ export default {
       'setEnterHolderList'
     ]),
     submit () {
-      this.$refs['form'].validate((valid) => {
-        if (valid) {
-          this.list = this.groupMember.items.map(item => { return item.value })
-          this.handleStudentIsExist({ list: this.list }).then(res => {
-            if (res.length === 0) {
-              this.$emit('call-back', true)
-            } else {
-              res.map(item => { this.$Message.error(item + '不存在') })
-              this.$emit('call-back', false)
-            }
-          })
+      // this.$refs['form'].validate((valid) => {
+      //   if (valid) {
+      this.list = this.groupMember.items.map(item => { return item.value })
+      this.handleStudentIsExist({ list: this.list }).then(res => {
+        if (res.length === 0) {
+          this.$emit('call-back', true)
         } else {
-          this.$Message.error('失败')
-          this.flag = false
+          res.map(item => { this.$Message.error(item + '不存在') })
+          this.$emit('call-back', false)
         }
       })
+      // } else {
+      //   this.$Message.error('失败')
+      //   this.flag = false
+      // }
+      // })
     },
     handleAdd () {
       this.groupMember.memberNum++

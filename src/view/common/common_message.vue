@@ -4,37 +4,28 @@
         <!--左边列表-->
         <div slot="left" class="left-split-pane">
           <Card :padding="0" title="消息列表">
-            <CellGroup @on-click="switchGroup">
-              <Cell v-for="(item,index) in message.teacher_group"
-                    :key="item.id"
-                    :name="index"
-                    :title="item" />
-            </CellGroup>
-            <CellGroup @on-click="switchGroup">
-              <Cell v-for="(item,index) in message.student_group"
-                    :key="item.id"
-                    :name="index"
-                    :title="item" />
-            </CellGroup>
-            <CellGroup @on-click="switchJoin">
-              <Cell v-for="(item,index) in message.join"
-                    :key="item.id"
-                    :name="index"
-                    :title="item.groupName" />
+            <CellGroup @on-click="switchRight">
+              <Cell title="🤙 邀请信息" :name="1"/>
+              <Cell title="🖥️ 系统消息" :name="2"/>
             </CellGroup>
           </Card>
         </div>
         <!--右边-->
         <div slot="right" class="demo-split-pane">
-          <InviteMessage :content="content" style="margin: 15px"  v-if="switch_index === 0"/>
-          <StuInviteMessage :content="content" style="margin: 15px"  v-else-if="switch_index === 1"/>
+          <div v-if="index===1">
+            <InviteMessage style="margin: 15px"/>
+          </div>
+          <div v-else-if="index===2">
+            {{systemMessage}}
+          </div>
+<!--          <StuInviteMessage :content="content" style="margin: 15px"  v-else-if="switch_index === 1"/>-->
         </div>
       </Split>
     </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 import InviteMessage from '@/view/components/invite-message'
 import StuInviteMessage from '@/view/components/stu-invite-message'
@@ -48,7 +39,7 @@ export default {
       message: new Map(),
       group: [],
       content: null,
-      switch_index: 0
+      index: 0
     }
   },
   mounted () {
@@ -60,17 +51,20 @@ export default {
     ...mapActions([
       'handleGetMessage'
     ]),
-    switchGroup (index) {
-      if (this.message.hasOwnProperty('student_group')) {
-        this.switch_index = 1
-        this.content = this.message.student_group[index]
-      } else if (this.message.hasOwnProperty('teacher_group')) {
-        this.switch_index = 0
-        this.content = this.message.teacher_group[index]
-      }
+    switchRight (index) {
+      this.index = index
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'getSystemMessage',
+      'getInviteMessage'
+    ]),
+    systemMessage () {
+      return this.getSystemMessage
     },
-    switchJoin (index) {
-      this.content = this.message.join[index]
+    inviteMessage () {
+      return this.getInviteMessage
     }
   }
 }

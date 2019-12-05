@@ -58,10 +58,22 @@ export default {
         isRemember
       }
       this.handleLogin({ token }).then(flag => {
-        flag ? this.handleGetUserInfo().then(res => {
-          res ? this.$router.push({ name: 'home' })
-            : this.$Message.error('获取失败')
-        }) : this.$Message.error('登陆失败')
+        flag
+          ? this.handleGetUserInfo().then(res => {
+            if (res.flag) {
+              this.$router.push({ name: 'home' })
+              // eslint-disable-next-line no-new
+              // new Promise((resolve) => {
+              //   setTimeout(resolve, 2000)
+              //   this.$socket.emit('logined', {
+              //     body: res.body
+              //   })
+              // })
+            } else {
+              this.$Message.error('获取失败')
+            }
+          })
+          : this.$Message.error('登陆失败')
       })
     },
     /**

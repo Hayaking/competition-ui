@@ -46,14 +46,20 @@ export default {
     // 获取用户相关信息
     handleGetUserInfo ({ commit }) {
       return new Promise((resolve) => {
-        if (!getInfo()) {
-          get_user_info().then(res => {
-            commit('setUser', res.data.body)
-            resolve(res.data.state === 'SUCCESS')
+        // if (!getInfo()) {
+        get_user_info().then(res => {
+          commit('setUser', res.data.body)
+          resolve({
+            flag: res.data.state === 'SUCCESS',
+            body: res.data.body.id
           })
-        } else {
-          resolve(true)
-        }
+        })
+        // } else {
+        //   resolve({
+        //     flag: true,
+        //     body: getInfo()
+        //   })
+        // }
       })
     },
     // 注册

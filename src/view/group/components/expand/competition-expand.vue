@@ -80,10 +80,16 @@
         {{isNeedWorks(row.isNeedWorks)}}
       </template>
       <template slot="startState" slot-scope="{ row, index }">
-        {{formatDate(row.startState)}}
+        <div v-if="row.startState === 0">未开始</div>
+        <div v-if="row.startState === 1">已开始</div>
+        <div v-if="row.startState === 2">结算中</div>
+        <div v-if="row.startState === 3">已结束</div>
       </template>
       <template slot="enterState" slot-scope="{ row, index }">
-        {{formatDate(row.enterState)}}
+        <div v-if="row.enterState === 0">未开始</div>
+        <div v-if="row.enterState === 1">已开始</div>
+        <div v-if="row.enterState === 2">结算中</div>
+        <div v-if="row.enterState === 3">已结束</div>
       </template>
     </Table>
   </div>
@@ -154,13 +160,13 @@ export default {
         },
         {
           title: '开始状态',
-          key: 'startState',
+          slot: 'startState',
           width: 100,
           fixed: 'right'
         },
         {
           title: '报名状态',
-          key: 'enterState',
+          slot: 'enterState',
           width: 100,
           fixed: 'right'
         }

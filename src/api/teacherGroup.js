@@ -35,19 +35,25 @@ export const invite_teacher_member = (groupId, teacherId) => {
   })
 }
 
-export const agree_teacher_group_invite = (groupId) => {
+// export const agree_teacher_group_invite = (groupId) => {
+//   return axios.request({
+//     url: `teacherGroup/agree/${groupId}`,
+//     method: 'post'
+//   })
+// }
+export const review_teacher_group_invite = (flag, groupId) => {
   return axios.request({
-    url: `teacherGroup/agree/${groupId}`,
+    url: `/teacherGroup/${groupId}/review/${flag}`,
     method: 'post'
   })
 }
 
-export const refuse_teacher_group_invite = (groupId) => {
-  return axios.request({
-    url: `teacherGroup/refuse/${groupId}`,
-    method: 'post'
-  })
-}
+// export const refuse_teacher_group_invite = (groupId) => {
+//   return axios.request({
+//     url: `teacherGroup/refuse/${groupId}`,
+//     method: 'post'
+//   })
+// }
 
 export const create_teacher_group = (group) => {
   return axios.request({

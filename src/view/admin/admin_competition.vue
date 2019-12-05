@@ -13,9 +13,13 @@
     <Table :columns="TABLE_HEAD" :data="tb_res" stripe border >
       <!--比赛审核状态-->
       <template slot-scope="{ row, index }" slot="state">
-        <Button type="success" v-if="row.state === 1"  @click="review(row.id,row.state)">审核通过</Button>
-        <Button type="primary" v-else-if="row.state === 0" @click="review(row.id,row.state)">未审核</Button>
-        <Button type="error" v-else-if="row.state === -1" @click="review(row.id,row.state)">未通过审核</Button>
+        <Select v-model="row.state" @on-change="stateChange(row.id,row.state)">
+          <Icon slot="prefix" type="ios-star" :color="iconColor(row.state)"/>
+          <Option :value="0">未审核</Option>
+          <Option :value="1">审核通过</Option>
+          <Option :value="-1">审核未通过</Option>
+          <Option :value="2">打回修改</Option>
+        </Select>
       </template>
       <!--下载-->
       <template slot-scope="{ row, index }" slot="download">
@@ -147,22 +151,6 @@ export default {
         this.tb_res = res.records
       })
     },
-    /**
-     * 审核competition
-     */
-    review (id, state) {
-      let newState
-      if (state + 1 >= 2) {
-        newState = -1
-      } else {
-        newState = state + 1
-      }
-      this.handleSetCompetitionState({ id, newState }).then(res => {
-        if (res) {
-          this.getApplyPage()
-        }
-      })
-    },
     search () {
       if (this.key === '') {
         this.getApplyPage()
@@ -195,6 +183,28 @@ export default {
       } else {
         return this.COMPETITION_TYPE[minId - 1].typeName + '→' + this.COMPETITION_TYPE[maxId - 1].typeName
       }
+    },
+    iconColor (state) {
+      return state === -1
+        ? '#ed4014'
+        : state === 0
+          ? '#2d8cf0'
+          : state === 1
+            ? '#19be6b'
+            : '#ff9900'
+    },
+    /**
+     * 审核competition
+     */
+    stateChange (id, state) {
+      this.handleSetCompetitionState({ id, state }).then(res => {
+        if (res) {
+          this.$Message.success('成功')
+          this.getApplyPage()
+        } else {
+          this.$Message.error('失败')
+        }
+      })
     }
   }
 }

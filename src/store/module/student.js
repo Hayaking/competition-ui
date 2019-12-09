@@ -4,6 +4,7 @@ import {
   is_exist,
   search_student_by_page, update_student_info
 } from '@/api/student'
+import { update_student_securityinfo } from '../../api/student'
 
 export default {
   state: {
@@ -49,6 +50,15 @@ export default {
       return new Promise((resolve, reject) => {
         update_student_info(student).then(res => {
           resolve(res.data.state === 'SUCCESS')
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
+    handleUpdateStudentSecurityInfo ({ commit }, { student }) {
+      return new Promise((resolve, reject) => {
+        update_student_securityinfo(student).then(res => {
+          resolve(res.data.state === `SUCCESS`)
         }).catch(err => {
           reject(err)
         })

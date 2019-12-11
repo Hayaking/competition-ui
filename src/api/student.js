@@ -7,6 +7,13 @@ export const get_all_student_by_page = (pageNum, pageSize) => {
   })
 }
 
+export const get_student_by_id = (id) => {
+  return axios.request({
+    url: `/student/id/{id}`,
+    method: 'get'
+  })
+}
+
 export const is_exist = (list) => {
   return axios.request({
     url: `/student/exist`,

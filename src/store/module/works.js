@@ -1,4 +1,4 @@
-import { create_works, get_works_list_by_group_id } from '@/api/work'
+import { create_works, get_works_by_id, get_works_list_by_group_id } from '@/api/work'
 
 export default {
   state: {
@@ -38,6 +38,16 @@ export default {
             reject(err)
           })
         }
+      })
+    },
+    handleGetWorksById ({ commit }, { id }) {
+      return new Promise((resolve) => {
+        get_works_by_id(id).then(res => {
+          resolve({
+            flag: res.data.state === 'SUCCESS',
+            body: res.data.body
+          })
+        })
       })
     }
   }

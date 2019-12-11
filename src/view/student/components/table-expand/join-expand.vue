@@ -167,10 +167,11 @@ export default {
       })
     },
     isClick (row) {
-      if (row.progress.startState === '2' && row.isEditable) {
-        return !row.isPromotion
-      }
-      return true
+      // if (row.progress.startState === '2' && row.isEditable) {
+      //   return !row.isPromotion
+      // }
+      console.info(row.progress.startState)
+      return row.progress.startState !== 2
     }
   },
   computed: {

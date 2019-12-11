@@ -63,14 +63,12 @@ export default {
       })
     },
     handleGetEnterList ({ commit }, { pageNum, pageSize, competitionId, progressId }) {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         get_enter_list(pageNum, pageSize, competitionId, progressId).then(res => {
           resolve({
             flag: res.data.state === 'SUCCESS',
             body: res.data.body
           })
-        }).catch(err => {
-          reject(err)
         })
       })
     },

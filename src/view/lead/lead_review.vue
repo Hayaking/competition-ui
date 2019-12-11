@@ -16,7 +16,7 @@
         <div>{{row.competition.name}}</div>
       </template>
       <template slot-scope="{ row, index }" slot="action">
-        <Button v-if="row.applyState === '通过'" @click="review(row.id,false)">拒绝</Button>
+        <Button v-if="row.applyState === '通过'" type="error" @click="review(row.id,false)">拒绝</Button>
         <Button v-else type="primary" @click="review(row.id,true)">通过</Button>
       </template>
     </Table>
@@ -78,14 +78,6 @@ export default {
         {
           title: '指导教师2申请状态',
           key: 'applyState2'
-        },
-        {
-          title: '报名状态',
-          key: 'enterState'
-        },
-        {
-          title: '参赛状态',
-          key: 'joinState'
         },
         {
           title: '操作',

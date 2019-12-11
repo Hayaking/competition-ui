@@ -74,7 +74,7 @@ export default {
       })
     },
     handleGetStudentGroupMemberList ({ commit }, { groupId }) {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         if (groupId === undefined) {
           resolve({
             flag: false,
@@ -86,8 +86,6 @@ export default {
               flag: res.data.state === 'SUCCESS',
               body: res.data.body
             })
-          }).catch(err => {
-            reject(err)
           })
         }
       })

@@ -2,27 +2,27 @@
   <Card>
     <div slot="title">
       <Row>
-        <Col span="1">
-          {{competition.name}}
-        </Col>
-        <Col span="3">
-          <Select v-model="progressId">
-            <Option v-for="(item,index) in PROGRESS_LIST"
-                    :value="item.id"
-                    :key="index">
-              {{COMPETITION_TYPE[item.typeId-1].typeName}}
-            </Option>
-          </Select>
-        </Col>
-        <Col span="5">
-          <Input search
-                 class="tool-bar"/>
-        </Col>
-        <Col span="5">
-          <Button type="primary" >增加</Button>
-          <Button type="primary" @click="exportsExcel">导出报名列表</Button>
-          <Button type="primary" @click="reviewAll">全部通过</Button>
-        </Col>
+        <span style="font-size: 20px">{{competition.name}}</span>
+        <Row>
+          <Col span="3">
+            <Select v-model="progressId">
+              <Option v-for="(item,index) in PROGRESS_LIST"
+                      :value="item.id"
+                      :key="index">
+                {{item.name}}
+              </Option>
+            </Select>
+          </Col>
+          <Col span="5">
+            <Input search
+                   class="tool-bar"/>
+          </Col>
+          <Col span="5">
+            <Button type="primary" >增加</Button>
+            <Button type="primary" @click="exportsExcel">导出报名列表</Button>
+            <Button type="primary" @click="reviewAll">全部通过</Button>
+          </Col>
+        </Row>
       </Row>
     </div>
     <Table :columns="TABLE_HEAD"
@@ -33,7 +33,7 @@
         <div>{{row.progress.competition.name}}</div>
       </template>
       <template slot-scope="{ row, index }" slot="works">
-        <div>{{row.progress.works.worksName}}</div>
+        <div>{{row.join.works.worksName}}</div>
       </template>
       <template slot-scope="{ row, index }" slot="teacher1">
         <div v-if="row.join.teacher1 === null">无</div>
@@ -42,7 +42,7 @@
             {{row.join.teacher1.teacherName}}
           </Col>
           <Col span="12">
-            <Tag color="primary">{{row.applyState}}</Tag>
+            <Tag color="primary">{{row.join.applyState}}</Tag>
           </Col>
         </Row>
       </template>
@@ -53,19 +53,20 @@
             {{row.join.teacher2.teacherName}}
           </Col>
           <Col span="12">
-            <Tag color="primary">{{row.applyState}}</Tag>
+            <Tag color="primary">{{row.join.applyState2}}</Tag>
           </Col>
         </Row>
       </template>
       <template slot-scope="{ row, index }" slot="enterState">
-        <Tag>{{row.enterState}}</Tag>
+        <Tag v-if="row.getEnterPage === -1" color="error">拒绝</Tag>
+        <Tag v-else-if="row.getEnterPage === 0" color="primary">等待</Tag>
+        <Tag v-else color="success">已报名</Tag>
       </template>
       <template slot-scope="{ row, index }" slot="group">
-        <div>
-          <div v-for="(item,index) in row.works.studentGroup.members" :key="index">
-            {{item.student.stuName}}
-          </div>
-        </div>
+        <Group :id="row.join.groupId" />
+      </template>
+      <template slot-scope="{ row, index }" slot="person">
+        <Person :id="row.join.creatorId"/>
       </template>
       <template slot-scope="{ row, index }" slot="action">
         <Button type="success" size="small" style="margin-right: 5px" @click="review(row,1)">
@@ -74,10 +75,10 @@
         <Button type="error" size="small" @click="review(row,-1)">
           拒绝
         </Button>
-        <Button type="primary" size="small" @click="promotion(row,true)">
+        <Button type="success" size="small" style="margin-right: 5px" @click="promotion(row,true)">
           晋级
         </Button>
-        <Button type="primary" size="small" @click="promotion(row,false)">
+        <Button type="error" size="small" @click="promotion(row,false)">
           淘汰
         </Button>
       </template>
@@ -86,31 +87,24 @@
           :total="page.total"
           :current="page.current"
           :page-size="page.page_size"
-          @on-change = "pageChange"
-    />
+          @on-change = "pageChange"/>
   </Card>
 </template>
 
 <script>
+import Group from '@/view/group/components/cell/group'
+import Person from '@/view/group/components/cell/person'
 import { mapActions, mapGetters } from 'vuex'
 import JoinExpand from '@/view/components/table-expand/join-expand'
 export default {
   name: 'competition_enter_list',
-  components: { JoinExpand },
+  components: { JoinExpand, Group, Person },
   data () {
     return {
       TABLE_HEAD: [
         {
-          key: 'id',
-          title: 'id'
-        },
-        {
-          title: '作品名',
-          slot: 'works'
-        },
-        {
-          title: '参赛人员',
-          slot: 'group'
+          title: 'id',
+          key: 'id'
         },
         {
           title: '指导老师1',
@@ -122,11 +116,11 @@ export default {
         },
         {
           title: '报名状态',
-          key: 'enterState'
+          slot: 'enterState'
         },
         {
           title: '晋级状态',
-          key: 'promotionState'
+          key: 'isPromotion'
         },
         {
           title: '操作',
@@ -165,7 +159,8 @@ export default {
       'handleSetJoinEnterState',
       'handleGetProgressListByCompetitionId',
       'handleGetType',
-      'handlePromotion'
+      'handlePromotion',
+      'handleGetWorksById'
     ]),
     /**
      * 分页
@@ -180,7 +175,9 @@ export default {
      */
     getEnterPage (pageNum = 1, pageSize = 12) {
       let competitionId = this.competition.id
-      if (this.progressId === 0) { this.progressId = this.PROGRESS_LIST[0].id }
+      if (this.progressId === 0) {
+        this.progressId = this.PROGRESS_LIST[0].id
+      }
       this.handleGetEnterList({
         pageNum,
         pageSize,
@@ -249,6 +246,26 @@ export default {
   },
   watch: {
     progressId (val) {
+      let progress = this.PROGRESS_LIST.find(item => {
+        return item.id === val
+      })
+      if (progress.isSingle) {
+        this.TABLE_HEAD.splice(1, 0, {
+          title: '参赛人员1',
+          slot: 'person'
+        })
+      } else {
+        this.TABLE_HEAD.splice(1, 0, {
+          title: '参赛人员2',
+          slot: 'group'
+        })
+      }
+      if (progress.isNeedWorks) {
+        this.TABLE_HEAD.splice(1, 0, {
+          title: '作品名',
+          slot: 'works'
+        })
+      }
       this.getEnterPage()
     }
   }

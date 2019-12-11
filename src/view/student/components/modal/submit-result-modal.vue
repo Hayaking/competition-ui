@@ -103,6 +103,7 @@ export default {
     },
     submitResult () {
       this.form.price.joinInProgressId = this.id
+      // 是否得奖
       if (this.form.isWinThePrice) {
         let formData = new FormData()
         formData.append('file', this.image)

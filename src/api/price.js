@@ -14,3 +14,10 @@ export const get_price_by_join_in_progress_id = (joinInProgressId) => {
     method: 'get'
   })
 }
+
+export const get_price_page_by_student = (pageNum, pageSize) => {
+  return axios.request({
+    url: `/price/student/${pageNum}/${pageSize}`,
+    method: 'get'
+  })
+}

@@ -12,14 +12,12 @@ export default {
   },
   actions: {
     handleGetLeadApplyPage ({ commit }, { pageNum, pageSize }) {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         get_lead_apply(pageNum, pageSize).then(res => {
           if (res.data.state === 'SUCCESS') {
             resolve(res.data.body)
           }
           resolve(false)
-        }).catch(err => {
-          reject(err)
         })
       })
     },

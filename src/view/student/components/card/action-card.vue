@@ -68,7 +68,7 @@ export default {
       })
     },
     toCompetition () {
-      this.$router.push({ name: 'common_competition' })
+      this.$router.push({ name: 'common_competition_list' })
     },
     toConfig () {
       this.$router.push({ name: 'common_edit_self' })

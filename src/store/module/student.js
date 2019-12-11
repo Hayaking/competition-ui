@@ -1,5 +1,5 @@
 import {
-  get_all_student_by_page,
+  get_all_student_by_page, get_student_by_id,
   insert_or_update_student,
   is_exist,
   search_student_by_page, update_student_info
@@ -24,6 +24,16 @@ export default {
           resolve(res.data.body)
         }).catch(err => {
           reject(err)
+        })
+      })
+    },
+    handleGetStudentById ({ commit }, { id }) {
+      return new Promise((resolve) => {
+        get_student_by_id(id).then(res => {
+          resolve({
+            flag: res.data.state === 'SUCCESS',
+            body: res.data.body
+          })
         })
       })
     },

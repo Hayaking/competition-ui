@@ -14,3 +14,10 @@ export const get_works_list_by_group_id = (groupId) => {
     method: 'get'
   })
 }
+
+export const get_works_by_id = (id) => {
+  return axios.request({
+    url: `/works/${id}`,
+    method: 'get'
+  })
+}

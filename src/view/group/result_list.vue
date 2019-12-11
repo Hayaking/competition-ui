@@ -11,8 +11,6 @@
                     :value="item.id"
                     :key="index">
               {{item.name}}
-              ：
-              {{COMPETITION_TYPE[item.typeId-1].typeName}}
             </Option>
           </Select>
         </Col>
@@ -29,20 +27,28 @@
            :data="page.records"
            stripe
            border >
+      <template slot-scope="{ row, index }" slot="works">
+        <div>{{row.join.works.worksName}}</div>
+      </template>
       <template slot-scope="{ row, index }" slot="competition">
         <div>{{row.competition.name}}</div>
       </template>
       <template slot-scope="{ row, index }" slot="enterState">
         <Tag>{{row.enterState}}</Tag>
       </template>
-      <template slot-scope="{ row, index }" slot="join">
-        {{row.join}}
+      <template slot-scope="{ row, index }" slot="group">
+        <Group :id="row.join.groupId" />
       </template>
-      <template slot-scope="{ row, index }" slot="priceState">
-        <Tag>{{row.priceState}}</Tag>
+      <template slot-scope="{ row, index }" slot="person">
+        <Person :id="row.join.creatorId"/>
+      </template>
+      <template slot-scope="{ row, index }" slot="isPrice">
+        <Tag v-if="row.isPrice" color="success">是</Tag>
+        <Tag v-else color="error">否</Tag>
       </template>
       <template slot-scope="{ row, index }" slot="reviewState">
-        <Tag>{{row.reviewState}}</Tag>
+        <Tag v-if="row.reviewState" color="success">是</Tag>
+        <Tag v-else color="error">否</Tag>
       </template>
       <template slot-scope="{ row, index }" slot="action">
         <Button type="success" size="small" style="margin-right: 5px" @click="review(row.id,1,false)">
@@ -71,13 +77,16 @@
 </template>
 
 <script>
+
+import Group from '@/view/group/components/cell/group'
+import Person from '@/view/group/components/cell/person'
 import { mapActions, mapGetters } from 'vuex'
 import JoinExpand from '@/view/components/table-expand/join-expand'
 import PriceExpand from '@/view/group/components/expand/price-expand'
 import ResultModal from '@/view/group/components/modal/submit-result-modal'
 export default {
   name: 'competition_result_list',
-  components: { JoinExpand, PriceExpand, ResultModal },
+  components: { JoinExpand, PriceExpand, ResultModal, Group, Person },
   data () {
     return {
       TABLE_HEAD: [
@@ -114,16 +123,12 @@ export default {
           }
         },
         {
-          key: 'id',
-          title: 'id'
-        },
-        {
-          title: '参赛',
-          slot: 'join'
+          title: 'id',
+          key: 'id'
         },
         {
           title: '是否得奖',
-          slot: 'priceState'
+          slot: 'isPrice'
         },
         {
           title: '是否审核通过',
@@ -190,7 +195,6 @@ export default {
       }).then(res => {
         if (res.flag) {
           this.page = res.body
-          this.$Message.success('成功')
         } else {
           this.$Message.error('失败')
         }
@@ -205,7 +209,6 @@ export default {
     review (inProgressId, reviewState, editState) {
       this.handleReviewJoinInProgress({ inProgressId, reviewState, editState }).then(res => {
         if (res) {
-          this.$Message.success('成功')
           this.getResultPage()
         } else {
           this.$Message.error('失败')
@@ -251,6 +254,26 @@ export default {
   },
   watch: {
     progressId (val) {
+      let progress = this.PROGRESS_LIST.find(item => {
+        return item.id === val
+      })
+      if (progress.isSingle) {
+        this.TABLE_HEAD.splice(2, 0, {
+          title: '参赛人员1',
+          slot: 'person'
+        })
+      } else {
+        this.TABLE_HEAD.splice(2, 0, {
+          title: '参赛人员2',
+          slot: 'group'
+        })
+      }
+      if (progress.isNeedWorks) {
+        this.TABLE_HEAD.splice(2, 0, {
+          title: '作品名',
+          slot: 'works'
+        })
+      }
       this.getResultPage()
     }
   }

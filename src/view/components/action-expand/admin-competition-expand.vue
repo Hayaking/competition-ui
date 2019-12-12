@@ -1,7 +1,6 @@
 <template>
   <div>
       <Button @click="downloadApply"
-              style="margin-right: 5px"
               type="primary"
               size="small">
         下载申请表

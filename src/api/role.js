@@ -53,3 +53,10 @@ export const get_self_role_list = () => {
     method: 'get'
   })
 }
+
+export const get_user_page_by_role = (id, pageNum, pageSize) => {
+  return axios.request({
+    url: `/role/${id}/user/${pageNum}/${pageSize}`,
+    method: 'get'
+  })
+}

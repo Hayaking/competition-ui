@@ -1,8 +1,6 @@
 <template>
   <div>
-    <MenuEditModal :show="show"
-                   @cancel="cancel"/>
-
+    <MenuEditModal :show="show" @cancel="cancel"/>
     <Card>
       <div slot="title">
         <Select v-model="roleId" style="width:200px">
@@ -16,11 +14,10 @@
       <div slot="extra">
         <Button type="primary">提交</Button>
       </div>
-
       <Tree :data="data"
             show-checkbox
             @on-check-change="checkChange"
-      ></Tree>
+      />
     </Card>
   </div>
 </template>

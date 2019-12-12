@@ -39,7 +39,7 @@
             <Col span="8">
               <Cell>
                 <div slot="icon">负责人:</div>
-                <div slot="label">{{ row.competition.personInCharge }}</div>
+                <div slot="label">{{ row.competition.personInCharge.teacherName }}</div>
               </Cell>
             </Col>
             <Col span="8">

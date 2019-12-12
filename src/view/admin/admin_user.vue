@@ -1,5 +1,10 @@
 <template>
   <Card>
+    <Drawer title="菜单" :closable="false" draggable v-model="showDrawer">
+      <Tree :data="data"
+            show-checkbox
+            @on-check-change="checkChange"/>
+    </Drawer>
     <!--角色对话框-->
     <RoleModal
       :show="show1"
@@ -19,9 +24,8 @@
       @cancel="cancelModal"
     />
     <div slot="title">
-      <Select v-model="type"  style="width: 100px">
-        <Option value="teacher">教师</option>
-        <Option value="student">学生</option>
+      <Select v-model="roleId"  style="width: 100px">
+        <Option v-for="(item,index) in roleList" :value="item.id" :key="index">{{item.roleName}}</option>
       </Select>
       <Input search
              v-model="key"
@@ -30,9 +34,9 @@
       </Input>
       <ButtonGroup>
         <Button @click="showUserInfoModal" type="primary">添加</Button>
+        <Button @click="showMenuDrawer" type="primary">修改角色菜单</Button>
       </ButtonGroup>
     </div>
-
     <Row>
       <Table :columns="TABLE_HEAD"
              :data="page.records"
@@ -64,7 +68,7 @@
 
 <script>
 
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import RoleModal from '@/view/components/modal/role-modal'
 import StudentEditModal from '@/view/components/modal/student-edit-modal'
 import TeacherEditModal from '@/view/components/modal/teacher-edit-modal'
@@ -89,44 +93,54 @@ export default {
           key: 'id',
           width: 100,
           fixed: 'left'
-        }, {
+        },
+        {
           title: '姓名',
           key: 'teacherName',
           width: 100,
           fixed: 'left'
-        }, {
+        },
+        {
           title: '帐号',
           key: 'account',
           width: 150
-        }, {
+        },
+        {
           title: '密码',
           key: 'password',
           width: 150
-        }, {
+        },
+        {
           title: '性别',
           key: 'teacherSex',
           width: 70
-        }, {
+        },
+        {
           title: '电话',
           key: 'teacherPhone',
           width: 150
-        }, {
+        },
+        {
           title: '电话',
           key: 'teacherPhone',
           width: 150
-        }, {
+        },
+        {
           title: '擅长领域',
           key: 'teacherMaster',
           width: 150
-        }, {
+        },
+        {
           title: '职称',
           key: 'teacherLevel',
           width: 150
-        }, {
+        },
+        {
           title: '银行卡号',
           key: 'teacherBankCardNo',
           width: 150
-        }, {
+        },
+        {
           title: '编辑',
           width: 200,
           fixed: 'right',
@@ -139,36 +153,44 @@ export default {
           key: 'id',
           width: 100,
           fixed: 'left'
-        }, {
+        },
+        {
           title: '姓名',
           key: 'stuName',
           width: 150,
           fixed: 'left'
-        }, {
+        },
+        {
           title: '帐号',
           key: 'account',
           width: 150
-        }, {
+        },
+        {
           title: '班级',
           key: 'stuClass',
           width: 150
-        }, {
+        },
+        {
           title: '密码',
           key: 'password',
           width: 150
-        }, {
+        },
+        {
           title: '性别',
           key: 'stuSex',
           width: 70
-        }, {
+        },
+        {
           title: '电话',
           key: 'stuPhone',
           width: 150
-        }, {
+        },
+        {
           title: '银行卡号',
           key: 'stuBankCardNo',
           width: 150
-        }, {
+        },
+        {
           title: '编辑',
           width: 200,
           slot: 'action'
@@ -183,25 +205,37 @@ export default {
       show1: false,
       show2: false,
       show3: false,
+      showDrawer: false,
       key: '',
-      deleteObject: {}
+      deleteObject: {},
+      roleId: 1,
+      menuList: [],
+      MENU_ALL: []
     }
   },
   mounted () {
     this.$nextTick(() => {
-      this.getUser()
-      this.TABLE_HEAD = this.tb_student_head
+      this.getUserPage(1, 1, 12)
+      this.TABLE_HEAD = this.tb_teacher_head
       this.$store.dispatch('handleGetRoleList')
+      this.handleGetAllMenu().then(res => {
+        res.flag
+          ? this.MENU_ALL = res.body
+          : this.$Message.error('获取失败')
+      })
     })
   },
   methods: {
     ...mapActions([
-      'handleGetAllStudent',
-      'handleGetAllTeacherByPage',
       'handleGetStudentRole',
       'handleGetTeacherRole',
       'handleSearchStudent',
-      'handleSearchTeacher'
+      'handleSearchTeacher',
+      'handleGetUserPageByRole',
+      'handleGetRoleList',
+      'handleGetAllMenu',
+      'handleGetMenuListByRoleId',
+      'handleSetRoleAndMenu'
     ]),
     /**
      * 页码改变时执行
@@ -216,20 +250,9 @@ export default {
     /**
      * 分页获取学生或教师
      */
-    getUser (pageNum = 1, pageSize = 12) {
-      this.type === 'student'
-        ? this.getStudent(pageNum, pageSize)
-        : this.getTeacher(pageNum, pageSize)
-    },
-    getTeacher (pageNum, pageSize) {
-      this.handleGetAllTeacherByPage({ pageNum, pageSize }).then(res => {
-        this.page = res
-      })
-    },
-    getStudent (pageNum, pageSize) {
-      this.handleGetAllStudent({ pageNum, pageSize }).then(res => {
-        // this.tb_res = res.records
-        this.page = res
+    getUserPage (id = 0, pageNum = 1, pageSize = 12) {
+      this.handleGetUserPageByRole({ id, pageNum, pageSize }).then(res => {
+        this.page = res.body
       })
     },
     /**
@@ -325,15 +348,88 @@ export default {
       } else {
         this.show2 = true
       }
+    },
+    showMenuDrawer () {
+      this.showDrawer = !this.showDrawer
+      this.handleGetMenuListByRoleId({ roleId: this.roleId }).then(res => {
+        res.flag
+          ? this.menuList = res.body
+          : this.$Message.error('获取失败')
+      })
+    },
+    checkChange (obj, item) {
+      // 一级菜单
+      if (item.hasOwnProperty('children')) {
+        let id = this.MENU_ALL.find(f => { return this.$t(f.name) === item.title }).id
+        this.handleSetRoleAndMenu({
+          roleId: this.roleId,
+          menu1Id: id,
+          flag: item.checked,
+          tag: true
+        }).then(res => {
+          res ? this.$Message.success('成功') : this.$Message.error('失败')
+        })
+      } else {
+        let menu1Id
+        let menu2Id
+        this.MENU_ALL.find(menu1 => {
+          // 在一级菜单里找二级菜单
+          let menu2 = menu1.children.find(menu2 => { return this.$t(menu2.name) === item.title })
+          if (menu2 !== undefined) {
+            menu2Id = menu2.id
+            menu1Id = menu1.id
+          }
+          return menu2 !== undefined
+        })
+        this.handleSetRoleAndMenu({
+          roleId: this.roleId,
+          menu1Id,
+          menu2Id,
+          flag: item.checked,
+          tag: false
+        }).then(res => {
+          res ? this.$Message.success('成功') : this.$Message.error('失败')
+        })
+      }
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'getAllRole'
+    ]),
+    roleList () {
+      return this.getAllRole
+    },
+    data () {
+      return this.MENU_ALL.map(item => {
+        let menu1
+        this.menuList.length > 0
+          ? menu1 = this.menuList.find(f => { return f.name === item.name })
+          : menu1 = undefined
+        return {
+          id: item.id,
+          title: this.$t(item.name),
+          expand: true,
+          children: item.children.map(child => {
+            return {
+              title: this.$t(child.name),
+              // menu1===true时说明有一级菜单
+              checked: menu1 !== undefined
+                ? menu1.children.find(f => { return f.name === child.name }) !== undefined
+                : false
+            }
+          })
+        }
+      })
     }
   },
   watch: {
-    type (newVal, oldVal) {
-      if (newVal !== oldVal) {
-        this.getUser()
-        newVal === 'student'
-          ? this.TABLE_HEAD = this.tb_student_head
-          : this.TABLE_HEAD = this.tb_teacher_head
+    roleId (val) {
+      this.getUserPage(val, 1, 12)
+      if (val === 5) {
+        this.TABLE_HEAD = this.tb_student_head
+      } else {
+        this.TABLE_HEAD = this.tb_teacher_head
       }
     }
   }

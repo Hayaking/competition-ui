@@ -5,7 +5,7 @@ import {
   delete_student_role,
   get_teacher_role,
   add_teacher_role,
-  delete_teacher_role, get_self_role_list
+  delete_teacher_role, get_self_role_list, get_user_page_by_role
 } from '@/api/role'
 
 export default {
@@ -104,6 +104,16 @@ export default {
           resolve(res.data.state === 'SUCCESS')
         }).catch(err => {
           reject(err)
+        })
+      })
+    },
+    handleGetUserPageByRole ({ commit }, { id, pageNum, pageSize }) {
+      return new Promise((resolve) => {
+        get_user_page_by_role(id, pageNum, pageSize).then(res => {
+          resolve({
+            state: res.data.state === 'SUCCESS',
+            body: res.data.body
+          })
         })
       })
     }

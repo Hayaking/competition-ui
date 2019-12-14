@@ -23,6 +23,7 @@ export default {
   stu_join_list: '参赛列表',
   stu_price: '获奖列表',
   lead: '指导老师',
+  work_load: '工作量',
   stu_group: '小组',
   group: '工作组',
   review: '审核',

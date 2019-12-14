@@ -44,3 +44,10 @@ export const search_student_by_page = (key, pageNum, pageSize) => {
     method: 'get'
   })
 }
+
+export const get_top5_price_student = () => {
+  return axios.request({
+    url: `/student/price/top5`,
+    method: 'get'
+  })
+}

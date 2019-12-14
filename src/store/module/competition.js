@@ -4,7 +4,7 @@ import {
   get_competition_all,
   get_competition_by_group_id,
   get_competition_by_id,
-  get_competition_pass_all,
+  get_competition_pass_all, get_home_competition,
   get_simple_competition_list_by_group_id,
   save_competition_holder,
   search_competition,
@@ -185,6 +185,16 @@ export default {
             })
           })
         }
+      })
+    },
+    handleGetHomeCompetition ({ commit }) {
+      return new Promise((resolve) => {
+        get_home_competition().then(res => {
+          resolve({
+            flag: res.data.state === 'SUCCESS',
+            body: res.data.body
+          })
+        })
       })
     }
   }

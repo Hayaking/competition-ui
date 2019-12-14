@@ -85,7 +85,7 @@ export default {
   },
   data () {
     return {
-      type: 'student',
+      type: 'teacher',
       TABLE_HEAD: [],
       tb_teacher_head: [
         {
@@ -427,8 +427,10 @@ export default {
     roleId (val) {
       this.getUserPage(val, 1, 12)
       if (val === 5) {
+        this.type = 'student'
         this.TABLE_HEAD = this.tb_student_head
       } else {
+        this.type = 'teacher'
         this.TABLE_HEAD = this.tb_teacher_head
       }
     }

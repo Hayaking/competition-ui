@@ -1,4 +1,9 @@
-import { create_price, get_price_by_join_in_progress_id, get_price_page_by_student } from '@/api/price'
+import {
+  create_price,
+  get_price_by_join_in_progress_id,
+  get_price_page_by_student,
+  get_recently_price
+} from '@/api/price'
 
 export default {
   state: {
@@ -31,6 +36,16 @@ export default {
     handleGetPriceByStudent ({ commit }, { pageNum, pageSize }) {
       return new Promise((resolve) => {
         get_price_page_by_student(pageNum, pageSize).then(res => {
+          resolve({
+            flag: res.data.state === 'SUCCESS',
+            body: res.data.body
+          })
+        })
+      })
+    },
+    handleRecentlyPrice ({ commit }) {
+      return new Promise((resolve) => {
+        get_recently_price().then(res => {
           resolve({
             flag: res.data.state === 'SUCCESS',
             body: res.data.body

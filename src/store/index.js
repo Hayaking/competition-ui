@@ -25,6 +25,7 @@ import progress from './module/progress'
 import price from './module/price'
 import download from './module/download'
 import groupLog from './module/groupLog'
+import workload from './module/workload'
 
 Vue.use(Vuex)
 
@@ -62,6 +63,7 @@ export default new Vuex.Store({
     progress,
     price,
     download,
-    groupLog
+    groupLog,
+    workload
   }
 })

@@ -90,3 +90,9 @@ export const search_pass_competition = (key, pageNum, pageSize) => {
     method: 'get'
   })
 }
+export const get_home_competition = () => {
+  return axios.request({
+    url: `/competition/home`,
+    method: 'get'
+  })
+}

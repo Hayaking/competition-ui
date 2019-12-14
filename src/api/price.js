@@ -21,3 +21,9 @@ export const get_price_page_by_student = (pageNum, pageSize) => {
     method: 'get'
   })
 }
+export const get_recently_price = () => {
+  return axios.request({
+    url: `/price/recently`,
+    method: 'get'
+  })
+}

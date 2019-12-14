@@ -1,5 +1,5 @@
 import {
-  get_all_student_by_page, get_student_by_id,
+  get_all_student_by_page, get_student_by_id, get_top5_price_student,
   insert_or_update_student,
   is_exist,
   search_student_by_page, update_student_info
@@ -70,6 +70,16 @@ export default {
           resolve(res.data.body)
         }).catch(err => {
           reject(err)
+        })
+      })
+    },
+    handleGetTop5PriceStudent ({ commit }) {
+      return new Promise((resolve) => {
+        get_top5_price_student().then(res => {
+          resolve({
+            flag: res.data.state === 'SUCCESS',
+            body: res.data.body
+          })
         })
       })
     }

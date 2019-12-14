@@ -1,17 +1,19 @@
 <template>
   <Card title="安全设置">
-    <Form label-width="70"
+    <Form :model="user"
+          label-width="70"
           label-position="left">
       <FormItem label="密码：">
-        <Input/>
+        <Input v-model="user.password" type="password"/>
       </FormItem>
       <FormItem label="银行卡号：">
-        <Input/>
+        <Input v-model="user.stuBankCardNo"/>
       </FormItem>
       <FormItem label="电话：">
-        <Input/>
+        <Input v-model="user.stuPhone"/>
       </FormItem>
     </Form>
+    <Button @click="save">保存</Button>
   </Card>
 </template>
 
@@ -19,7 +21,7 @@
 import { mapActions, mapGetters } from 'vuex'
 
 export default {
-  name: 'info-card',
+  name: 'security-card',
   data () {
     return {
       user: {}

@@ -37,6 +37,7 @@ export const update_student_info = (student) => {
     method: 'post'
   })
 }
+
 export const update_student_securityinfo = (student) => {
   return axios.request({
     url: `/student/securityinfo`,

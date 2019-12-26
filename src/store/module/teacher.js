@@ -3,9 +3,8 @@ import {
   get_all_teacher_by_page,
   get_lead_teacher_list,
   insert_or_update_teacher,
-  search_teacher_by_page
+  search_teacher_by_page, update_teacher_info, update_teacher_securityinfo
 } from '@/api/teacher'
-
 export default {
   state: {
     allTeacher: []
@@ -60,6 +59,24 @@ export default {
       return new Promise((resolve, reject) => {
         insert_or_update_teacher(teacher).then(res => {
           resolve(res.data.state === 'SUCCESS')
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
+    handleUpdateTeacherInfo ({ commit }, { teacher }) {
+      return new Promise((resolve, reject) => {
+        update_teacher_info(teacher).then(res => {
+          resolve(res.data.state === 'SUCCESS')
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
+    handleUpdateTeacherSecurityInfo ({ commit }, { teacher }) {
+      return new Promise((resolve, reject) => {
+        update_teacher_securityinfo(teacher).then(res => {
+          resolve(res.data.state === `SUCCESS`)
         }).catch(err => {
           reject(err)
         })

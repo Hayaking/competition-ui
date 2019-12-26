@@ -16,8 +16,12 @@
         <div>{{row.competition.name}}</div>
       </template>
       <template slot-scope="{ row, index }" slot="action">
-        <Button v-if="row.applyState === '通过'" type="error" @click="review(row.id,false)">拒绝</Button>
-        <Button v-else type="primary" @click="review(row.id,true)">通过</Button>
+        <Button v-if="getId === row.teacherId1 ? row.applyState  === '通过': row.applyState2 === '通过'"
+                type="error"
+                @click="review(row.id,false)">拒绝
+        </Button>
+        <Button v-else type="primary"
+                 @click="review(row.id,true)">通过</Button>
       </template>
     </Table>
     <Page show-total
@@ -30,7 +34,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import JoinExpand from '@/view/components/table-expand/join-expand'
 
 export default {
@@ -38,6 +42,7 @@ export default {
   components: { JoinExpand },
   data () {
     return {
+      user: {},
       key: '',
       TABLE_HEAD: [
         {
@@ -115,6 +120,7 @@ export default {
       })
     },
     review (id, flag) {
+      console.info()
       this.handleSetLeadApplyState({ flag, joinId: id }).then(res => {
         if (res) {
           this.getApplyPage()
@@ -136,7 +142,16 @@ export default {
           : this.$Message.error('失败')
       })
     }
+  },
+  computed: {
+    ...mapGetters([
+      'getUserId'
+    ]),
+    getId () {
+      return this.getUserId
+    }
   }
+
 }
 </script>
 

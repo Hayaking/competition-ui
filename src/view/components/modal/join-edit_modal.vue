@@ -5,7 +5,7 @@
     v-model="modalShow">
 
     <Form :model="join">
-    <FormItem label="作评名称">
+    <FormItem label="作品名称">
       <Input v-model="join.works.worksName"></Input>
     </FormItem>
     <FormItem label="竞赛名称">
@@ -14,14 +14,11 @@
     <FormItem label="指导老师1">
       <Input v-model="join.teacherId1"></Input>
     </FormItem>
-    <FormItem label="指导老师1">
+    <FormItem label="指导老师2">
       <Input v-model="join.teacherId2"></Input>
     </FormItem>
   </Form>
 
-    <div slot="footer">
-      <div>拖拽</div>
-    </div>
   </Modal>
 </template>
 

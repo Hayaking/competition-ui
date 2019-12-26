@@ -34,4 +34,18 @@ export const insert_or_update_teacher = (teacher) => {
     method: 'post'
   })
 }
+export const update_teacher_info = (teacher) => {
+  return axios.request({
+    url: `/teacher/info`,
+    data: teacher,
+    method: 'post'
+  })
+}
 
+export const update_teacher_securityinfo = (teacher) => {
+  return axios.request({
+    url: `/teacher/securityinfo`,
+    data: teacher,
+    method: `post`
+  })
+}
